@@ -5,6 +5,11 @@
 
 
 #include <Windows.h>
+#include <string>
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include <functional>
 
 
 #endif // STDAFX_H

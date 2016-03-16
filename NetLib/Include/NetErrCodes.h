@@ -10,6 +10,12 @@ namespace NetLib
 	enum NetErrCode : int
 	{
 		neterr_noErr = 0,
+		neterr_noSocketLibrary,
+		neterr_cantCreateSocket,
+		neterr_cantSetSocketOptions,
+		neterr_cantBindSocket,
+		neterr_cantStartListen,
+		neterr_cantCreateThread,
 
 		neterr_end
 	};
