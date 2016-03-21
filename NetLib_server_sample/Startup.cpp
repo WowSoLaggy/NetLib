@@ -6,11 +6,11 @@
 using namespace NetLib;
 
 
-void OnClientAccepted(std::string pClientAddress, int pClientPort)
+void OnClientAccepted(unsigned int pClientId, std::string pClientAddress, int pClientPort)
 {
 	LOG("OnClientAccepted()");
 
-	echo("Accepted: ", pClientAddress, ":", pClientPort);
+	echo("Accepted id: ", pClientId, " from ", pClientAddress, ":", pClientPort);
 }
 
 int main(int argc, char *argv[])
@@ -25,19 +25,17 @@ int main(int argc, char *argv[])
 	Server server;
 	err = server.Start(32167, OnClientAccepted);
 	echo("Listen result: ", err);
+	std::getchar();
 	if (err != neterr_noErr)
 		return 0;
 
-	std::getchar();
-
 	err = server.Stop();
 	echo("Stop result: ", err);
+	std::getchar();
 	if (err != neterr_noErr)
 		return 0;
 
 	// Finish
-
-	std::getchar();
 
 	NETDISPOSE;
 	LOGDISPOSE;

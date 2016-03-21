@@ -44,5 +44,11 @@
     <ClCompile Include="Net.cpp">
       <Filter>src\Net</Filter>
     </ClCompile>
+    <ClCompile Include="Listen.cpp">
+      <Filter>src\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Receive.cpp">
+      <Filter>src\Server</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

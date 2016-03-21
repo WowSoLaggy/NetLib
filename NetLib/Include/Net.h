@@ -24,10 +24,14 @@ namespace NetLib
 
 	protected:
 
+		inline static int GetBufferSize() { return (32 * 1024); }	// 32 KB. It is the maximum size of a package that can be sent or received
+
 		NetErrCode CreateSocket(SOCKET &pSocket);
 		NetErrCode SetOptReuseAddr(SOCKET &pSocket);
 		NetErrCode SetOptNonBlock(SOCKET &pSocket);
-		NetErrCode CloseSocket(SOCKET pSocket);
+		NetErrCode CloseSocket(SOCKET &pSocket);
+
+		NetErrCode Send(SOCKET &pSocket, const char *pData, int pSizeInBytes);
 	};
 
 } // NetLib

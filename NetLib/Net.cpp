@@ -93,10 +93,36 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Net::CloseSocket(SOCKET pSocket)
+	NetErrCode Net::CloseSocket(SOCKET &pSocket)
 	{
 		shutdown(pSocket, SD_BOTH);
 		closesocket(pSocket);
+
+		return neterr_noErr;
+	}
+
+	NetErrCode Net::Send(SOCKET &pSocket, const char *pData, int pSizeInBytes)
+	{
+		LOG("Net::Send()");
+		int res;
+
+		int offset = 0;
+		while (true)
+		{
+			res = send(pSocket, &pData[offset], min(pSizeInBytes - offset, Net::GetBufferSize()), 0);
+			if (res == SOCKET_ERROR)
+			{
+				echo("Can't send data.");
+				return neterr_cantSend;
+			}
+			else if (res == 0)
+				return neterr_connectionClosed;
+
+			offset += res;
+
+			if (offset == pSizeInBytes)
+				break;
+		}
 
 		return neterr_noErr;
 	}

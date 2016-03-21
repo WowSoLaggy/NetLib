@@ -19,18 +19,31 @@ int main(int argc, char *argv[])
 	err = client.Connect("127.0.0.1", 32167);
 	echo("Connect result: ", err);
 	if (err != neterr_noErr)
+	{
+		std::getchar();
 		return 0;
+	}
 
-	std::getchar();
+	echo("Enter text to send to the server. Enter 'q' to quit.");
+	while (true)
+	{
+		std::string line;
+		std::cin >> line;
+		if (line.compare("q") == 0)
+			break;
+
+		err = client.Send(line.c_str(), line.size());
+		echo("Sent ", line.size(), " bytes. Result: ", err);
+	}
 
 	err = client.Disconnect();
 	echo("Disconnect result: ", err);
+	std::getchar(); // doesn't actually wait, returns 10 because of LF
+	std::getchar(); // really waits
 	if (err != neterr_noErr)
 		return 0;
 
 	// Finish
-
-	std::getchar();
 
 	NETDISPOSE;
 	LOGDISPOSE;

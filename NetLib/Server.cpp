@@ -9,7 +9,7 @@ namespace NetLib
 	Server::~Server() { }
 
 
-	NetErrCode Server::Start(int pPort, std::function<void(std::string pClientAddress, int pClientPort)> pOnClientAccepted)
+	NetErrCode Server::Start(int pPort, AcceptCallback pOnClientAccepted)
 	{
 		LOG("Server::Start()");
 		NetErrCode err;
@@ -70,10 +70,11 @@ namespace NetLib
 			return neterr_cantStartListen;
 		}
 
-		// Start listen thread
+		// Start mainloop thread
 
-		m_isListen = true;
-		HANDLE hThread = CreateThread(NULL, 0, ListenThreadStarter, this, CREATE_SUSPENDED, NULL);
+		m_isRunning = true;
+		m_receiveBuffer.resize(Net::GetBufferSize());
+		HANDLE hThread = CreateThread(NULL, 0, MainLoopThreadStarter, this, CREATE_SUSPENDED, NULL);
 		if (hThread == nullptr)
 		{
 			echo("Can't create listen thread.");
@@ -87,57 +88,94 @@ namespace NetLib
 
 	NetErrCode Server::Stop()
 	{
-		m_isListen = false;
+		m_isRunning = false;
 		return neterr_noErr;
 	}
 
-	
-
-	bool Server::CheckIsListening(SOCKET pSocket)
+	NetErrCode Server::DisconnectClient(unsigned int pClientId)
 	{
-		int res;
+		LOG("Server::DisconnectClient()");
+		NetErrCode err;
 
-		char val;
-		int valLength = sizeof(val);
-		res = getsockopt(pSocket, SOL_SOCKET, SO_ACCEPTCONN, &val, &valLength);
-		return ((res != SOCKET_ERROR) && (val != 0));
+		m_clientsLock.lock();
+		{
+			auto it = std::find(m_clients.begin(), m_clients.end(), pClientId);
+			if (it == m_clients.end())
+			{
+				m_clientsLock.unlock();
+				echo("Can't find the given client to disconnect.");
+				return neterr_noSuchClient;
+			}
+
+			m_clients.erase(it);
+		}
+		m_clientsLock.unlock();
+
+		err = CloseSocket(pClientId);
+		if (err != neterr_noErr)
+		{
+			echo("Can't close socket.");
+			return err;
+		}
+
+		return neterr_noErr;
 	}
 
-	DWORD WINAPI Server::ListenThreadStarter(LPVOID pParam)
+
+	DWORD WINAPI Server::MainLoopThreadStarter(LPVOID pParam)
 	{
 		if (pParam == nullptr)
 			return -1;
-		((Server *)pParam)->ListenLoop();
+		((Server *)pParam)->MainLoop();
 		return 0;
 	}
 
-	void Server::ListenLoop()
+	void Server::MainLoop()
 	{
-		sockaddr_in clientAddr;
-		int clientAddrLength = sizeof(sockaddr_in);
-		SOCKET sockClient;
+		LOG("Server::MainLoop()");
+		NetErrCode err;
 
-		while (m_isListen)
+		while (m_isRunning)
 		{
-			sockClient = accept(m_sockListen, (sockaddr *)&clientAddr, &clientAddrLength);
-			if (sockClient != INVALID_SOCKET)
-			{
-				// Accepted someone
-				if (m_onClientAccepted != nullptr)
-					m_onClientAccepted(inet_ntoa(clientAddr.sin_addr), clientAddr.sin_port);
-			}
+			TryAccept();
+			TryReceive();
 
 			Sleep(1);
 		}
 
-		// Stop listen
+		err = CloseSocket(m_sockListen);	// Stop listen
+		if (err != neterr_noErr)
+			echo("Can't close listen socket.");
 
-		CloseSocket(m_sockListen);
+		err = Cleanup();
+		if (err != neterr_noErr)
+			echo("Error while cleaning up.");
 	}
 
-	bool Server::IsListening()
+	NetErrCode Server::Cleanup()
 	{
-		return CheckIsListening(m_sockListen);
+		LOG("Server::Cleanup()");
+		NetErrCode err;
+
+		m_clientsLock.lock();
+		{
+			for (auto &sock : m_clients)
+			{
+				err = CloseSocket(sock);
+				if (err != neterr_noErr)
+				{
+					// No return - continue to dispose all clients
+					echo("Can't close socket: ", sock);
+				}
+			}
+
+			std::vector<SOCKET>().swap(m_clients);
+		}
+		m_clientsLock.unlock();
+
+		std::vector<char>().swap(m_receiveBuffer);
+
+		return neterr_noErr;
 	}
 
 } // NetLib

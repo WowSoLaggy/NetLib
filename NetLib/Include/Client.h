@@ -22,6 +22,8 @@ namespace NetLib
 		NetErrCode Connect(std::string pServerIp, int pServerPort);
 		NetErrCode Disconnect();
 
+		NetErrCode Send(const char *pData, int pSizeInBytes);
+
 	protected:
 
 		SOCKET m_sockClient;

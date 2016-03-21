@@ -57,4 +57,19 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
+	NetErrCode Client::Send(const char *pData, int pSizeInBytes)
+	{
+		LOG("Client::Send()");
+		NetErrCode err;
+
+		err = Net::Send(m_sockClient, pData, pSizeInBytes);
+		if (err != neterr_noErr)
+		{
+			echo("Can't send data to client.");
+			return err;
+		}
+
+		return neterr_noErr;
+	}
+
 } // NetLib
