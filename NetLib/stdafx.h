@@ -9,6 +9,8 @@
 #include <vector>
 #include <fstream>
 #include <functional>
+#include <mutex>
+#include <iostream>
 
 
 #endif // STDAFX_H

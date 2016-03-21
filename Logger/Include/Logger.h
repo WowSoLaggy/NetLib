@@ -1,7 +1,8 @@
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // Module:		Logger
 // Author:		Anton Egorov
-// Description:	Class that logs any text to the console and the given file
+// Description:	Class that logs any text to the console and the given file.
+//				Thread-safety is guaranteed.
 //
 // Usage example:
 //
@@ -9,7 +10,7 @@
 // {
 //		LOG("SomeFunc()");
 //		...
-//		echo("Hello, world!");
+//		echo("Hello, world! Result is: ", someVariable, ".");
 //		...
 // }
 //
@@ -40,15 +41,13 @@
 // Disposes logger. Writes the bye message to the log
 #define LOGDISPOSE Log::Logger::Dispose()
 
-// Define that should be called before any echo-calls. Initializes the log object for the current function
+// Macros that should be called before any echo-calls. Initializes the log object for the current function
 // Params:
 // [in] std::string pPrefix	- function name
 #define LOG(pPrefix) Log::Logger log(pPrefix)
 
 // Logs the given message
-//Params:
-// [in] std::string pText - text to log
-#define echo(pText) log.Echo(pText)
+#define echo log.Echo
 
 
 namespace Log
@@ -67,10 +66,17 @@ namespace Log
 		// Logger destructor
 		virtual ~Logger();
 
+
 		// Logs the given message
-		//Params:
-		// [in] std::string pText - text to log
-		void Echo(std::string pText);
+		// Params:
+		// [in] 
+		template <typename ... Args>
+		void Echo(Args ... pArgs)
+		{
+			EchoDateTime();
+			EchoInternal(pArgs ...);
+		}
+
 
 		// Initializes logger. Should be called first of all. Writes the welcome message to the log
 		// Params:
@@ -82,13 +88,56 @@ namespace Log
 		// Disposes logger. Writes the bye message to the log
 		static void Dispose();
 
-	private:
+		// Returns the DateTime string like this: "YYYY.MM.DD HH.MM.SS"
+		static std::string GetDateTimeString();
 
-		std::string m_prefix;
-		std::fstream m_fOut;
+	protected:
 
-		static std::string m_productName;
-		static std::string m_logFileName;
+		std::string m_prefix;					// Function name (or whatever was sent to the LOG macros)
+
+		volatile static bool s_isInitialized;	// Indicates whether the Logger class was initialized and is ready to log
+		static std::string s_productName;		// Product name. Used in the welcome and bye messages
+		static std::string s_logFileName;		// Name of the file to log into
+		static std::mutex s_logMutex;			// Locker to provide thread-safety of Logger operations
+
+		void EchoDateTime();					// Logs current date and time
+
+		// Echoes the bag of arguments
+		template <typename First, typename ... Rest>
+		void EchoInternal(First pFirst, Rest ... pRest)
+		{
+			s_logMutex.lock();
+
+			if (!s_isInitialized)
+				return;
+
+			std::fstream m_logFile(s_logFileName, std::ios::app);
+			std::cout << pFirst;
+			m_logFile << pFirst;
+			m_logFile.close();
+
+			s_logMutex.unlock();
+
+			EchoInternal(pRest ...);
+		}
+
+		// Echoes the last of arguments from the args bag
+		template <typename T>
+		void EchoInternal(T pPar)
+		{
+			s_logMutex.lock();
+
+			if (!s_isInitialized)
+				return;
+
+			std::fstream m_logFile(s_logFileName, std::ios::app);
+			std::cout << pPar << std::endl;
+			m_logFile << pPar << std::endl;
+			m_logFile.close();
+
+			s_logMutex.unlock();
+		}
+
 	};
 
 } // Log

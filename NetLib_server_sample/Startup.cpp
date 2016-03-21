@@ -22,14 +22,14 @@ int main(int argc, char *argv[])
 
 	Server server;
 	err = server.Start(32167, OnClientAccepted);
-	echo(std::string("Listen result: ").append(std::to_string(err)));
+	echo("Listen result: ", err);
 	if (err != neterr_noErr)
 		return 0;
 
 	std::getchar();
 
 	err = server.Stop();
-	echo(std::string("Stop result: ").append(std::to_string(err)));
+	echo("Stop result: ", err);
 	if (err != neterr_noErr)
 		return 0;
 
@@ -39,5 +39,5 @@ int main(int argc, char *argv[])
 
 	LOGDISPOSE;
 
-    return 0;
+	return 0;
 }
