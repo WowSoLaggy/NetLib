@@ -7,6 +7,12 @@
     <Filter Include="src\Server">
       <UniqueIdentifier>{08da4b3a-23f9-4378-b63a-622cabd596ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Client">
+      <UniqueIdentifier>{5236243f-d71c-440e-873b-743afdd9fd38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Net">
+      <UniqueIdentifier>{692c59fa-13e1-4f54-b8da-6b7afc537c4a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -18,6 +24,12 @@
     <ClInclude Include="Include\Server.h">
       <Filter>src\Server</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Client.h">
+      <Filter>src\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Net.h">
+      <Filter>src\Net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -25,6 +37,12 @@
     </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>src\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>src\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Net.cpp">
+      <Filter>src\Net</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

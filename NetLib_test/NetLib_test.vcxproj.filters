@@ -2,7 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="src">
-      <UniqueIdentifier>{f09ac0f7-4930-408f-945b-2134e66b1ce0}</UniqueIdentifier>
+      <UniqueIdentifier>{f7562274-f01c-49c3-970b-b07ac290c18f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Tests">
+      <UniqueIdentifier>{9ad9d23d-401c-4a24-b9a8-0b85e36f61b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -11,11 +14,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Startup.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="NetLib_test.cpp">
+      <Filter>src\Tests</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

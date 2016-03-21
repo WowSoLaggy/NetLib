@@ -2,12 +2,6 @@
 #include "Server.h"
 
 
-#pragma comment(lib, "Ws2_32.lib")	// Link socket library
-
-
-#define SD_BOTH	0x02				// Manifest constant for shutdown() 
-
-
 namespace NetLib
 {
 
@@ -18,49 +12,38 @@ namespace NetLib
 	NetErrCode Server::Start(int pPort, std::function<void(std::string pClientAddress, int pClientPort)> pOnClientAccepted)
 	{
 		LOG("Server::Start()");
+		NetErrCode err;
 		int res = 0;
 
 		m_onClientAccepted = pOnClientAccepted;
 
-		// Initialize socket library
-
-		WSADATA wsaData;
-		res = WSAStartup(MAKEWORD(2, 2), &wsaData);
-		if (res != 0)
-		{
-			echo("Can't initialize socket library.");
-			return neterr_noSocketLibrary;
-		}
-
 		// Create socket
 
-		m_sockListen = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (m_sockListen == INVALID_SOCKET)
+		err = Net::CreateSocket(m_sockListen);
+		if (err != neterr_noErr)
 		{
 			echo("Can't create socket to listen.");
-			return neterr_cantCreateSocket;
+			return err;
 		}
 
 		// Set option SO_REUSEADDR
 
-		int int_on = 1;
-		res = setsockopt(m_sockListen, SOL_SOCKET, SO_REUSEADDR, (const char *)&int_on, sizeof(int_on));
-		if (res != 0)
+		err = Net::SetOptReuseAddr(m_sockListen);
+		if (err != neterr_noErr)
 		{
 			echo("Can't set socket SO_REUSEADDR option.");
-			CloseSocket(m_sockListen);
-			return neterr_cantSetSocketOptions;
+			Net::CloseSocket(m_sockListen);
+			return err;
 		}
 
 		// Set non-blocking mode
 
-		u_long u_long_on = 1;
-		res = ioctlsocket(m_sockListen, FIONBIO, &u_long_on);
-		if (res != 0)
+		err = Net::SetOptNonBlock(m_sockListen);
+		if (err != neterr_noErr)
 		{
 			echo("Can't set socket non-blocking mode.");
-			CloseSocket(m_sockListen);
-			return neterr_cantSetSocketOptions;
+			Net::CloseSocket(m_sockListen);
+			return err;
 		}
 
 		// Bind socket
@@ -108,13 +91,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Server::CloseSocket(SOCKET pSocket)
-	{
-		shutdown(pSocket, SD_BOTH);
-		closesocket(pSocket);
-
-		return neterr_noErr;
-	}
+	
 
 	bool Server::CheckIsListening(SOCKET pSocket)
 	{
@@ -145,6 +122,9 @@ namespace NetLib
 			sockClient = accept(m_sockListen, (sockaddr *)&clientAddr, &clientAddrLength);
 			if (sockClient != INVALID_SOCKET)
 			{
+				// Accepted someone
+				if (m_onClientAccepted != nullptr)
+					m_onClientAccepted(inet_ntoa(clientAddr.sin_addr), clientAddr.sin_port);
 			}
 
 			Sleep(1);
@@ -153,6 +133,11 @@ namespace NetLib
 		// Stop listen
 
 		CloseSocket(m_sockListen);
+	}
+
+	bool Server::IsListening()
+	{
+		return CheckIsListening(m_sockListen);
 	}
 
 } // NetLib

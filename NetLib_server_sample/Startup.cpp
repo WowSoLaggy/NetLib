@@ -10,13 +10,15 @@ void OnClientAccepted(std::string pClientAddress, int pClientPort)
 {
 	LOG("OnClientAccepted()");
 
-	echo("Accepted someone!");
+	echo("Accepted: ", pClientAddress, ":", pClientPort);
 }
 
 int main(int argc, char *argv[])
 {
 	CreateDirectory("Logs", nullptr);
-	LOGINIT("Logs\\NetLib.log", "NetLib", "NetLib_sample.exe");
+	LOGINIT("Logs\\Server.log", "NetLib Server", "NetLib_server_sample.exe");
+	NETINIT;
+
 	LOG("main()");
 	NetErrCode err;
 
@@ -37,6 +39,7 @@ int main(int argc, char *argv[])
 
 	std::getchar();
 
+	NETDISPOSE;
 	LOGDISPOSE;
 
 	return 0;
