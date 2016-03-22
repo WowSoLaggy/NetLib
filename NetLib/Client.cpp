@@ -43,6 +43,26 @@ namespace NetLib
 		res = connect(m_sockClient, (const sockaddr *)&addr, sizeof(sockaddr_in));
 		if (res != 0)
 		{
+			res = WSAGetLastError();
+			if (res == WSAECONNREFUSED)
+			{
+				// Connection refused.
+				// No connection could be made because the target computer actively refused it.
+				// This usually results from trying to connect to a service that is inactive
+				// on the foreign host—that is, one with no server application running.
+				echo("Server (", pServerIp, ":", pServerPort, ") refused connection.");
+				return neterr_connectionRefused;
+			}
+			else if (res == WSAETIMEDOUT)
+			{
+				// Connection timed out.
+				// A connection attempt failed because the connected party did not properly respond after a period
+				// of time, or the established connection failed because the connected host has failed to respond.
+				echo("Connection to ", pServerIp, ":", pServerPort, " timed out.");
+				return neterr_connectionTimedOut;
+			}
+
+			// Unknown error
 			echo("Can't connect to the server: ", pServerIp, ":", pServerPort);
 			Net::CloseSocket(m_sockClient);
 			return neterr_cantConnect;

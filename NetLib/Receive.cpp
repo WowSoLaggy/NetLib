@@ -28,8 +28,8 @@ namespace NetLib
 			FD_ZERO(&fds);
 
 			// Add sockets to the fd set
-			for (auto &sock : m_clients)
-				FD_SET(sock, &fds);
+			for (auto &client : m_clients)
+				FD_SET(client.Sock, &fds);
 
 			// Check sockets
 			res = select(0, &fds, nullptr, nullptr, &timeout);
@@ -43,18 +43,33 @@ namespace NetLib
 			else if (res == SOCKET_ERROR)
 			{
 				echo("Unknown error occurred while selecting sockets.");
+				m_clientsLock.unlock();
 				return;
 			}
 
 			// Check who is ready to receive
-			for (auto &sock : m_clients)
+			for (auto &client : m_clients)
 			{
-				if (!FD_ISSET(sock, &fds))
+				if (!FD_ISSET(client.Sock, &fds))
 					continue;
 
-				int bytesReceived = recv(sock, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
+				int bytesReceived = recv(client.Sock, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
 
-				// TODO:
+				if (bytesReceived == SOCKET_ERROR)
+				{
+					echo("Error receiving data. Disconnect client: ", client.Sock);
+					client.Closed = true;
+					continue;
+				}
+				else if (bytesReceived == 0)
+				{
+					// Connection has been gracefully closed. Not an error
+					client.Closed = true;
+					continue;
+				}
+
+				if (m_onClientDataReceived != nullptr)
+					m_onClientDataReceived(client.Sock, m_receiveBuffer.data(), bytesReceived);
 			}
 		}
 		m_clientsLock.unlock();

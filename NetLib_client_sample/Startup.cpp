@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	while (true)
 	{
 		std::string line;
-		std::cin >> line;
+		std::getline(std::cin, line);
 		if (line.compare("q") == 0)
 			break;
 
@@ -38,8 +38,7 @@ int main(int argc, char *argv[])
 
 	err = client.Disconnect();
 	echo("Disconnect result: ", err);
-	std::getchar(); // doesn't actually wait, returns 10 because of LF
-	std::getchar(); // really waits
+	std::getchar();
 	if (err != neterr_noErr)
 		return 0;
 

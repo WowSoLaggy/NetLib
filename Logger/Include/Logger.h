@@ -46,7 +46,7 @@
 // [in] std::string pPrefix	- function name
 #define LOG(pPrefix) Log::Logger log(pPrefix)
 
-// Logs the given message
+// Logs all given args
 #define echo log.Echo
 
 
@@ -67,14 +67,17 @@ namespace Log
 		virtual ~Logger();
 
 
-		// Logs the given message
+		// Logs all given args
 		// Params:
-		// [in] 
+		// [in] Args pArgs	- bag of args to log
 		template <typename ... Args>
 		void Echo(Args ... pArgs)
 		{
+			if (!s_isInitialized)
+				return;
+
 			EchoDateTime();
-			EchoInternal(pArgs ...);
+			Echo_Internal(pArgs ...);
 		}
 
 
@@ -104,37 +107,31 @@ namespace Log
 
 		// Echoes the bag of arguments
 		template <typename First, typename ... Rest>
-		void EchoInternal(First pFirst, Rest ... pRest)
+		void Echo_Internal(First pFirst, Rest ... pRest)
 		{
 			s_logMutex.lock();
-
-			if (!s_isInitialized)
-				return;
-
-			std::fstream m_logFile(s_logFileName, std::ios::app);
-			std::cout << pFirst;
-			m_logFile << pFirst;
-			m_logFile.close();
-
+			{
+				std::fstream m_logFile(s_logFileName, std::ios::app);
+				std::cout << pFirst;
+				m_logFile << pFirst;
+				m_logFile.close();
+			}
 			s_logMutex.unlock();
 
-			EchoInternal(pRest ...);
+			Echo_Internal(pRest ...);
 		}
 
 		// Echoes the last of arguments from the args bag
 		template <typename T>
-		void EchoInternal(T pPar)
+		void Echo_Internal(T pPar)
 		{
 			s_logMutex.lock();
-
-			if (!s_isInitialized)
-				return;
-
-			std::fstream m_logFile(s_logFileName, std::ios::app);
-			std::cout << pPar << std::endl;
-			m_logFile << pPar << std::endl;
-			m_logFile.close();
-
+			{
+				std::fstream m_logFile(s_logFileName, std::ios::app);
+				std::cout << pPar << std::endl;
+				m_logFile << pPar << std::endl;
+				m_logFile.close();
+			}
 			s_logMutex.unlock();
 		}
 

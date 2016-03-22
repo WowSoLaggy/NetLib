@@ -25,22 +25,25 @@ namespace NetLib
 		sockaddr_in clientAddr;
 		int clientAddrLength = sizeof(sockaddr_in);
 		SOCKET sockClient;
+		ClientData clientData;
 
 		sockClient = accept(m_sockListen, (sockaddr *)&clientAddr, &clientAddrLength);
 		if (sockClient != INVALID_SOCKET)
 		{
+			clientData = ClientData(sockClient, inet_ntoa(clientAddr.sin_addr), clientAddr.sin_port);
+
 			m_clientsLock.lock();
 			{
 				// Add to m_clients only if it is not there already
-				auto it = std::find(m_clients.begin(), m_clients.end(), sockClient);
+				auto it = std::find_if(m_clients.begin(), m_clients.end(), [&sockClient](const auto &client) { return client.Sock == sockClient; });
 				if (it == m_clients.end())
-					m_clients.push_back(sockClient);
+					m_clients.push_back(clientData);
 			}
 			m_clientsLock.unlock();
 
 			// Accepted someone
 			if (m_onClientAccepted != nullptr)
-				m_onClientAccepted(sockClient, inet_ntoa(clientAddr.sin_addr), clientAddr.sin_port);
+				m_onClientAccepted(clientData.Sock, clientData.Address, clientData.Port);
 		}
 	}
 

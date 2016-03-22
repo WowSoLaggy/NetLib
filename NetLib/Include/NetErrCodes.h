@@ -18,9 +18,12 @@ namespace NetLib
 		neterr_cantStartListen,
 		neterr_cantCreateThread,
 		neterr_cantConnect,
+		neterr_connectionRefused,
+		neterr_connectionTimedOut,
 		neterr_cantSend,
 		neterr_connectionClosed,
 		neterr_noSuchClient,
+		neterr_errorDisconnecting,
 
 		neterr_end
 	};

@@ -11,6 +11,7 @@
 #include <functional>
 #include <mutex>
 #include <iostream>
+#include <algorithm>
 
 
 #endif // STDAFX_H

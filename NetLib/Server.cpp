@@ -9,13 +9,15 @@ namespace NetLib
 	Server::~Server() { }
 
 
-	NetErrCode Server::Start(int pPort, AcceptCallback pOnClientAccepted)
+	NetErrCode Server::Start(int pPort, AcceptCallback pOnClientAccepted, DisconnectCallback pOnClientDisconnected, ReceiveCallback pOnClientDataReceived)
 	{
 		LOG("Server::Start()");
 		NetErrCode err;
 		int res = 0;
 
 		m_onClientAccepted = pOnClientAccepted;
+		m_onClientDisconnected = pOnClientDisconnected;
+		m_onClientDataReceived = pOnClientDataReceived;
 
 		// Create socket
 
@@ -88,7 +90,9 @@ namespace NetLib
 
 	NetErrCode Server::Stop()
 	{
+		m_runningLock.lock();
 		m_isRunning = false;
+		m_runningLock.unlock();
 		return neterr_noErr;
 	}
 
@@ -99,17 +103,32 @@ namespace NetLib
 
 		m_clientsLock.lock();
 		{
-			auto it = std::find(m_clients.begin(), m_clients.end(), pClientId);
+			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Sock == pClientId; });
 			if (it == m_clients.end())
 			{
 				m_clientsLock.unlock();
-				echo("Can't find the given client to disconnect.");
+				echo("Can't find the given client to disconnect: ", pClientId);
 				return neterr_noSuchClient;
 			}
 
 			m_clients.erase(it);
+			err = DisconnectClient_Internal(pClientId);
+			if (err != neterr_noErr)
+			{
+				m_clientsLock.unlock();
+				echo("Error while disconnecting client: ", pClientId);
+				return neterr_errorDisconnecting;
+			}
 		}
 		m_clientsLock.unlock();
+
+		return neterr_noErr;
+	}
+
+	NetErrCode Server::DisconnectClient_Internal(unsigned int pClientId)
+	{
+		LOG("Server::DisconnectClient_Internal()");
+		NetErrCode err;
 
 		err = CloseSocket(pClientId);
 		if (err != neterr_noErr)
@@ -117,6 +136,9 @@ namespace NetLib
 			echo("Can't close socket.");
 			return err;
 		}
+
+		if (m_onClientDisconnected != nullptr)
+			m_onClientDisconnected(pClientId);
 
 		return neterr_noErr;
 	}
@@ -135,10 +157,21 @@ namespace NetLib
 		LOG("Server::MainLoop()");
 		NetErrCode err;
 
-		while (m_isRunning)
+		while (true)
 		{
-			TryAccept();
-			TryReceive();
+			m_runningLock.lock();
+			{
+				if (!m_isRunning)
+				{
+					m_runningLock.unlock();
+					break;
+				}
+
+				TryAccept();
+				TryReceive();
+				DisconnectClosed();
+			}
+			m_runningLock.unlock();
 
 			Sleep(1);
 		}
@@ -152,6 +185,38 @@ namespace NetLib
 			echo("Error while cleaning up.");
 	}
 
+	void Server::DisconnectClosed()
+	{
+		LOG("Server::DisconnectClosed()");
+		NetErrCode err;
+
+		m_clientsLock.lock();
+		{
+			if (m_clients.size() == 0)
+			{
+				// No one to disconnect
+				m_clientsLock.unlock();
+				return;
+			}
+
+			for (int i = (int)(m_clients.size() - 1); i >= 0; i--)
+			{
+				if (!m_clients[i].Closed)
+					continue;
+
+				unsigned int clientId = m_clients[i].Sock;
+				m_clients.erase(m_clients.begin() + i);
+				err = DisconnectClient_Internal(clientId);
+				if (err != neterr_noErr)
+				{
+					// No return, continue to kick closed connections
+					echo("Error while disconnecting client: ", clientId);
+				}
+			}
+		}
+		m_clientsLock.unlock();
+	}
+
 	NetErrCode Server::Cleanup()
 	{
 		LOG("Server::Cleanup()");
@@ -159,17 +224,17 @@ namespace NetLib
 
 		m_clientsLock.lock();
 		{
-			for (auto &sock : m_clients)
+			for (auto &client : m_clients)
 			{
-				err = CloseSocket(sock);
+				err = CloseSocket(client.Sock);
 				if (err != neterr_noErr)
 				{
 					// No return - continue to dispose all clients
-					echo("Can't close socket: ", sock);
+					echo("Can't close socket: ", client.Sock);
 				}
 			}
 
-			std::vector<SOCKET>().swap(m_clients);
+			std::vector<ClientData>().swap(m_clients);
 		}
 		m_clientsLock.unlock();
 
