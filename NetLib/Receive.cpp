@@ -68,8 +68,8 @@ namespace NetLib
 					continue;
 				}
 
-				if (m_onClientDataReceived != nullptr)
-					m_onClientDataReceived(client.Sock, m_receiveBuffer.data(), bytesReceived);
+				if (m_onReceiveFromClient != nullptr)
+					m_onReceiveFromClient(client.Sock, m_receiveBuffer.data(), bytesReceived);
 			}
 		}
 		m_clientsLock.unlock();

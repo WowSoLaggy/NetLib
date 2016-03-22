@@ -5,10 +5,13 @@
 
 using namespace NetLib;
 
+unsigned int lastClient = 0;
+
 
 void OnClientAccepted(unsigned int pClientId, std::string pClientAddress, int pClientPort)
 {
 	LOG("OnClientAccepted()");
+	lastClient = pClientId;
 	echo("Accepted id: ", pClientId, " from ", pClientAddress, ":", pClientPort);
 }
 void OnClientDisconnected(unsigned int pClientId)
@@ -32,18 +35,38 @@ int main(int argc, char *argv[])
 	LOG("main()");
 	NetErrCode err;
 
-	Server server;
-	err = server.Start(32167, OnClientAccepted, OnClientDisconnected, OnClientDataReceived);
-	echo("Listen result: ", err);
-	std::getchar();
+	Server server(OnClientAccepted, OnClientDisconnected, OnClientDataReceived);
+	err = server.Start(32167);
 	if (err != neterr_noErr)
+	{
+		echo("Server start error: ", err, ".");
+		std::getchar();
+		NETDISPOSE;
+		LOGDISPOSE;
 		return 0;
+	}
+	echo("Server started OK.");
+
+	while (true)
+	{
+		std::string line;
+		std::getline(std::cin, line);
+		if (line.compare("q") == 0)
+			break;
+
+		err = server.SendToClient(lastClient, line.c_str(), line.size());
+		if (err == neterr_noErr)
+			echo("Sent ", line.size(), " bytes.");
+		else
+			echo("Error occurred: ", err, ".");
+	}
 
 	err = server.Stop();
-	echo("Stop result: ", err);
-	std::getchar();
 	if (err != neterr_noErr)
-		return 0;
+		echo("Server stop error: ", err, ".");
+	else
+		echo("Server stopped OK.");
+	std::getchar();
 
 	// Finish
 

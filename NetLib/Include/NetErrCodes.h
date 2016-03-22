@@ -21,9 +21,12 @@ namespace NetLib
 		neterr_connectionRefused,
 		neterr_connectionTimedOut,
 		neterr_cantSend,
+		neterr_cantSendInvalidLength,
 		neterr_connectionClosed,
 		neterr_noSuchClient,
 		neterr_errorDisconnecting,
+		neterr_cantSelect,
+		neterr_cantReceive,
 
 		neterr_end
 	};

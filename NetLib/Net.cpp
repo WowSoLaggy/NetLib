@@ -77,12 +77,12 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Net::SetOptNonBlock(SOCKET &pSocket)
+	NetErrCode Net::SetOptNonBlock(SOCKET &pSocket, bool pOn)
 	{
 		LOG("Net::SetOptNonBlock()");
 		int res;
 
-		u_long u_long_on = 1;
+		u_long u_long_on = pOn ? 1 : 0;
 		res = ioctlsocket(pSocket, FIONBIO, &u_long_on);
 		if (res != 0)
 		{
@@ -105,6 +105,12 @@ namespace NetLib
 	{
 		LOG("Net::Send()");
 		int res;
+
+		if (pSizeInBytes <= 0)
+		{
+			echo("Can't send ", pSizeInBytes, " bytes.");
+			return neterr_cantSendInvalidLength;
+		}
 
 		int offset = 0;
 		while (true)

@@ -27,11 +27,11 @@
     <ClInclude Include="Include\Client.h">
       <Filter>src\Client</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Net.h">
-      <Filter>src\Net</Filter>
-    </ClInclude>
     <ClInclude Include="Include\ClientData.h">
       <Filter>src\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Net.h">
+      <Filter>src\Net</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

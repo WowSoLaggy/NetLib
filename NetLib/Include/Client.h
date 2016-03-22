@@ -11,8 +11,7 @@
 
 namespace NetLib
 {
-
-	class Client : public Net
+	class Client
 	{
 	public:
 
@@ -23,6 +22,7 @@ namespace NetLib
 		NetErrCode Disconnect();
 
 		NetErrCode Send(const char *pData, int pSizeInBytes);
+		NetErrCode Receive(char *pBuffer, int pBufferSize, int &pReceivedDataLength);
 
 	protected:
 

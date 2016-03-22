@@ -5,19 +5,24 @@
 namespace NetLib
 {
 
-	Server::Server() { }
+	Server::Server(
+		ClientAcceptCallback pOnClientAccepted,
+		ClientDisconnectCallback pOnClientDisconnected,
+		ReceiveFromClientCallback pOnReceiveFromClient)
+	{
+		m_onClientAccepted = pOnClientAccepted;
+		m_onClientDisconnected = pOnClientDisconnected;
+		m_onReceiveFromClient = pOnReceiveFromClient;
+	}
+
 	Server::~Server() { }
 
 
-	NetErrCode Server::Start(int pPort, AcceptCallback pOnClientAccepted, DisconnectCallback pOnClientDisconnected, ReceiveCallback pOnClientDataReceived)
+	NetErrCode Server::Start(int pPort)
 	{
 		LOG("Server::Start()");
 		NetErrCode err;
 		int res = 0;
-
-		m_onClientAccepted = pOnClientAccepted;
-		m_onClientDisconnected = pOnClientDisconnected;
-		m_onClientDataReceived = pOnClientDataReceived;
 
 		// Create socket
 
@@ -40,7 +45,7 @@ namespace NetLib
 
 		// Set non-blocking mode
 
-		err = Net::SetOptNonBlock(m_sockListen);
+		err = Net::SetOptNonBlock(m_sockListen, true);
 		if (err != neterr_noErr)
 		{
 			echo("Can't set socket non-blocking mode.");
@@ -58,7 +63,7 @@ namespace NetLib
 		if (res != 0)
 		{
 			echo("Can't bind socket.");
-			CloseSocket(m_sockListen);
+			Net::CloseSocket(m_sockListen);
 			return neterr_cantBindSocket;
 		}
 
@@ -68,7 +73,7 @@ namespace NetLib
 		if (res != 0)
 		{
 			echo("Can't start listen socket.");
-			CloseSocket(m_sockListen);
+			Net::CloseSocket(m_sockListen);
 			return neterr_cantStartListen;
 		}
 
@@ -80,7 +85,7 @@ namespace NetLib
 		if (hThread == nullptr)
 		{
 			echo("Can't create listen thread.");
-			CloseSocket(m_sockListen);
+			Net::CloseSocket(m_sockListen);
 			return neterr_cantCreateThread;
 		}
 		ResumeThread(hThread);
@@ -93,6 +98,21 @@ namespace NetLib
 		m_runningLock.lock();
 		m_isRunning = false;
 		m_runningLock.unlock();
+		return neterr_noErr;
+	}
+
+	NetErrCode Server::SendToClient(unsigned int pClientId, const char *pData, int pDataLength)
+	{
+		LOG("Server::SendToClient()");
+		NetErrCode err;
+
+		err = Net::Send(pClientId, pData, pDataLength);
+		if (err != neterr_noErr)
+		{
+			echo("Error sending data to client: ", pClientId);
+			return err;
+		}
+
 		return neterr_noErr;
 	}
 
@@ -130,7 +150,7 @@ namespace NetLib
 		LOG("Server::DisconnectClient_Internal()");
 		NetErrCode err;
 
-		err = CloseSocket(pClientId);
+		err = Net::CloseSocket(pClientId);
 		if (err != neterr_noErr)
 		{
 			echo("Can't close socket.");
@@ -176,7 +196,7 @@ namespace NetLib
 			Sleep(1);
 		}
 
-		err = CloseSocket(m_sockListen);	// Stop listen
+		err = Net::CloseSocket(m_sockListen);	// Stop listen
 		if (err != neterr_noErr)
 			echo("Can't close listen socket.");
 
@@ -226,7 +246,7 @@ namespace NetLib
 		{
 			for (auto &client : m_clients)
 			{
-				err = CloseSocket(client.Sock);
+				err = Net::CloseSocket(client.Sock);
 				if (err != neterr_noErr)
 				{
 					// No return - continue to dispose all clients

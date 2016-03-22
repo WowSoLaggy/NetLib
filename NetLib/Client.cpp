@@ -8,7 +8,7 @@ namespace NetLib
 	Client::Client() { }
 	Client::~Client() { }
 
-
+	
 	NetErrCode Client::Connect(std::string pServerIp, int pServerPort)
 	{
 		LOG("Client::Connect()");
@@ -73,7 +73,16 @@ namespace NetLib
 
 	NetErrCode Client::Disconnect()
 	{
-		Net::CloseSocket(m_sockClient);
+		LOG("Client::Disconnect()");
+		NetErrCode err;
+
+		err = Net::CloseSocket(m_sockClient);
+		if (err != neterr_noErr)
+		{
+			echo("Can't close client socket.");
+			return err;
+		}
+
 		return neterr_noErr;
 	}
 
@@ -88,6 +97,62 @@ namespace NetLib
 			echo("Can't send data to client.");
 			return err;
 		}
+
+		return neterr_noErr;
+	}
+
+	NetErrCode Client::Receive(char *pBuffer, int pBufferSize, int &pReceivedDataLength)
+	{
+		LOG("Client::Receive()");
+		int res;
+
+		pReceivedDataLength = 0;
+
+		fd_set fds;	// File descriptors set
+		timeval timeout;
+		timeout.tv_sec = 0;
+		timeout.tv_usec = 0;
+
+		// Reset the fd set
+		FD_ZERO(&fds);
+
+		// Add socket to the fd set
+		FD_SET(m_sockClient, &fds);
+
+		// Check sockets
+		res = select(0, &fds, nullptr, nullptr, &timeout);
+
+		if (res == 0)
+		{
+			// Nothing to receive
+			return neterr_noErr;
+		}
+		else if (res == SOCKET_ERROR)
+		{
+			echo("Unknown error occurred while selecting socket.");
+			return neterr_cantSelect;
+		}
+
+		if (!FD_ISSET(m_sockClient, &fds))
+		{
+			// Strange but OK
+			return neterr_noErr;
+		}
+
+		int bytesReceived = recv(m_sockClient, pBuffer, pBufferSize, 0);
+
+		if (bytesReceived == SOCKET_ERROR)
+		{
+			echo("Error receiving data.");
+			return neterr_cantReceive;
+		}
+		else if (bytesReceived == 0)
+		{
+			// Connection has been gracefully closed. Not an error
+			return neterr_connectionClosed;
+		}
+
+		pReceivedDataLength = bytesReceived;
 
 		return neterr_noErr;
 	}
