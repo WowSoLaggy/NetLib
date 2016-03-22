@@ -4,6 +4,7 @@
 #define CLIENTDATA_H
 
 
+// Struct that represents client. It contains it's unique Id, address and port
 struct ClientData
 {
 	ClientData()
@@ -21,10 +22,10 @@ struct ClientData
 		Closed = false;
 	}
 
-	SOCKET Sock;
-	std::string Address;
-	int Port;
-	bool Closed;
+	SOCKET Sock;			// Client's socket (and Id at the same time)
+	std::string Address;	// Client's address
+	int Port;				// Client's port
+	bool Closed;			// Reserved flag used to determine whether the connection with this client should be closed
 };
 
 

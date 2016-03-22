@@ -3,8 +3,8 @@
 // Module:		Server
 // Author:		Anton Egorov
 // Description:	Class that starts server on the given port,
-//				accepts pending connections and controls
-//				connected clients
+//				accepts pending connections, sends and
+//				receives data, and controls connected clients
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 #pragma once
@@ -21,6 +21,7 @@
 
 namespace NetLib
 {
+
 	// Typedef for the client accepted callback
 	typedef std::function<void(unsigned int pClientId, std::string pClientAddress, int pClientPort)> ClientAcceptCallback;
 
@@ -32,7 +33,8 @@ namespace NetLib
 
 
 	// Class that starts server on the given port,
-	// accepts pending connections and controls connected clients
+	// accepts pending connections, sends and
+	// receives data, and controls connected clients
 	class Server
 	{
 	public:

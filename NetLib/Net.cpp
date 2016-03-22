@@ -127,7 +127,11 @@ namespace NetLib
 			offset += res;
 
 			if (offset == pSizeInBytes)
+			{
+				// We sent all we want, so break the loop.
+				// If not - continue send loop
 				break;
+			}
 		}
 
 		return neterr_noErr;
