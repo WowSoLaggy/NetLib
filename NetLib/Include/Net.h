@@ -17,10 +17,10 @@
 
 
 // Macro to initialize NetLib
-#define NETINIT Net::Init()
+#define NETINIT NetLib::Net::Init()
 
 // Macro to dispose NetLib
-#define NETDISPOSE Net::Dispose()
+#define NETDISPOSE NetLib::Net::Dispose()
 
 
 namespace NetLib

@@ -33,6 +33,9 @@
     <ClInclude Include="Include\Net.h">
       <Filter>src\Net</Filter>
     </ClInclude>
+    <ClInclude Include="Include\NetLib.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
