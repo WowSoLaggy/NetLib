@@ -57,6 +57,7 @@ namespace NetLib
 
 				if (bytesReceived == SOCKET_ERROR)
 				{
+					// Connection error or forced hard-close
 					echo("Error receiving data. Disconnect client: ", client.Sock);
 					client.Closed = true;
 					continue;
