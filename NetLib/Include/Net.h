@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef NET_H
-#define NET_H
+#ifndef NETLIB_NET_H
+#define NETLIB_NET_H
 
 
 #include "Logger.h"
@@ -76,4 +76,4 @@ namespace NetLib
 } // NetLib
 
 
-#endif // NET_H
+#endif // NETLIB_NET_H

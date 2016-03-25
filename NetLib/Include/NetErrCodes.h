@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef NETERRCODES_H
-#define NETERRCODES_H
+#ifndef NETLIB_NETERRCODES_H
+#define NETLIB_NETERRCODES_H
 
 
 namespace NetLib
@@ -34,4 +34,4 @@ namespace NetLib
 } // NetLib
 
 
-#endif // NETERRCODES_H
+#endif // NETLIB_NETERRCODES_H

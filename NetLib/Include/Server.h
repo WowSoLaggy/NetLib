@@ -9,8 +9,8 @@
 
 #pragma once
 
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef NETLIB_SERVER_H
+#define NETLIB_SERVER_H
 
 
 #include "Logger.h"
@@ -128,4 +128,4 @@ namespace NetLib
 } // NetLib
 
 
-#endif // SERVER_H
+#endif // NETLIB_SERVER_H

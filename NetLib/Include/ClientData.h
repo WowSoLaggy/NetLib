@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef CLIENTDATA_H
-#define CLIENTDATA_H
+#ifndef NETLIB_CLIENTDATA_H
+#define NETLIB_CLIENTDATA_H
 
 
 // Struct that represents client. It contains it's unique Id, address and port
@@ -29,4 +29,4 @@ struct ClientData
 };
 
 
-#endif // CLIENTDATA_H
+#endif // NETLIB_CLIENTDATA_H

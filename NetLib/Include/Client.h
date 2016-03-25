@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef NETLIB_CLIENT_H
+#define NETLIB_CLIENT_H
 
 
 #include "Logger.h"
@@ -64,4 +64,4 @@ namespace NetLib
 } // NetLib
 
 
-#endif // CLIENT_H
+#endif // NETLIB_CLIENT_H

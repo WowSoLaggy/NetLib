@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef STDAFX_H
-#define STDAFX_H
+#ifndef NETLIB_STDAFX_H
+#define NETLIB_STDAFX_H
 
 
 #include <Windows.h>
@@ -14,4 +14,4 @@
 #include <algorithm>
 
 
-#endif // STDAFX_H
+#endif // NETLIB_STDAFX_H
