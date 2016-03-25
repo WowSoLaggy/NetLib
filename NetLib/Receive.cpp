@@ -29,7 +29,7 @@ namespace NetLib
 
 			// Add sockets to the fd set
 			for (auto &client : m_clients)
-				FD_SET(client.Sock, &fds);
+				FD_SET(client.Id, &fds);
 
 			// Check sockets
 			res = select(0, &fds, nullptr, nullptr, &timeout);
@@ -50,15 +50,15 @@ namespace NetLib
 			// Check who is ready to receive
 			for (auto &client : m_clients)
 			{
-				if (!FD_ISSET(client.Sock, &fds))
+				if (!FD_ISSET(client.Id, &fds))
 					continue;
 
-				int bytesReceived = recv(client.Sock, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
+				int bytesReceived = recv(client.Id, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
 
 				if (bytesReceived == SOCKET_ERROR)
 				{
 					// Connection error or forced hard-close
-					echo("Error receiving data. Disconnect client: ", client.Sock);
+					echo("Error receiving data. Disconnect client: ", client.Id);
 					client.Closed = true;
 					continue;
 				}
@@ -70,7 +70,7 @@ namespace NetLib
 				}
 
 				if (m_onReceiveFromClient != nullptr)
-					m_onReceiveFromClient(client.Sock, m_receiveBuffer.data(), bytesReceived);
+					m_onReceiveFromClient(client.Id, m_receiveBuffer.data(), bytesReceived);
 			}
 		}
 		m_clientsLock.unlock();

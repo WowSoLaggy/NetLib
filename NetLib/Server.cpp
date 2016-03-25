@@ -123,7 +123,7 @@ namespace NetLib
 
 		m_clientsLock.lock();
 		{
-			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Sock == pClientId; });
+			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
 			if (it == m_clients.end())
 			{
 				m_clientsLock.unlock();
@@ -224,7 +224,7 @@ namespace NetLib
 				if (!m_clients[i].Closed)
 					continue;
 
-				unsigned int clientId = m_clients[i].Sock;
+				unsigned int clientId = m_clients[i].Id;
 				m_clients.erase(m_clients.begin() + i);
 				err = DisconnectClient_Internal(clientId);
 				if (err != neterr_noErr)
@@ -246,11 +246,11 @@ namespace NetLib
 		{
 			for (auto &client : m_clients)
 			{
-				err = Net::CloseSocket(client.Sock);
+				err = Net::CloseSocket(client.Id);
 				if (err != neterr_noErr)
 				{
 					// No return - continue to dispose all clients
-					echo("Can't close socket: ", client.Sock);
+					echo("Can't close socket: ", client.Id);
 				}
 			}
 

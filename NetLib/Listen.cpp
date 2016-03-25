@@ -35,7 +35,7 @@ namespace NetLib
 			m_clientsLock.lock();
 			{
 				// Add to m_clients only if it is not there already
-				auto it = std::find_if(m_clients.begin(), m_clients.end(), [&sockClient](const auto &client) { return client.Sock == sockClient; });
+				auto it = std::find_if(m_clients.begin(), m_clients.end(), [&sockClient](const auto &client) { return client.Id == sockClient; });
 				if (it == m_clients.end())
 					m_clients.push_back(clientData);
 			}
@@ -43,7 +43,7 @@ namespace NetLib
 
 			// Accepted someone
 			if (m_onClientAccepted != nullptr)
-				m_onClientAccepted(clientData.Sock, clientData.Address, clientData.Port);
+				m_onClientAccepted(clientData.Id, clientData.Address, clientData.Port);
 		}
 	}
 

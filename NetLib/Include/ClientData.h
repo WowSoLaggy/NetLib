@@ -9,20 +9,20 @@ struct ClientData
 {
 	ClientData()
 	{
-		Sock = 0;
+		Id = 0;
 		Address = "";
 		Port = 0;
 		Closed = false;
 	}
-	ClientData(SOCKET pSock, std::string pAddress, int pPort)
+	ClientData(unsigned int pId, std::string pAddress, int pPort)
 	{
-		Sock = pSock;
+		Id = pId;
 		Address = pAddress;
 		Port = pPort;
 		Closed = false;
 	}
 
-	SOCKET Sock;			// Client's socket (and Id at the same time)
+	unsigned int Id;		// Client's Id
 	std::string Address;	// Client's address
 	int Port;				// Client's port
 	bool Closed;			// Reserved flag used to determine whether the connection with this client should be closed
