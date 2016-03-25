@@ -30,7 +30,7 @@ namespace NetLib
 		sockClient = accept(m_sockListen, (sockaddr *)&clientAddr, &clientAddrLength);
 		if (sockClient != INVALID_SOCKET)
 		{
-			clientData = ClientData(sockClient, inet_ntoa(clientAddr.sin_addr), clientAddr.sin_port);
+			clientData = ClientData(sockClient, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 			m_clientsLock.lock();
 			{
