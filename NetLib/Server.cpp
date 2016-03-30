@@ -33,6 +33,20 @@ namespace NetLib
 			return err;
 		}
 
+		// Bind socket
+
+		memset(&m_addrListen, 0, sizeof(m_addrListen));
+		m_addrListen.sin_family = AF_INET;
+		m_addrListen.sin_addr.s_addr = INADDR_ANY;
+		m_addrListen.sin_port = htons(pPort);
+		res = bind(m_sockListen, (sockaddr *)&m_addrListen, sizeof(sockaddr_in));
+		if (res != 0)
+		{
+			echo("Can't bind socket.");
+			Net::CloseSocket(m_sockListen);
+			return neterr_cantBindSocket;
+		}
+
 		// Set option SO_REUSEADDR
 
 		err = Net::SetOptReuseAddr(m_sockListen);
@@ -51,20 +65,6 @@ namespace NetLib
 			echo("Can't set socket non-blocking mode.");
 			Net::CloseSocket(m_sockListen);
 			return err;
-		}
-
-		// Bind socket
-
-		memset(&m_addrListen, 0, sizeof(m_addrListen));
-		m_addrListen.sin_family = AF_INET;
-		m_addrListen.sin_addr.s_addr = INADDR_ANY;
-		m_addrListen.sin_port = htons(pPort);
-		res = bind(m_sockListen, (sockaddr *)&m_addrListen, sizeof(sockaddr_in));
-		if (res != 0)
-		{
-			echo("Can't bind socket.");
-			Net::CloseSocket(m_sockListen);
-			return neterr_cantBindSocket;
 		}
 
 		// Listen

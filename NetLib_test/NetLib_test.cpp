@@ -61,13 +61,66 @@ namespace NetLib_test
 
 			err = server.Stop();
 			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Logger::WriteMessage("Server stopped OK.");
 
 
 			err = server.Start(32167);
 			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error restarting server.");
+			Logger::WriteMessage("Server restarted OK.");
 
 			err = server.Stop();
 			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Logger::WriteMessage("Server stopped OK.");
+
+
+			// Give time to stop
+			Sleep(100);
+
+
+			err = NetLib::Net::Dispose();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Logger::WriteMessage("NetLib is disposed.");
+
+			Logger::WriteMessage("--- FINISH ---");
+		}
+
+
+		TEST_METHOD(ServerCreateTwice)
+		{
+			Logger::WriteMessage("--- START ---");
+			NetLib::NetErrCode err;
+
+			err = NetLib::Net::Init();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Logger::WriteMessage("NetLib is initialized.");
+
+
+			NetLib::Server server1(nullptr, nullptr, nullptr);
+			Logger::WriteMessage("First server is initialized.");
+
+			err = server1.Start(32167);
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error starting server.");
+			Logger::WriteMessage("First server started.");
+
+			NetLib::Server server2(nullptr, nullptr, nullptr);
+			Logger::WriteMessage("Second server is initialized.");
+
+			err = server2.Start(32167);
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_cantBindSocket, L"Second server started OK but should fail.");
+			Logger::WriteMessage("Second server failed to start.");
+
+
+			err = server1.Stop();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping first server.");
+			Logger::WriteMessage("First server stopped OK.");
+
+			err = server2.Stop();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping second server.");
+			Logger::WriteMessage("Second server stopped OK.");
+
+
+			// Give time to stop
+			Sleep(100);
 
 
 			err = NetLib::Net::Dispose();
@@ -94,6 +147,7 @@ namespace NetLib_test
 
 			err = client.Connect("127.0.0.1", 1);
 			Assert::IsTrue(err == NetLib::NetErrCode::neterr_connectionRefused, L"Connection should be refused but it succeeded.");
+			Logger::WriteMessage("Connection has been successfully refused.");
 
 
 			err = NetLib::Net::Dispose();
