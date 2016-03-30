@@ -22,7 +22,7 @@ namespace NetLib
 		res = WSAStartup(MAKEWORD(2, 2), &wsaData);
 		if (res != 0)
 		{
-			echo("Can't initialize socket library.");
+			echo("ERROR: Can't initialize socket library.");
 			return neterr_noWsa;
 		}
 
@@ -39,7 +39,7 @@ namespace NetLib
 		res = WSACleanup();
 		if (res != 0)
 		{
-			echo("Error whilst disposing socket library");
+			echo("ERROR: Can't dispose socket library");
 			return neterr_cantCleanupWsa;
 		}
 
@@ -54,7 +54,7 @@ namespace NetLib
 		pSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if (pSocket == INVALID_SOCKET)
 		{
-			echo("Can't create socket.");
+			echo("ERROR: Can't create socket.");
 			return neterr_cantCreateSocket;
 		}
 
@@ -70,7 +70,7 @@ namespace NetLib
 		res = setsockopt(pSocket, SOL_SOCKET, SO_REUSEADDR, (const char *)&int_on, sizeof(int_on));
 		if (res != 0)
 		{
-			echo("Can't set socket SO_REUSEADDR option.");
+			echo("ERROR: Can't set socket SO_REUSEADDR option.");
 			return neterr_cantSetSocketOptions;
 		}
 
@@ -86,7 +86,7 @@ namespace NetLib
 		res = ioctlsocket(pSocket, FIONBIO, &u_long_on);
 		if (res != 0)
 		{
-			echo("Can't set socket non-blocking mode.");
+			echo("ERROR: Can't set socket non-blocking mode.");
 			return neterr_cantSetSocketOptions;
 		}
 
@@ -108,7 +108,7 @@ namespace NetLib
 
 		if (pSizeInBytes <= 0)
 		{
-			echo("Can't send ", pSizeInBytes, " bytes.");
+			echo("ERROR: Can't send ", pSizeInBytes, " bytes.");
 			return neterr_cantSendInvalidLength;
 		}
 
@@ -118,7 +118,7 @@ namespace NetLib
 			res = send(pSocket, &pData[offset], min(pSizeInBytes - offset, Net::GetBufferSize()), 0);
 			if (res == SOCKET_ERROR)
 			{
-				echo("Can't send data.");
+				echo("ERROR: Can't send data.");
 				return neterr_cantSend;
 			}
 			else if (res == 0)

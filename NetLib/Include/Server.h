@@ -56,6 +56,11 @@ namespace NetLib
 		// Returns whether the server is listening for the incoming connections
 		bool IsListening();
 
+		// Checks whether the client with the given Id exists
+		// Params:
+		// [in] unsigned int pClient	- Id of the client to check existance for
+		bool CheckClientExists(unsigned int pClientId);
+
 
 		// Starts the server on the given port
 		// Params:

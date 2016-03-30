@@ -29,7 +29,7 @@ namespace NetLib
 		err = Net::CreateSocket(m_sockListen);
 		if (err != neterr_noErr)
 		{
-			echo("Can't create socket to listen.");
+			echo("ERROR: Can't create socket to listen.");
 			return err;
 		}
 
@@ -42,7 +42,7 @@ namespace NetLib
 		res = bind(m_sockListen, (sockaddr *)&m_addrListen, sizeof(sockaddr_in));
 		if (res != 0)
 		{
-			echo("Can't bind socket.");
+			echo("ERROR: Can't bind socket.");
 			Net::CloseSocket(m_sockListen);
 			return neterr_cantBindSocket;
 		}
@@ -52,7 +52,7 @@ namespace NetLib
 		err = Net::SetOptReuseAddr(m_sockListen);
 		if (err != neterr_noErr)
 		{
-			echo("Can't set socket SO_REUSEADDR option.");
+			echo("ERROR: Can't set socket SO_REUSEADDR option.");
 			Net::CloseSocket(m_sockListen);
 			return err;
 		}
@@ -62,7 +62,7 @@ namespace NetLib
 		err = Net::SetOptNonBlock(m_sockListen, true);
 		if (err != neterr_noErr)
 		{
-			echo("Can't set socket non-blocking mode.");
+			echo("ERROR: Can't set socket non-blocking mode.");
 			Net::CloseSocket(m_sockListen);
 			return err;
 		}
@@ -72,7 +72,7 @@ namespace NetLib
 		res = listen(m_sockListen, 5); // 5 is a magic number It should be OK
 		if (res != 0)
 		{
-			echo("Can't start listen socket.");
+			echo("ERROR: Can't start listen socket.");
 			Net::CloseSocket(m_sockListen);
 			return neterr_cantStartListen;
 		}
@@ -84,7 +84,7 @@ namespace NetLib
 		HANDLE hThread = CreateThread(NULL, 0, MainLoopThreadStarter, this, CREATE_SUSPENDED, NULL);
 		if (hThread == nullptr)
 		{
-			echo("Can't create listen thread.");
+			echo("ERROR: Can't create listen thread.");
 			Net::CloseSocket(m_sockListen);
 			return neterr_cantCreateThread;
 		}
@@ -105,11 +105,19 @@ namespace NetLib
 	{
 		LOG("Server::SendToClient()");
 		NetErrCode err;
+		bool res;
+
+		res = CheckClientExists(pClientId);
+		if (!res)
+		{
+			echo("ERROR: Can't find client to send data to.");
+			return neterr_noSuchClient;
+		}
 
 		err = Net::Send(pClientId, pData, pDataLength);
 		if (err != neterr_noErr)
 		{
-			echo("Error sending data to client: ", pClientId);
+			echo("ERROR: Can't send data to client: ", pClientId);
 			return err;
 		}
 
@@ -127,7 +135,7 @@ namespace NetLib
 			if (it == m_clients.end())
 			{
 				m_clientsLock.unlock();
-				echo("Can't find the given client to disconnect: ", pClientId);
+				echo("ERROR: Can't find client to disconnect: ", pClientId);
 				return neterr_noSuchClient;
 			}
 
@@ -136,7 +144,7 @@ namespace NetLib
 			if (err != neterr_noErr)
 			{
 				m_clientsLock.unlock();
-				echo("Error while disconnecting client: ", pClientId);
+				echo("ERROR: Can't disconnect client: ", pClientId);
 				return neterr_errorDisconnecting;
 			}
 		}
@@ -153,7 +161,7 @@ namespace NetLib
 		err = Net::CloseSocket(pClientId);
 		if (err != neterr_noErr)
 		{
-			echo("Can't close socket.");
+			echo("ERROR: Can't close socket.");
 			return err;
 		}
 
@@ -198,11 +206,11 @@ namespace NetLib
 
 		err = Net::CloseSocket(m_sockListen);	// Stop listen
 		if (err != neterr_noErr)
-			echo("Can't close listen socket.");
+			echo("ERROR: Can't close listen socket.");
 
 		err = Cleanup();
 		if (err != neterr_noErr)
-			echo("Error while cleaning up.");
+			echo("ERROR: Can't clean up.");
 	}
 
 	void Server::DisconnectClosed()
@@ -230,7 +238,7 @@ namespace NetLib
 				if (err != neterr_noErr)
 				{
 					// No return, continue to kick closed connections
-					echo("Error while disconnecting client: ", clientId);
+					echo("ERROR: Can't disconnect client: ", clientId);
 				}
 			}
 		}
@@ -250,7 +258,7 @@ namespace NetLib
 				if (err != neterr_noErr)
 				{
 					// No return - continue to dispose all clients
-					echo("Can't close socket: ", client.Id);
+					echo("ERROR: Can't close socket: ", client.Id);
 				}
 			}
 
@@ -261,6 +269,21 @@ namespace NetLib
 		std::vector<char>().swap(m_receiveBuffer);
 
 		return neterr_noErr;
+	}
+
+	bool Server::CheckClientExists(unsigned int pClientId)
+	{
+		m_clientsLock.lock();
+		{
+			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
+			if (it == m_clients.end())
+			{
+				m_clientsLock.unlock();
+				return false;
+			}
+		}
+		m_clientsLock.unlock();
+		return true;
 	}
 
 } // NetLib

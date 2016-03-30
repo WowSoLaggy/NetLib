@@ -42,7 +42,7 @@ namespace NetLib
 			}
 			else if (res == SOCKET_ERROR)
 			{
-				echo("Unknown error occurred while selecting sockets.");
+				echo("ERROR: Unknown error occurred while selecting sockets.");
 				m_clientsLock.unlock();
 				return;
 			}
@@ -58,7 +58,7 @@ namespace NetLib
 				if (bytesReceived == SOCKET_ERROR)
 				{
 					// Connection error or forced hard-close
-					echo("Error receiving data. Disconnect client: ", client.Id);
+					echo("ERROR: Can't receive data. Disconnect client: ", client.Id);
 					client.Closed = true;
 					continue;
 				}

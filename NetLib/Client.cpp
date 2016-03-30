@@ -20,7 +20,7 @@ namespace NetLib
 		err = Net::CreateSocket(m_sockClient);
 		if (err != neterr_noErr)
 		{
-			echo("Can't create socket to listen.");
+			echo("ERROR: Can't create socket to listen.");
 			return err;
 		}
 
@@ -29,7 +29,7 @@ namespace NetLib
 		err = Net::SetOptReuseAddr(m_sockClient);
 		if (err != neterr_noErr)
 		{
-			echo("Can't set socket SO_REUSEADDR option.");
+			echo("ERROR: Can't set socket SO_REUSEADDR option.");
 			Net::CloseSocket(m_sockClient);
 			return err;
 		}
@@ -50,7 +50,7 @@ namespace NetLib
 				// No connection could be made because the target computer actively refused it.
 				// This usually results from trying to connect to a service that is inactive
 				// on the foreign host—that is, one with no server application running.
-				echo("Server (", pServerIp, ":", pServerPort, ") refused connection.");
+				echo("ERROR: Server (", pServerIp, ":", pServerPort, ") refused connection.");
 				return neterr_connectionRefused;
 			}
 			else if (res == WSAETIMEDOUT)
@@ -58,12 +58,12 @@ namespace NetLib
 				// Connection timed out.
 				// A connection attempt failed because the connected party did not properly respond after a period
 				// of time, or the established connection failed because the connected host has failed to respond.
-				echo("Connection to ", pServerIp, ":", pServerPort, " timed out.");
+				echo("ERROR: Connection to ", pServerIp, ":", pServerPort, " timed out.");
 				return neterr_connectionTimedOut;
 			}
 
 			// Unknown error
-			echo("Can't connect to the server: ", pServerIp, ":", pServerPort);
+			echo("ERROR: Can't connect to the server: ", pServerIp, ":", pServerPort);
 			Net::CloseSocket(m_sockClient);
 			return neterr_cantConnect;
 		}
@@ -79,7 +79,7 @@ namespace NetLib
 		err = Net::CloseSocket(m_sockClient);
 		if (err != neterr_noErr)
 		{
-			echo("Can't close client socket.");
+			echo("ERROR: Can't close client socket.");
 			return err;
 		}
 
@@ -94,7 +94,7 @@ namespace NetLib
 		err = Net::Send(m_sockClient, pData, pSizeInBytes);
 		if (err != neterr_noErr)
 		{
-			echo("Can't send data to client.");
+			echo("ERROR: Can't send data to client.");
 			return err;
 		}
 
@@ -129,7 +129,7 @@ namespace NetLib
 		}
 		else if (res == SOCKET_ERROR)
 		{
-			echo("Unknown error occurred while selecting socket.");
+			echo("ERROR: Unknown error occurred while selecting socket.");
 			return neterr_cantSelect;
 		}
 
@@ -143,7 +143,7 @@ namespace NetLib
 
 		if (bytesReceived == SOCKET_ERROR)
 		{
-			echo("Error receiving data.");
+			echo("ERROR: Can't receive data.");
 			return neterr_cantReceive;
 		}
 		else if (bytesReceived == 0)

@@ -18,7 +18,7 @@ namespace NetLib_test
 		receivedSomething = true;
 		receivedText = std::string(pData, pDataLength);
 	}
-	unsigned int clientId;
+	volatile unsigned int clientId;
 	void OnClientAccepted(unsigned int pClientId, std::string pClientAddress, int pClientPort)
 	{
 		clientId = pClientId;
@@ -296,6 +296,58 @@ namespace NetLib_test
 			Assert::IsTrue(bytesReceived != 0, L"Didn't receive test message.");
 			Assert::IsTrue(receivedText.compare(testMessage) == 0, L"Received message doesn't match.");
 			Logger::WriteMessage("Message received correct.");
+
+
+			err = client.Disconnect();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disconnecting client from server.");
+			Logger::WriteMessage("Client disconnected.");
+
+
+			err = server.Stop();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+
+
+			// Wait some time to stop the server
+			Sleep(100);
+
+
+			err = NetLib::Net::Dispose();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Logger::WriteMessage("NetLib is disposed.");
+
+			Logger::WriteMessage("--- FINISH ---");
+		}
+
+		TEST_METHOD(CheckClientExists)
+		{
+			Logger::WriteMessage("--- START ---");
+			NetLib::NetErrCode err;
+
+			err = NetLib::Net::Init();
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Logger::WriteMessage("NetLib is initialized.");
+
+
+			receivedSomething = false;
+			NetLib::Server server(OnClientAccepted, nullptr, nullptr);
+			err = server.Start(32167);
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error starting server.");
+			Logger::WriteMessage("Server is started.");
+
+
+			NetLib::Client client;
+			err = client.Connect("127.0.0.1", 32167);
+			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error connecting to server.");
+			Logger::WriteMessage("Client connected.");
+
+
+			// Give some time to connect
+			Sleep(100);
+
+
+			Assert::IsTrue(server.CheckClientExists(clientId), L"Server says that connected client doesn't exist.");
+			Assert::IsTrue(!server.CheckClientExists(12312377), L"Server says that random clientId exists.");
+			Logger::WriteMessage("Server CheckClientExists function seems to work fine.");
 
 
 			err = client.Disconnect();
