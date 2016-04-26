@@ -109,14 +109,10 @@ namespace Log
 		template <typename First, typename ... Rest>
 		void Echo_Internal(First pFirst, Rest ... pRest)
 		{
-			s_logMutex.lock();
-			{
-				std::fstream m_logFile(s_logFileName, std::ios::app);
-				std::cout << pFirst;
-				m_logFile << pFirst;
-				m_logFile.close();
-			}
-			s_logMutex.unlock();
+			std::fstream m_logFile(s_logFileName, std::ios::app);
+			std::cout << pFirst;
+			m_logFile << pFirst;
+			m_logFile.close();
 
 			Echo_Internal(pRest ...);
 		}
@@ -125,13 +121,11 @@ namespace Log
 		template <typename T>
 		void Echo_Internal(T pPar)
 		{
-			s_logMutex.lock();
-			{
-				std::fstream m_logFile(s_logFileName, std::ios::app);
-				std::cout << pPar << std::endl;
-				m_logFile << pPar << std::endl;
-				m_logFile.close();
-			}
+			std::fstream m_logFile(s_logFileName, std::ios::app);
+			std::cout << pPar << std::endl;
+			m_logFile << pPar << std::endl;
+			m_logFile.close();
+
 			s_logMutex.unlock();
 		}
 
