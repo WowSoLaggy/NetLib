@@ -46,15 +46,15 @@ namespace NetLib
 		// Sends the given data to the remote server
 		// Params:
 		// [in] const char * pData	- data to send to the remote server
-		// [in] int pSizeInBytes	- size of the data to be sent
-		NetErrCode Send(const char *pData, int pSizeInBytes);
+		// [in] size_t pSizeInBytes	- size of the data to be sent
+		NetErrCode Send(const char *pData, size_t pSizeInBytes);
 
 		// Tries to receive data from the remote server if any
 		// Params:
 		// [in]  char * pBuffer				- buffer to receive data to
-		// [in]  int pBufferSize			- length of the buffer to receive data to
+		// [in]  size_t pBufferSize			- length of the buffer to receive data to
 		// [out] int & pReceivedDataLength	- length of the received data (can be 0 if nothing to receive)
-		NetErrCode Receive(char *pBuffer, int pBufferSize, int &pReceivedDataLength);
+		NetErrCode Receive(char *pBuffer, size_t pBufferSize, int &pReceivedDataLength);
 
 	protected:
 

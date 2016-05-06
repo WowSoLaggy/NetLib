@@ -13,13 +13,13 @@ namespace NetLib_test
 {
 	volatile bool receivedSomething;
 	std::string receivedText;
-	void OnClientDataReceived(unsigned int pClientId, char *pData, int pDataLength)
+	void OnClientDataReceived(CLIENTID pClientId, char *pData, int pDataLength)
 	{
 		receivedSomething = true;
 		receivedText = std::string(pData, pDataLength);
 	}
-	volatile unsigned int clientId;
-	void OnClientAccepted(unsigned int pClientId, std::string pClientAddress, int pClientPort)
+	volatile CLIENTID clientId;
+	void OnClientAccepted(CLIENTID pClientId, std::string pClientAddress, int pClientPort)
 	{
 		clientId = pClientId;
 	}

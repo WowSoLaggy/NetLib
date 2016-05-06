@@ -23,13 +23,13 @@ namespace NetLib
 {
 
 	// Typedef for the client accepted callback
-	typedef std::function<void(unsigned int pClientId, std::string pClientAddress, int pClientPort)> ClientAcceptCallback;
+	typedef std::function<void(CLIENTID pClientId, std::string pClientAddress, int pClientPort)> ClientAcceptCallback;
 
 	// Typedef for the client disconnected callback
-	typedef std::function<void(unsigned int pClientId)> ClientDisconnectCallback;
+	typedef std::function<void(CLIENTID pClientId)> ClientDisconnectCallback;
 
 	// Typedef for the data received callback
-	typedef std::function<void(unsigned int pClientId, char *pData, int pDataLength)> ReceiveFromClientCallback;
+	typedef std::function<void(CLIENTID pClientId, char *pData, int pDataLength)> ReceiveFromClientCallback;
 
 
 	// Class that starts server on the given port,
@@ -58,8 +58,8 @@ namespace NetLib
 
 		// Checks whether the client with the given Id exists
 		// Params:
-		// [in] unsigned int pClient	- Id of the client to check existance for
-		bool CheckClientExists(unsigned int pClientId);
+		// [in] CLIENTID pClient	- Id of the client to check existance for
+		bool CheckClientExists(CLIENTID pClientId);
 
 
 		// Starts the server on the given port
@@ -73,15 +73,15 @@ namespace NetLib
 
 		// Sends the given data to the client with the given Id
 		// Params:
-		// [in] unsigned int pClientId	- Id of the client to send data to
-		// [in] const char * pData		- pointer to the data to send
-		// [in] int pDataLength			- length of the data to send
-		NetErrCode SendToClient(unsigned int pClientId, const char *pData, int pDataLength);
+		// [in] CLIENTID pClientId	- Id of the client to send data to
+		// [in] const char * pData	- pointer to the data to send
+		// [in] size_t pDataLength	- length of the data to send
+		NetErrCode SendToClient(CLIENTID pClientId, const char *pData, size_t pDataLength);
 
 		// Disconnects the client with the given Id
 		// Params:
-		// [in] unsigned int pClientId	- Id of the client to be disconnected
-		NetErrCode DisconnectClient(unsigned int pClientId);
+		// [in] CLIENTID pClientId	- Id of the client to be disconnected
+		NetErrCode DisconnectClient(CLIENTID pClientId);
 
 	protected:
 
@@ -103,8 +103,8 @@ namespace NetLib
 
 		// Disconnects the client with the given Id (no mutex lock)
 		// Params:
-		// [in] unsigned int pClientId	- Id of the client to be disconnected
-		NetErrCode DisconnectClient_Internal(unsigned int pClientId);
+		// [in] CLIENTID pClientId	- Id of the client to be disconnected
+		NetErrCode DisconnectClient_Internal(CLIENTID pClientId);
 
 
 		// Static main loop starter

@@ -5,21 +5,21 @@
 
 using namespace NetLib;
 
-unsigned int lastClient = 0;
+CLIENTID lastClient = 0;
 
 
-void OnClientAccepted(unsigned int pClientId, std::string pClientAddress, int pClientPort)
+void OnClientAccepted(CLIENTID pClientId, std::string pClientAddress, int pClientPort)
 {
 	LOG("OnClientAccepted()");
 	lastClient = pClientId;
 	echo("Accepted id: ", pClientId, " from ", pClientAddress, ":", pClientPort);
 }
-void OnClientDisconnected(unsigned int pClientId)
+void OnClientDisconnected(CLIENTID pClientId)
 {
 	LOG("OnClientDisconnected()");
 	echo("Disconnected id: ", pClientId);
 }
-void OnClientDataReceived(unsigned int pClientId, char *pData, int pDataLength)
+void OnClientDataReceived(CLIENTID pClientId, char *pData, int pDataLength)
 {
 	LOG("OnClientDataReceived()");
 	std::string text(pData, pDataLength);

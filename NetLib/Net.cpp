@@ -101,7 +101,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Net::Send(SOCKET &pSocket, const char *pData, int pSizeInBytes)
+	NetErrCode Net::Send(SOCKET &pSocket, const char *pData, size_t pSizeInBytes)
 	{
 		LOG("Net::Send()");
 		int res;
@@ -115,7 +115,7 @@ namespace NetLib
 		int offset = 0;
 		while (true)
 		{
-			res = send(pSocket, &pData[offset], min(pSizeInBytes - offset, Net::GetBufferSize()), 0);
+			res = send(pSocket, &pData[offset], min((int)pSizeInBytes - offset, Net::GetBufferSize()), 0);
 			if (res == SOCKET_ERROR)
 			{
 				echo("ERROR: Can't send data.");

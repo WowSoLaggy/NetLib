@@ -69,8 +69,8 @@ namespace NetLib
 		// Params:
 		// [in] SOCKET & pSocket	- socket to send data to
 		// [in] const char * pData	- data to be sent
-		// [in] int pSizeInBytes	- size of data to be sent in bytes
-		static NetErrCode Send(SOCKET &pSocket, const char *pData, int pSizeInBytes);
+		// [in] size_t pSizeInBytes	- size of data to be sent in bytes
+		static NetErrCode Send(SOCKET &pSocket, const char *pData, size_t pSizeInBytes);
 	};
 
 } // NetLib

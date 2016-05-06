@@ -86,7 +86,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Client::Send(const char *pData, int pSizeInBytes)
+	NetErrCode Client::Send(const char *pData, size_t pSizeInBytes)
 	{
 		LOG("Client::Send()");
 		NetErrCode err;
@@ -101,7 +101,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Client::Receive(char *pBuffer, int pBufferSize, int &pReceivedDataLength)
+	NetErrCode Client::Receive(char *pBuffer, size_t pBufferSize, int &pReceivedDataLength)
 	{
 		LOG("Client::Receive()");
 		int res;
@@ -139,7 +139,7 @@ namespace NetLib
 			return neterr_noErr;
 		}
 
-		int bytesReceived = recv(m_sockClient, pBuffer, pBufferSize, 0);
+		int bytesReceived = recv(m_sockClient, pBuffer, (int)pBufferSize, 0);
 
 		if (bytesReceived == SOCKET_ERROR)
 		{

@@ -101,7 +101,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Server::SendToClient(unsigned int pClientId, const char *pData, int pDataLength)
+	NetErrCode Server::SendToClient(CLIENTID pClientId, const char *pData, size_t pDataLength)
 	{
 		LOG("Server::SendToClient()");
 		NetErrCode err;
@@ -124,7 +124,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Server::DisconnectClient(unsigned int pClientId)
+	NetErrCode Server::DisconnectClient(CLIENTID pClientId)
 	{
 		LOG("Server::DisconnectClient()");
 		NetErrCode err;
@@ -153,7 +153,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Server::DisconnectClient_Internal(unsigned int pClientId)
+	NetErrCode Server::DisconnectClient_Internal(CLIENTID pClientId)
 	{
 		LOG("Server::DisconnectClient_Internal()");
 		NetErrCode err;
@@ -232,7 +232,7 @@ namespace NetLib
 				if (!m_clients[i].Closed)
 					continue;
 
-				unsigned int clientId = m_clients[i].Id;
+				CLIENTID clientId = m_clients[i].Id;
 				m_clients.erase(m_clients.begin() + i);
 				err = DisconnectClient_Internal(clientId);
 				if (err != neterr_noErr)
@@ -271,7 +271,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	bool Server::CheckClientExists(unsigned int pClientId)
+	bool Server::CheckClientExists(CLIENTID pClientId)
 	{
 		m_clientsLock.lock();
 		{
