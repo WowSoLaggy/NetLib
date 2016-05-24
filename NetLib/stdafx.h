@@ -13,5 +13,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Log.h"
+
 
 #endif // NETLIB_STDAFX_H

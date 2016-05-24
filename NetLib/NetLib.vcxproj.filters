@@ -13,6 +13,12 @@
     <Filter Include="src\Net">
       <UniqueIdentifier>{692c59fa-13e1-4f54-b8da-6b7afc537c4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{d1ff4a51-10da-401d-beb0-e5d8b08c20d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\Log">
+      <UniqueIdentifier>{fe1bc35f-3170-47a0-8b87-21cbf5d547bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -35,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="Include\NetLib.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Log\Log.h">
+      <Filter>libs\Log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

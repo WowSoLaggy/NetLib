@@ -13,7 +13,6 @@
 #define NETLIB_SERVER_H
 
 
-#include "Logger.h"
 #include "NetErrCodes.h"
 #include "Net.h"
 #include "ClientData.h"

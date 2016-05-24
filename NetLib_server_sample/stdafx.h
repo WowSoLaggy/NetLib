@@ -12,5 +12,7 @@
 #include <functional>
 #include <mutex>
 
+#include "Log.h"
+
 
 #endif // STDAFX_H

@@ -12,7 +12,6 @@
 #define NETLIB_CLIENT_H
 
 
-#include "Logger.h"
 #include "NetErrCodes.h"
 #include "Net.h"
 
