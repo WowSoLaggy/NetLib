@@ -1,7 +1,5 @@
 #include "stdafx.h"
 
-#include "Server.h"
-
 
 using namespace NetLib;
 
