@@ -182,10 +182,11 @@ namespace Log
 	// Returns the size of the file with the given name. It doesn't check it's existance
 	// Params:
 	// [in] const std::string & pFileName	- name of the file to get size of
-	static size_t GetFileSize(const std::string &pFileName)
+	static long int GetFileSize(const std::string &pFileName)
 	{
-		std::ifstream file(pFileName.c_str(), std::ios::ate | std::ios::binary);
-		return file.tellg();
+		struct stat stat_buf;
+		int rc = stat(pFileName.c_str(), &stat_buf);
+		return (rc == 0) ? stat_buf.st_size : -1;
 	}
 
 
@@ -391,7 +392,7 @@ namespace Log
 				return;
 			if (!CheckFileExists(pFileName))
 				return;
-			if ((pRotateFileSize != 0) && (static_cast<int>(GetFileSize(pFileName)) < pRotateFileSize))
+			if ((pRotateFileSize != 0) && (GetFileSize(pFileName) < pRotateFileSize))
 				return;
 
 			// Generate new file name. Iterate through the file names to find the absent file name

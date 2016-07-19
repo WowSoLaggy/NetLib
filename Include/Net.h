@@ -13,6 +13,7 @@
 
 
 #include <Windows.h>
+#include <string>
 #include "Log.h"
 
 #include "NetErrCodes.h"
@@ -160,8 +161,8 @@ namespace NetLib
 		// Params:
 		// [in] SOCKET & pSocket	- socket to send data to
 		// [in] const char * pData	- data to be sent
-		// [in] size_t pSizeInBytes	- size of data to be sent in bytes
-		static NetErrCode Send(SOCKET &pSocket, const char *pData, size_t pSizeInBytes)
+		// [in] int pSizeInBytes	- size of data to be sent in bytes
+		static NetErrCode Send(SOCKET &pSocket, const char *pData, int pSizeInBytes)
 		{
 			LOG("Net::Send()");
 			int res;
@@ -175,7 +176,7 @@ namespace NetLib
 			int offset = 0;
 			while (true)
 			{
-				res = send(pSocket, &pData[offset], min((int)pSizeInBytes - offset, Net::GetBufferSize()), 0);
+				res = send(pSocket, &pData[offset], min(pSizeInBytes - offset, Net::GetBufferSize()), 0);
 				if (res == SOCKET_ERROR)
 				{
 					echo("ERROR: Can't send data.");

@@ -221,7 +221,7 @@ namespace NetLib_test
 
 
 			std::string testMessage = "Hello, world!";
-			err = client.Send(testMessage.c_str(), testMessage.size());
+			err = client.Send(testMessage.c_str(), (int)testMessage.size());
 			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error sending test message to server.");
 			Logger::WriteMessage("Test message sent.");
 
@@ -280,7 +280,7 @@ namespace NetLib_test
 
 
 			std::string testMessage = "Hello, world!";
-			err = server.SendToClient(clientId, testMessage.c_str(), testMessage.size());
+			err = server.SendToClient(clientId, testMessage.c_str(), (int)testMessage.size());
 			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error sending test message to client.");
 			Logger::WriteMessage("Test message sent.");
 
@@ -289,7 +289,7 @@ namespace NetLib_test
 
 			receivedText.resize(1024);
 			int bytesReceived = 0;
-			client.Receive(&receivedText[0], receivedText.size(), bytesReceived);
+			client.Receive(&receivedText[0], (int)receivedText.size(), bytesReceived);
 			receivedText.resize(bytesReceived);
 
 

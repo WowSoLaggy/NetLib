@@ -13,6 +13,9 @@
 #define NETLIB_SERVER_H
 
 
+#include <mutex>
+#include <string>
+#include <functional>
 #include <algorithm>
 
 #include "NetErrCodes.h"
@@ -24,7 +27,7 @@ namespace NetLib
 {
 
 	// Typedef for the client accepted callback
-	typedef std::function<void(CLIENTID pClientId, std::string pClientAddress, int pClientPort)> ClientAcceptCallback;
+	typedef std::function<void(CLIENTID pClientId, const std::string &pClientAddress, int pClientPort)> ClientAcceptCallback;
 
 	// Typedef for the client disconnected callback
 	typedef std::function<void(CLIENTID pClientId)> ClientDisconnectCallback;
@@ -182,8 +185,8 @@ namespace NetLib
 		// Params:
 		// [in] CLIENTID pClientId	- Id of the client to send data to
 		// [in] const char * pData	- pointer to the data to send
-		// [in] size_t pDataLength	- length of the data to send
-		NetErrCode SendToClient(CLIENTID pClientId, const char *pData, size_t pDataLength)
+		// [in] int pDataLength		- length of the data to send
+		NetErrCode SendToClient(CLIENTID pClientId, const char *pData, int pDataLength)
 		{
 			LOG("Server::SendToClient()");
 			NetErrCode err;

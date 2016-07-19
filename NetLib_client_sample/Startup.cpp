@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 		{
 			std::vector<char> buffer(1024);
 			int bytesReceived = 0;
-			err = client.Receive(&buffer[0], buffer.size(), bytesReceived);
+			err = client.Receive(&buffer[0], (int)buffer.size(), bytesReceived);
 			if (err != neterr_noErr)
 				echo("Error receiving data: ", err, ".");
 			else
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
-		err = client.Send(line.c_str(), line.size());
+		err = client.Send(line.c_str(), (int)line.size());
 		if (err == neterr_noErr)
 			echo("Sent ", line.size(), " bytes.");
 		else

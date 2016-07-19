@@ -4,6 +4,9 @@
 #define NETLIB_CLIENTDATA_H
 
 
+#include <string>
+
+
 typedef UINT_PTR CLIENTID;
 
 
@@ -17,7 +20,8 @@ struct ClientData
 		Port = 0;
 		Closed = false;
 	}
-	ClientData(CLIENTID pId, std::string pAddress, int pPort)
+
+	ClientData(CLIENTID pId, const std::string &pAddress, int pPort)
 	{
 		Id = pId;
 		Address = pAddress;
@@ -25,7 +29,7 @@ struct ClientData
 		Closed = false;
 	}
 
-	CLIENTID Id;		// Client's Id
+	CLIENTID Id;			// Client's Id
 	std::string Address;	// Client's address
 	int Port;				// Client's port
 	bool Closed;			// Reserved flag used to determine whether the connection with this client should be closed

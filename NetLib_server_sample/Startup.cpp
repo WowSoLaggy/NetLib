@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 		if (line.compare("q") == 0)
 			break;
 
-		err = server.SendToClient(lastClient, line.c_str(), line.size());
+		err = server.SendToClient(lastClient, line.c_str(), (int)line.size());
 		if (err == neterr_noErr)
 			echo("Sent ", line.size(), " bytes.");
 		else

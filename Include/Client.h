@@ -12,6 +12,8 @@
 #define NETLIB_CLIENT_H
 
 
+#include <string>
+
 #include "NetErrCodes.h"
 #include "Net.h"
 
@@ -34,9 +36,9 @@ namespace NetLib
 
 		// Connects to the remote server with the given address
 		// Params:
-		// [in] std::string pServerIp	- string that represents the remote server address
-		// [in] int pServerPort			- remote server port
-		NetErrCode Connect(std::string pServerIp, int pServerPort)
+		// [in] const std::string & pServerIp	- string that represents the remote server address
+		// [in] int pServerPort					- remote server port
+		NetErrCode Connect(const std::string &pServerIp, int pServerPort)
 		{
 			LOG("Client::Connect()");
 			NetErrCode err;
@@ -120,8 +122,8 @@ namespace NetLib
 		// Sends the given data to the remote server
 		// Params:
 		// [in] const char * pData	- data to send to the remote server
-		// [in] size_t pSizeInBytes	- size of the data to be sent
-		NetErrCode Send(const char *pData, size_t pSizeInBytes)
+		// [in] int pSizeInBytes	- size of the data to be sent
+		NetErrCode Send(const char *pData, int pSizeInBytes)
 		{
 			LOG("Client::Send()");
 			NetErrCode err;
@@ -140,9 +142,9 @@ namespace NetLib
 		// Tries to receive data from the remote server if any
 		// Params:
 		// [in]  char * pBuffer				- buffer to receive data to
-		// [in]  size_t pBufferSize			- length of the buffer to receive data to
+		// [in]  int pBufferSize			- length of the buffer to receive data to
 		// [out] int & pReceivedDataLength	- length of the received data (can be 0 if nothing to receive)
-		NetErrCode Receive(char *pBuffer, size_t pBufferSize, int &pReceivedDataLength)
+		NetErrCode Receive(char *pBuffer, int pBufferSize, int &pReceivedDataLength)
 		{
 			LOG("Client::Receive()");
 			int res;
@@ -180,7 +182,7 @@ namespace NetLib
 				return neterr_noErr;
 			}
 
-			int bytesReceived = recv(m_sockClient, pBuffer, (int)pBufferSize, 0);
+			int bytesReceived = recv(m_sockClient, pBuffer, pBufferSize, 0);
 
 			if (bytesReceived == SOCKET_ERROR)
 			{

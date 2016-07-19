@@ -9,6 +9,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetLib_client_sample", "Net
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetLib_test", "NetLib_test\NetLib_test.vcxproj", "{1F2A322A-A4B8-4B30-889F-D883CE7622D7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Include", "Include", "{FCCB7119-4150-4A65-B21B-E5D3155D1868}"
+	ProjectSection(SolutionItems) = preProject
+		Include\Client.h = Include\Client.h
+		Include\ClientData.h = Include\ClientData.h
+		Include\Net.h = Include\Net.h
+		Include\NetErrCodes.h = Include\NetErrCodes.h
+		Include\NetLib.h = Include\NetLib.h
+		Include\Server.h = Include\Server.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
