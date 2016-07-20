@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 {
 	CreateDirectory("Logs", nullptr);
 	LOGINIT("Logs\\Client.log", "NetLib Client", "NetLib_client_sample.exe");
-	NETINIT();
+	NETINIT;
 
 	LOG("main()");
 	NetErrCode err;

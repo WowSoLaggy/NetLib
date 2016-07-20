@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 {
 	CreateDirectory("Logs", nullptr);
 	LOGINIT("Logs\\Server.log", "NetLib Server", "NetLib_server_sample.exe");
-	NETINIT();
+	NETINIT;
 
 	LOG("main()");
 	NetErrCode err;

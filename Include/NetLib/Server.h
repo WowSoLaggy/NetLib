@@ -76,16 +76,12 @@ namespace NetLib
 		// [in] CLIENTID pClient	- Id of the client to check existance for
 		bool CheckClientExists(CLIENTID pClientId)
 		{
-			m_clientsLock.lock();
-			{
-				auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
-				if (it == m_clients.end())
-				{
-					m_clientsLock.unlock();
-					return false;
-				}
-			}
-			m_clientsLock.unlock();
+			std::unique_lock<std::mutex> lock(m_clientsLock);
+
+			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
+			if (it == m_clients.end())
+				return false;
+
 			return true;
 		}
 
@@ -216,26 +212,22 @@ namespace NetLib
 			LOG("Server::DisconnectClient()");
 			NetErrCode err;
 
-			m_clientsLock.lock();
-			{
-				auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
-				if (it == m_clients.end())
-				{
-					m_clientsLock.unlock();
-					echo("ERROR: Can't find client to disconnect: ", pClientId);
-					return neterr_noSuchClient;
-				}
+			std::unique_lock<std::mutex> lock(m_clientsLock);
 
-				m_clients.erase(it);
-				err = DisconnectClient_Internal(pClientId);
-				if (err != neterr_noErr)
-				{
-					m_clientsLock.unlock();
-					echo("ERROR: Can't disconnect client: ", pClientId);
-					return neterr_errorDisconnecting;
-				}
+			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
+			if (it == m_clients.end())
+			{
+				echo("ERROR: Can't find client to disconnect: ", pClientId);
+				return neterr_noSuchClient;
 			}
-			m_clientsLock.unlock();
+
+			m_clients.erase(it);
+			err = DisconnectClient_Internal(pClientId);
+			if (err != neterr_noErr)
+			{
+				echo("ERROR: Can't disconnect client: ", pClientId);
+				return neterr_errorDisconnecting;
+			}
 
 			return neterr_noErr;
 		}
@@ -449,8 +441,9 @@ namespace NetLib
 			LOG("Server::Cleanup()");
 			NetErrCode err;
 
-			m_clientsLock.lock();
 			{
+				std::unique_lock<std::mutex> lock(m_clientsLock);
+
 				for (auto &client : m_clients)
 				{
 					err = Net::CloseSocket(client.Id);
@@ -463,7 +456,6 @@ namespace NetLib
 
 				std::vector<ClientData>().swap(m_clients);
 			}
-			m_clientsLock.unlock();
 
 			std::vector<char>().swap(m_receiveBuffer);
 

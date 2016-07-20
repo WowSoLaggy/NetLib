@@ -16,7 +16,7 @@
 
 
 // Creates NetLib RAII object. All NetLib classes and functions should be called only while the lifetime of this container
-#define NETINIT auto unique_net = ::NetLib::unique_net
+#define NETINIT ::NetLib::unique_net unique_net
 
 
 namespace NetLib

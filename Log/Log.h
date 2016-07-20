@@ -78,7 +78,7 @@
 
 
 // Creates RAII log object
-#define LOGINIT auto unique_log = ::Log::unique_log
+#define LOGINIT ::Log::unique_log unique_log
 
 
 // Initializes the log object for the current function. Should be called before any echo-calls
