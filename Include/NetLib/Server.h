@@ -2,7 +2,7 @@
 // Product:		NetLib
 // Module:		Server
 // Author:		Anton Egorov
-// Description:	Class that starts server on the given port,
+// Description:	Class that starts the server on the given port,
 //				accepts pending connections, sends and
 //				receives data, and controls connected clients
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
