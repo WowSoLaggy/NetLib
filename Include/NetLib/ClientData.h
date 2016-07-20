@@ -18,7 +18,6 @@ struct ClientData
 		Id = 0;
 		Address = "";
 		Port = 0;
-		Closed = false;
 	}
 
 	ClientData(CLIENTID pId, const std::string &pAddress, int pPort)
@@ -26,13 +25,12 @@ struct ClientData
 		Id = pId;
 		Address = pAddress;
 		Port = pPort;
-		Closed = false;
 	}
 
 	CLIENTID Id;			// Client's Id
 	std::string Address;	// Client's address
 	int Port;				// Client's port
-	bool Closed;			// Reserved flag used to determine whether the connection with this client should be closed
+
 };
 
 

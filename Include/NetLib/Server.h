@@ -173,9 +173,7 @@ namespace NetLib
 		// Stops the server and disconnects all clients
 		NetErrCode Stop()
 		{
-			m_runningLock.lock();
 			m_isRunning = false;
-			m_runningLock.unlock();
 			return neterr_noErr;
 		}
 
@@ -247,7 +245,6 @@ namespace NetLib
 
 
 		volatile bool m_isRunning;							// Variable used to stop server
-		std::mutex m_runningLock;							// Mutex to lock access to the m_isRunning variable. Used to stop server
 		sockaddr_in m_addrListen;							// Address to listen on
 		SOCKET m_sockListen;								// Socket that is used to listen for the pending connections
 		ClientAcceptCallback m_onClientAccepted;			// Callback that is called when the new client is accepted
@@ -315,19 +312,11 @@ namespace NetLib
 
 			while (true)
 			{
-				m_runningLock.lock();
-				{
-					if (!m_isRunning)
-					{
-						m_runningLock.unlock();
-						break;
-					}
+				if (!m_isRunning)
+					break;
 
-					TryAccept();
-					TryReceive();
-					DisconnectClosed();
-				}
-				m_runningLock.unlock();
+				TryAccept();
+				TryReceive();
 
 				Sleep(1);
 			}
@@ -356,14 +345,14 @@ namespace NetLib
 			{
 				clientData = ClientData(sockClient, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
-				m_clientsLock.lock();
 				{
+					std::unique_lock<std::mutex> lock(m_clientsLock);
+
 					// Add to m_clients only if it is not there already
 					auto it = std::find_if(m_clients.begin(), m_clients.end(), [&sockClient](const auto &client) { return client.Id == sockClient; });
 					if (it == m_clients.end())
 						m_clients.push_back(clientData);
 				}
-				m_clientsLock.unlock();
 
 				// Accepted someone
 				if (m_onClientAccepted != nullptr)
@@ -377,106 +366,79 @@ namespace NetLib
 		{
 			LOG("Server::TryReceive()");
 			int res;
-
-			m_clientsLock.lock();
-			{
-				if (m_clients.size() == 0)
-				{
-					// No one to receive from
-					m_clientsLock.unlock();
-					return;
-				}
-
-				fd_set fds;	// File descriptors set
-				timeval timeout;
-				timeout.tv_sec = 0;
-				timeout.tv_usec = 0;
-
-				// Reset the fd set
-				FD_ZERO(&fds);
-
-				// Add sockets to the fd set
-				for (auto &client : m_clients)
-					FD_SET(client.Id, &fds);
-
-				// Check sockets
-				res = select(0, &fds, nullptr, nullptr, &timeout);
-
-				if (res == 0)
-				{
-					// No one is ready to receive
-					m_clientsLock.unlock();
-					return;
-				}
-				else if (res == SOCKET_ERROR)
-				{
-					echo("ERROR: Unknown error occurred while selecting sockets.");
-					m_clientsLock.unlock();
-					return;
-				}
-
-				// Check who is ready to receive
-				for (auto &client : m_clients)
-				{
-					if (!FD_ISSET(client.Id, &fds))
-						continue;
-
-					int bytesReceived = recv(client.Id, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
-
-					if (bytesReceived == SOCKET_ERROR)
-					{
-						// Connection error or forced hard-close
-						echo("ERROR: Can't receive data. Disconnect client: ", client.Id);
-						client.Closed = true;
-						continue;
-					}
-					else if (bytesReceived == 0)
-					{
-						// Connection has been gracefully closed. Not an error
-						client.Closed = true;
-						continue;
-					}
-
-					if (m_onReceiveFromClient != nullptr)
-						m_onReceiveFromClient(client.Id, m_receiveBuffer.data(), bytesReceived);
-				}
-			}
-			m_clientsLock.unlock();
-		}
-
-
-
-		// Disconnects clients with the closed connection
-		void DisconnectClosed()
-		{
-			LOG("Server::DisconnectClosed()");
 			NetErrCode err;
 
-			m_clientsLock.lock();
+			std::unique_lock<std::mutex> lock(m_clientsLock);
+
+			if (m_clients.size() == 0)
 			{
-				if (m_clients.size() == 0)
-				{
-					// No one to disconnect
-					m_clientsLock.unlock();
-					return;
-				}
-
-				for (int i = (int)(m_clients.size() - 1); i >= 0; i--)
-				{
-					if (!m_clients[i].Closed)
-						continue;
-
-					CLIENTID clientId = m_clients[i].Id;
-					m_clients.erase(m_clients.begin() + i);
-					err = DisconnectClient_Internal(clientId);
-					if (err != neterr_noErr)
-					{
-						// No return, continue to kick closed connections
-						echo("ERROR: Can't disconnect client: ", clientId);
-					}
-				}
+				// No one to receive from
+				return;
 			}
-			m_clientsLock.unlock();
+
+			fd_set fds;	// File descriptors set
+			timeval timeout;
+			timeout.tv_sec = 0;
+			timeout.tv_usec = 0;
+
+			// Reset the fd set
+			FD_ZERO(&fds);
+
+			// Add sockets to the fd set
+			for (auto &client : m_clients)
+				FD_SET(client.Id, &fds);
+
+			// Check sockets
+			res = select(0, &fds, nullptr, nullptr, &timeout);
+
+			if (res == 0)
+			{
+				// No one is ready to receive
+				return;
+			}
+			else if (res == SOCKET_ERROR)
+			{
+				echo("ERROR: Unknown error occurred while selecting sockets.");
+				return;
+			}
+
+			// Check who is ready to receive
+			auto it = m_clients.begin();
+			while (it != m_clients.end())
+			{
+				if (!FD_ISSET(it->Id, &fds))
+				{
+					++it;
+					continue;
+				}
+
+				int bytesReceived = recv(it->Id, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
+
+				if (bytesReceived > 0)
+				{
+					if (m_onReceiveFromClient != nullptr)
+						m_onReceiveFromClient(it->Id, m_receiveBuffer.data(), bytesReceived);
+
+					++it;
+					continue;
+				}
+
+				if (bytesReceived == SOCKET_ERROR)
+				{
+					// Connection error or forced hard-close
+					echo("ERROR: Error receiving data. Force disconnect (client id: ", it->Id, ").");
+				}
+				else if (bytesReceived == 0)
+				{
+					// Connection has been gracefully closed. Not an error
+				}
+
+				err = DisconnectClient_Internal(it->Id);
+				if (err != neterr_noErr)
+					echo("ERROR: Can't disconnect client: ", it->Id, ".");
+
+				it = m_clients.erase(it);
+			}
 		}
 
 
@@ -495,7 +457,7 @@ namespace NetLib
 					if (err != neterr_noErr)
 					{
 						// No return - continue to dispose all clients
-						echo("ERROR: Can't close socket: ", client.Id);
+						echo("ERROR: Can't close socket (client id: ", client.Id, ").");
 					}
 				}
 

@@ -11,12 +11,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NetLib_test", "NetLib_test\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Include", "Include", "{FCCB7119-4150-4A65-B21B-E5D3155D1868}"
 	ProjectSection(SolutionItems) = preProject
-		Include\Client.h = Include\Client.h
-		Include\ClientData.h = Include\ClientData.h
-		Include\Net.h = Include\Net.h
-		Include\NetErrCodes.h = Include\NetErrCodes.h
+		Include\NetLib\Client.h = Include\NetLib\Client.h
+		Include\NetLib\ClientData.h = Include\NetLib\ClientData.h
+		Include\NetLib\Net.h = Include\NetLib\Net.h
+		Include\NetLib\NetErrCodes.h = Include\NetLib\NetErrCodes.h
+		Include\NetLib\NetInit.h = Include\NetLib\NetInit.h
 		Include\NetLib.h = Include\NetLib.h
-		Include\Server.h = Include\Server.h
+		Include\NetLib\Server.h = Include\NetLib\Server.h
 	EndProjectSection
 EndProject
 Global

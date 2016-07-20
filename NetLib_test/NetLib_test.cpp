@@ -2,8 +2,8 @@
 #include "CppUnitTest.h"
 
 
-#include "Server.h"
-#include "Client.h"
+#include "NetLib.h"
+using namespace NetLib::NetErrCodes;
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -31,14 +31,14 @@ namespace NetLib_test
 		TEST_METHOD(NetLibInitDispose)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");
@@ -48,10 +48,10 @@ namespace NetLib_test
 		TEST_METHOD(ServerCreateDelete)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 
@@ -60,16 +60,16 @@ namespace NetLib_test
 
 
 			err = server.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping server.");
 			Logger::WriteMessage("Server stopped OK.");
 
 
 			err = server.Start(32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error restarting server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error restarting server.");
 			Logger::WriteMessage("Server restarted OK.");
 
 			err = server.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping server.");
 			Logger::WriteMessage("Server stopped OK.");
 
 
@@ -78,7 +78,7 @@ namespace NetLib_test
 
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");
@@ -88,10 +88,10 @@ namespace NetLib_test
 		TEST_METHOD(ServerCreateTwice)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 
@@ -99,23 +99,23 @@ namespace NetLib_test
 			Logger::WriteMessage("First server is initialized.");
 
 			err = server1.Start(32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error starting server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error starting server.");
 			Logger::WriteMessage("First server started.");
 
 			NetLib::Server server2(nullptr, nullptr, nullptr);
 			Logger::WriteMessage("Second server is initialized.");
 
 			err = server2.Start(32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_cantBindSocket, L"Second server started OK but should fail.");
+			Assert::IsTrue(err == neterr_cantBindSocket, L"Second server started OK but should fail.");
 			Logger::WriteMessage("Second server failed to start.");
 
 
 			err = server1.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping first server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping first server.");
 			Logger::WriteMessage("First server stopped OK.");
 
 			err = server2.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping second server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping second server.");
 			Logger::WriteMessage("Second server stopped OK.");
 
 
@@ -124,7 +124,7 @@ namespace NetLib_test
 
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");
@@ -134,10 +134,10 @@ namespace NetLib_test
 		TEST_METHOD(ClientTryConnect)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 
@@ -146,12 +146,12 @@ namespace NetLib_test
 
 
 			err = client.Connect("127.0.0.1", 1);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_connectionRefused, L"Connection should be refused but it succeeded.");
+			Assert::IsTrue(err == neterr_connectionRefused, L"Connection should be refused but it succeeded.");
 			Logger::WriteMessage("Connection has been successfully refused.");
 
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");
@@ -161,10 +161,10 @@ namespace NetLib_test
 		TEST_METHOD(CheckIsListening)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 
@@ -174,13 +174,13 @@ namespace NetLib_test
 
 
 			err = server.Start(32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error starting server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error starting server.");
 			Assert::IsTrue(server.IsListening(), L"Server is not listening after start.");
 			Logger::WriteMessage("Server is started and is listening.");
 
 
 			err = server.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping server.");
 
 			// Wait some time to stop the server
 			Sleep(100);
@@ -190,7 +190,7 @@ namespace NetLib_test
 
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");
@@ -200,34 +200,34 @@ namespace NetLib_test
 		TEST_METHOD(SendToServer)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 
 			receivedSomething = false;
 			NetLib::Server server(nullptr, nullptr, OnClientDataReceived);
 			err = server.Start(32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error starting server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error starting server.");
 			Logger::WriteMessage("Server is started.");
 
 
 			NetLib::Client client;
 			err = client.Connect("127.0.0.1", 32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error connecting to server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error connecting to server.");
 			Logger::WriteMessage("Client connected.");
 
 
 			std::string testMessage = "Hello, world!";
 			err = client.Send(testMessage.c_str(), (int)testMessage.size());
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error sending test message to server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error sending test message to server.");
 			Logger::WriteMessage("Test message sent.");
 
 
 			err = client.Disconnect();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disconnecting client from server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disconnecting client from server.");
 			Logger::WriteMessage("Client disconnected.");
 
 
@@ -239,7 +239,7 @@ namespace NetLib_test
 			Logger::WriteMessage("Message received correct.");
 
 			err = server.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping server.");
 
 
 			// Wait some time to stop the server
@@ -247,7 +247,7 @@ namespace NetLib_test
 
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");
@@ -256,23 +256,23 @@ namespace NetLib_test
 		TEST_METHOD(SendToClient)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 
 			receivedSomething = false;
 			NetLib::Server server(OnClientAccepted, nullptr, OnClientDataReceived);
 			err = server.Start(32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error starting server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error starting server.");
 			Logger::WriteMessage("Server is started.");
 
 
 			NetLib::Client client;
 			err = client.Connect("127.0.0.1", 32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error connecting to server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error connecting to server.");
 			Logger::WriteMessage("Client connected.");
 
 
@@ -281,7 +281,7 @@ namespace NetLib_test
 
 			std::string testMessage = "Hello, world!";
 			err = server.SendToClient(clientId, testMessage.c_str(), (int)testMessage.size());
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error sending test message to client.");
+			Assert::IsTrue(err == neterr_noErr, L"Error sending test message to client.");
 			Logger::WriteMessage("Test message sent.");
 
 
@@ -299,12 +299,12 @@ namespace NetLib_test
 
 
 			err = client.Disconnect();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disconnecting client from server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disconnecting client from server.");
 			Logger::WriteMessage("Client disconnected.");
 
 
 			err = server.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping server.");
 
 
 			// Wait some time to stop the server
@@ -312,7 +312,7 @@ namespace NetLib_test
 
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");
@@ -321,23 +321,23 @@ namespace NetLib_test
 		TEST_METHOD(CheckClientExists)
 		{
 			Logger::WriteMessage("--- START ---");
-			NetLib::NetErrCode err;
+			NetErrCode err;
 
 			err = NetLib::Net::Init();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error initializing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error initializing NetLib.");
 			Logger::WriteMessage("NetLib is initialized.");
 
 
 			receivedSomething = false;
 			NetLib::Server server(OnClientAccepted, nullptr, nullptr);
 			err = server.Start(32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error starting server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error starting server.");
 			Logger::WriteMessage("Server is started.");
 
 
 			NetLib::Client client;
 			err = client.Connect("127.0.0.1", 32167);
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error connecting to server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error connecting to server.");
 			Logger::WriteMessage("Client connected.");
 
 
@@ -351,12 +351,12 @@ namespace NetLib_test
 
 
 			err = client.Disconnect();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disconnecting client from server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disconnecting client from server.");
 			Logger::WriteMessage("Client disconnected.");
 
 
 			err = server.Stop();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error stopping server.");
+			Assert::IsTrue(err == neterr_noErr, L"Error stopping server.");
 
 
 			// Wait some time to stop the server
@@ -364,7 +364,7 @@ namespace NetLib_test
 
 
 			err = NetLib::Net::Dispose();
-			Assert::IsTrue(err == NetLib::NetErrCode::neterr_noErr, L"Error disposing NetLib.");
+			Assert::IsTrue(err == neterr_noErr, L"Error disposing NetLib.");
 			Logger::WriteMessage("NetLib is disposed.");
 
 			Logger::WriteMessage("--- FINISH ---");

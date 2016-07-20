@@ -24,15 +24,10 @@
 // Manifest constant for shutdown()
 #define SD_BOTH	0x02
 
-// Macro to initialize NetLib
-#define NETINIT NetLib::Net::Init()
-
-// Macro to dispose NetLib
-#define NETDISPOSE NetLib::Net::Dispose()
-
 
 namespace NetLib
 {
+	using namespace NetLib::NetErrCodes;
 
 	// Class that contains common network functions for client and server
 	class Net

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 {
 	CreateDirectory("Logs", nullptr);
 	LOGINIT("Logs\\Server.log", "NetLib Server", "NetLib_server_sample.exe");
-	NETINIT;
+	NETINIT();
 
 	LOG("main()");
 	NetErrCode err;
@@ -39,8 +39,6 @@ int main(int argc, char *argv[])
 	{
 		echo("Server start error: ", err, ".");
 		std::getchar();
-		NETDISPOSE;
-		LOGDISPOSE;
 		return 0;
 	}
 	echo("Server started OK.");
@@ -65,11 +63,6 @@ int main(int argc, char *argv[])
 	else
 		echo("Server stopped OK.");
 	std::getchar();
-
-	// Finish
-
-	NETDISPOSE;
-	LOGDISPOSE;
 
 	return 0;
 }

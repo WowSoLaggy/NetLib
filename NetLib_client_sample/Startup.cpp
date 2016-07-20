@@ -1,28 +1,24 @@
 #include "stdafx.h"
 
-#include "Client.h"
-
-
-using namespace NetLib;
+#include "NetLib.h"
+using namespace NetLib::NetErrCodes;
 
 
 int main(int argc, char *argv[])
 {
 	CreateDirectory("Logs", nullptr);
 	LOGINIT("Logs\\Client.log", "NetLib Client", "NetLib_client_sample.exe");
-	NETINIT;
+	NETINIT();
 
 	LOG("main()");
 	NetErrCode err;
 
-	Client client;
+	NetLib::Client client;
 	err = client.Connect("127.0.0.1", 32167);
 	if (err != neterr_noErr)
 	{
 		echo("Connect error: ", err, ".");
 		std::getchar();
-		NETDISPOSE;
-		LOGDISPOSE;
 		return 0;
 	}
 	echo("Connect OK.");
@@ -67,11 +63,6 @@ int main(int argc, char *argv[])
 	else
 		echo("Disconnect OK");
 	std::getchar();
-
-	// Finish
-
-	NETDISPOSE;
-	LOGDISPOSE;
 
 	return 0;
 }
