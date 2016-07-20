@@ -17,6 +17,7 @@
 #include <string>
 #include <functional>
 #include <algorithm>
+#include <thread>
 
 #include "NetErrCodes.h"
 #include "Net.h"
@@ -153,14 +154,8 @@ namespace NetLib
 
 			m_isRunning = true;
 			m_receiveBuffer.resize(Net::GetBufferSize());
-			HANDLE hThread = CreateThread(NULL, 0, MainLoopThreadStarter, this, CREATE_SUSPENDED, NULL);
-			if (hThread == nullptr)
-			{
-				echo("ERROR: Can't create listen thread.");
-				Net::CloseSocket(m_sockListen);
-				return neterr_cantCreateThread;
-			}
-			ResumeThread(hThread);
+			std::thread thread(&Server::MainLoop, this);
+			thread.detach();
 
 			return neterr_noErr;
 		}
@@ -279,19 +274,6 @@ namespace NetLib
 				m_onClientDisconnected(pClientId);
 
 			return neterr_noErr;
-		}
-
-
-
-		// Static main loop starter
-		// Params:
-		// [in] LPVOID pParam	- pointer to the Server class instance
-		static DWORD WINAPI MainLoopThreadStarter(LPVOID pParam)
-		{
-			if (pParam == nullptr)
-				return -1;
-			((Server *)pParam)->MainLoop();
-			return 0;
 		}
 
 

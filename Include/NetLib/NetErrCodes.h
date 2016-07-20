@@ -18,7 +18,6 @@ namespace NetLib
 			neterr_cantSetSocketOptions,
 			neterr_cantBindSocket,
 			neterr_cantStartListen,
-			neterr_cantCreateThread,
 			neterr_cantConnect,
 			neterr_connectionRefused,
 			neterr_connectionTimedOut,
