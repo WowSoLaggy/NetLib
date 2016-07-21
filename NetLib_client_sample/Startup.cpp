@@ -4,6 +4,14 @@
 using namespace NetLib::NetErrCodes;
 
 
+void OnReceivedFromServer(char *pData, int pDataLength)
+{
+	LOG("OnReceivedFromServer()");
+	std::string text(pData, pDataLength);
+	echo("Server: \"", text.c_str(), "\"");
+}
+
+
 int main(int argc, char *argv[])
 {
 	CreateDirectory("Logs", nullptr);
@@ -13,7 +21,7 @@ int main(int argc, char *argv[])
 	LOG("main()");
 	NetErrCode err;
 
-	NetLib::Client client;
+	NetLib::Client client(OnReceivedFromServer);
 	err = client.Connect("127.0.0.1", 32167);
 	if (err != neterr_noErr)
 	{
@@ -23,34 +31,15 @@ int main(int argc, char *argv[])
 	}
 	echo("Connect OK.");
 
-	echo("Enter text to send to the server. Enter 'q' to quit. Enter 'r' to try to receive.");
+	echo("Enter text to send to the server. Enter 'q' to quit.");
 	while (true)
 	{
 		std::string line;
 		std::getline(std::cin, line);
 		if (line.compare("q") == 0)
 			break;
-		if (line.compare("r") == 0)
-		{
-			std::vector<char> buffer(1024);
-			int bytesReceived = 0;
-			err = client.Receive(&buffer[0], (int)buffer.size(), bytesReceived);
-			if (err != neterr_noErr)
-				echo("Error receiving data: ", err, ".");
-			else
-			{
-				if (bytesReceived != 0)
-				{
-					std::string str = std::string(buffer.data(), bytesReceived);
-					echo(str);
-				}
-				else
-					echo("Nothing to receive.");
-			}
-			continue;
-		}
-
-		err = client.Send(line.c_str(), (int)line.size());
+		
+		err = client.SendToServer(line.c_str(), (int)line.size());
 		if (err == neterr_noErr)
 			echo("Sent ", line.size(), " bytes.");
 		else
@@ -59,9 +48,9 @@ int main(int argc, char *argv[])
 
 	err = client.Disconnect();
 	if (err != neterr_noErr)
-		echo("Disconnect error: ", err);
+		echo("Disconnect error: ", err, ".");
 	else
-		echo("Disconnect OK");
+		echo("Disconnect OK.");
 	std::getchar();
 
 	return 0;

@@ -13,7 +13,7 @@ namespace NetLib_test
 {
 	volatile bool receivedSomething;
 	std::string receivedText;
-	void OnClientDataReceived(CLIENTID pClientId, char *pData, int pDataLength)
+	void OnReceivedDataFromClient(CLIENTID pClientId, char *pData, int pDataLength)
 	{
 		receivedSomething = true;
 		receivedText = std::string(pData, pDataLength);
@@ -22,6 +22,11 @@ namespace NetLib_test
 	void OnClientAccepted(CLIENTID pClientId, std::string pClientAddress, int pClientPort)
 	{
 		clientId = pClientId;
+	}
+	void OnReceivedDataFromServer(char *pData, int pDataLength)
+	{
+		receivedSomething = true;
+		receivedText = std::string(pData, pDataLength);
 	}
 
 	TEST_CLASS(NetLib_test)
@@ -141,7 +146,7 @@ namespace NetLib_test
 			Logger::WriteMessage("NetLib is initialized.");
 
 
-			NetLib::Client client;
+			NetLib::Client client(OnReceivedDataFromServer);
 			Logger::WriteMessage("Client is created.");
 
 
@@ -208,20 +213,20 @@ namespace NetLib_test
 
 
 			receivedSomething = false;
-			NetLib::Server server(nullptr, nullptr, OnClientDataReceived);
+			NetLib::Server server(nullptr, nullptr, OnReceivedDataFromClient);
 			err = server.Start(32167);
 			Assert::IsTrue(err == neterr_noErr, L"Error starting server.");
 			Logger::WriteMessage("Server is started.");
 
 
-			NetLib::Client client;
+			NetLib::Client client(OnReceivedDataFromServer);
 			err = client.Connect("127.0.0.1", 32167);
 			Assert::IsTrue(err == neterr_noErr, L"Error connecting to server.");
 			Logger::WriteMessage("Client connected.");
 
 
 			std::string testMessage = "Hello, world!";
-			err = client.Send(testMessage.c_str(), (int)testMessage.size());
+			err = client.SendToServer(testMessage.c_str(), (int)testMessage.size());
 			Assert::IsTrue(err == neterr_noErr, L"Error sending test message to server.");
 			Logger::WriteMessage("Test message sent.");
 
@@ -264,13 +269,13 @@ namespace NetLib_test
 
 
 			receivedSomething = false;
-			NetLib::Server server(OnClientAccepted, nullptr, OnClientDataReceived);
+			NetLib::Server server(OnClientAccepted, nullptr, OnReceivedDataFromClient);
 			err = server.Start(32167);
 			Assert::IsTrue(err == neterr_noErr, L"Error starting server.");
 			Logger::WriteMessage("Server is started.");
 
 
-			NetLib::Client client;
+			NetLib::Client client(OnReceivedDataFromServer);
 			err = client.Connect("127.0.0.1", 32167);
 			Assert::IsTrue(err == neterr_noErr, L"Error connecting to server.");
 			Logger::WriteMessage("Client connected.");
@@ -287,13 +292,8 @@ namespace NetLib_test
 
 			Sleep(100); // wait for data receive
 
-			receivedText.resize(1024);
-			int bytesReceived = 0;
-			client.Receive(&receivedText[0], (int)receivedText.size(), bytesReceived);
-			receivedText.resize(bytesReceived);
 
-
-			Assert::IsTrue(bytesReceived != 0, L"Didn't receive test message.");
+			Assert::IsTrue(receivedSomething, L"Didn't receive test message.");
 			Assert::IsTrue(receivedText.compare(testMessage) == 0, L"Received message doesn't match.");
 			Logger::WriteMessage("Message received correct.");
 
@@ -335,7 +335,7 @@ namespace NetLib_test
 			Logger::WriteMessage("Server is started.");
 
 
-			NetLib::Client client;
+			NetLib::Client client(OnReceivedDataFromServer);
 			err = client.Connect("127.0.0.1", 32167);
 			Assert::IsTrue(err == neterr_noErr, L"Error connecting to server.");
 			Logger::WriteMessage("Client connected.");

@@ -21,17 +21,28 @@
 namespace NetLib
 {
 
+	// Typedef for the data received callback
+	typedef std::function<void(char *pData, int pDataLength)> ClientCb_ReceivedFromServer;
+
+
 	// Class that connects to the server with
 	// the given address, sends and receives data
 	class Client
 	{
 	public:
 
-		// Default ctor
-		Client() { }
+		// Creates a new client instance
+		// Params:
+		// [in] ClientCb_ReceivedFromServer pOnReceivedFromServer	- callback that is called when the new data is received from the server
+		Client(ClientCb_ReceivedFromServer pOnReceivedFromServer)
+			: m_onReceivedFromServer(pOnReceivedFromServer)
+		{
+		}
 
-		// Default dtor
+
+		//
 		virtual ~Client() { }
+
 
 
 		// Connects to the remote server with the given address
@@ -97,6 +108,13 @@ namespace NetLib
 				return neterr_cantConnect;
 			}
 
+			// Start mainloop thread
+
+			m_isRunning = true;
+			m_receiveBuffer.resize(Net::GetBufferSize());
+			std::thread mainThread(&Client::MainLoop, this);
+			mainThread.detach();
+
 			return neterr_noErr;
 		}
 
@@ -104,16 +122,7 @@ namespace NetLib
 		// Disconnects from the remote server
 		NetErrCode Disconnect()
 		{
-			LOG("Client::Disconnect()");
-			NetErrCode err;
-
-			err = Net::CloseSocket(m_sockClient);
-			if (err != neterr_noErr)
-			{
-				echo("ERROR: Can't close client socket.");
-				return err;
-			}
-
+			m_isRunning = false;
 			return neterr_noErr;
 		}
 
@@ -123,9 +132,9 @@ namespace NetLib
 		// Params:
 		// [in] const char * pData	- data to send to the remote server
 		// [in] int pSizeInBytes	- size of the data to be sent
-		NetErrCode Send(const char *pData, int pSizeInBytes)
+		NetErrCode SendToServer(const char *pData, int pSizeInBytes)
 		{
-			LOG("Client::Send()");
+			LOG("Client::SendToServer()");
 			NetErrCode err;
 
 			err = Net::Send(m_sockClient, pData, pSizeInBytes);
@@ -139,17 +148,47 @@ namespace NetLib
 		}
 
 
-		// Tries to receive data from the remote server if any
-		// Params:
-		// [in]  char * pBuffer				- buffer to receive data to
-		// [in]  int pBufferSize			- length of the buffer to receive data to
-		// [out] int & pReceivedDataLength	- length of the received data (can be 0 if nothing to receive)
-		NetErrCode Receive(char *pBuffer, int pBufferSize, int &pReceivedDataLength)
-		{
-			LOG("Client::Receive()");
-			int res;
 
-			pReceivedDataLength = 0;
+	protected:
+
+
+		std::atomic_bool m_isRunning;						// Variable used to stop the client
+		SOCKET m_sockClient;								// Socket to connect to the remote server
+		std::vector<char> m_receiveBuffer;					// Buffer to receive data to
+
+		ClientCb_ReceivedFromServer m_onReceivedFromServer;	// Callback that is called when the new data is received from the server
+
+
+
+		// Main loop that repeats until the client is stopped
+		void MainLoop()
+		{
+			LOG("Client::MainLoop()");
+			NetErrCode err;
+
+			while (true)
+			{
+				if (!m_isRunning)
+					break;
+
+				TryReceive();
+
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			}
+
+			err = Net::CloseSocket(m_sockClient);
+			if (err != neterr_noErr)
+				echo("ERROR: Can't close client socket.");
+		}
+
+
+
+		// Tries to receive data from the remote server if any
+		void TryReceive()
+		{
+			LOG("Client::TryReceive()");
+			NetErrCode err;
+			int res;
 
 			fd_set fds;	// File descriptors set
 			timeval timeout;
@@ -168,43 +207,43 @@ namespace NetLib
 			if (res == 0)
 			{
 				// Nothing to receive
-				return neterr_noErr;
+				return;
 			}
 			else if (res == SOCKET_ERROR)
 			{
 				echo("ERROR: Unknown error occurred while selecting socket.");
-				return neterr_cantSelect;
+				return;
 			}
 
 			if (!FD_ISSET(m_sockClient, &fds))
 			{
 				// Strange but OK
-				return neterr_noErr;
+				return;
 			}
 
-			int bytesReceived = recv(m_sockClient, pBuffer, pBufferSize, 0);
+			int bytesReceived = recv(m_sockClient, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
+			if (bytesReceived > 0)
+			{
+				if (m_onReceivedFromServer != nullptr)
+					m_onReceivedFromServer(m_receiveBuffer.data(), bytesReceived);
+
+				return;
+			}
 
 			if (bytesReceived == SOCKET_ERROR)
 			{
-				echo("ERROR: Can't receive data.");
-				return neterr_cantReceive;
+				// Connection error or forced hard-close. Disconnect
+				echo("ERROR: Error receiving data. Force disconnect.");
 			}
 			else if (bytesReceived == 0)
 			{
 				// Connection has been gracefully closed. Not an error
-				return neterr_connectionClosed;
 			}
 
-			pReceivedDataLength = bytesReceived;
-
-			return neterr_noErr;
+			err = Disconnect();
+			if (err != neterr_noErr)
+				echo("ERROR: Can't disconnect.");
 		}
-
-
-	protected:
-
-
-		SOCKET m_sockClient;	// Socket to connect to the remote server
 	};
 
 } // NetLib

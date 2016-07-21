@@ -18,6 +18,7 @@
 #include <functional>
 #include <algorithm>
 #include <thread>
+#include <atomic>
 
 #include "NetErrCodes.h"
 #include "Net.h"
@@ -28,13 +29,13 @@ namespace NetLib
 {
 
 	// Typedef for the client accepted callback
-	typedef std::function<void(CLIENTID pClientId, const std::string &pClientAddress, int pClientPort)> ClientAcceptCallback;
+	typedef std::function<void(CLIENTID pClientId, const std::string &pClientAddress, int pClientPort)> ServerCb_ClientAccepted;
 
 	// Typedef for the client disconnected callback
-	typedef std::function<void(CLIENTID pClientId)> ClientDisconnectCallback;
+	typedef std::function<void(CLIENTID pClientId)> ServerCb_ClientDiconnected;
 
 	// Typedef for the data received callback
-	typedef std::function<void(CLIENTID pClientId, char *pData, int pDataLength)> ReceiveFromClientCallback;
+	typedef std::function<void(CLIENTID pClientId, char *pData, int pDataLength)> ServerCb_ReceivedFromClient;
 
 
 	// Class that starts server on the given port,
@@ -46,19 +47,19 @@ namespace NetLib
 
 		// Creates a new server instance
 		// Params:
-		// [in] ClientAcceptCallback pOnClientAccepted			- callback that is called when the new client is accepted
-		// [in] ClientDisconnectCallback pOnClientDisconnected	- callback that is called when the client is disconnected
-		// [in] ReceiveFromClientCallback pOnClientDataReceived	- callback taht is called when the new data is received from the client
+		// [in] ServerCb_ClientAccepted pOnClientAccepted			- callback that is called when the new client is accepted
+		// [in] ServerCb_ClientDiconnected pOnClientDisconnected	- callback that is called when the client is disconnected
+		// [in] ServerCb_ReceivedFromClient pOnReceivedFromClient	- callback that is called when the new data is received from the client
 		Server(
-			ClientAcceptCallback pOnClientAccepted,
-			ClientDisconnectCallback pOnClientDisconnected,
-			ReceiveFromClientCallback pOnReceiveFromClient)
-			: m_onClientAccepted(pOnClientAccepted), m_onClientDisconnected(pOnClientDisconnected), m_onReceiveFromClient(pOnReceiveFromClient)
+			ServerCb_ClientAccepted pOnClientAccepted,
+			ServerCb_ClientDiconnected pOnClientDisconnected,
+			ServerCb_ReceivedFromClient pOnReceivedFromClient)
+			: m_onClientAccepted(pOnClientAccepted), m_onClientDisconnected(pOnClientDisconnected), m_onReceivedFromClient(pOnReceivedFromClient)
 		{
 		}
 
 		
-		// Default virtual dtor
+		//
 		virtual ~Server() { }
 
 
@@ -152,8 +153,8 @@ namespace NetLib
 
 			m_isRunning = true;
 			m_receiveBuffer.resize(Net::GetBufferSize());
-			std::thread thread(&Server::MainLoop, this);
-			thread.detach();
+			std::thread mainThread(&Server::MainLoop, this);
+			mainThread.detach();
 
 			return neterr_noErr;
 		}
@@ -229,12 +230,13 @@ namespace NetLib
 	protected:
 
 
-		volatile bool m_isRunning;							// Variable used to stop server
+		std::atomic_bool m_isRunning;						// Variable used to stop the server
 		sockaddr_in m_addrListen;							// Address to listen on
 		SOCKET m_sockListen;								// Socket that is used to listen for the pending connections
-		ClientAcceptCallback m_onClientAccepted;			// Callback that is called when the new client is accepted
-		ClientDisconnectCallback m_onClientDisconnected;	// Callback that is called when the client is disconnected
-		ReceiveFromClientCallback m_onReceiveFromClient;	// Callback taht is called when the new data is received from the client
+
+		ServerCb_ClientAccepted m_onClientAccepted;			// Callback that is called when the new client is accepted
+		ServerCb_ClientDiconnected m_onClientDisconnected;	// Callback that is called when the client is disconnected
+		ServerCb_ReceivedFromClient m_onReceivedFromClient;	// Callback that is called when the new data is received from the client
 
 		std::recursive_mutex m_clientsLock;					// Mutex to lock access to the m_clients vector
 		std::vector<ClientData> m_clients;					// Vector of connected clients
@@ -385,11 +387,10 @@ namespace NetLib
 				}
 
 				int bytesReceived = recv(it->Id, m_receiveBuffer.data(), Net::GetBufferSize(), 0);
-
 				if (bytesReceived > 0)
 				{
-					if (m_onReceiveFromClient != nullptr)
-						m_onReceiveFromClient(it->Id, m_receiveBuffer.data(), bytesReceived);
+					if (m_onReceivedFromClient != nullptr)
+						m_onReceivedFromClient(it->Id, m_receiveBuffer.data(), bytesReceived);
 
 					++it;
 					continue;

@@ -17,12 +17,13 @@ void OnClientDisconnected(CLIENTID pClientId)
 	LOG("OnClientDisconnected()");
 	echo("Disconnected id: ", pClientId);
 }
-void OnClientDataReceived(CLIENTID pClientId, char *pData, int pDataLength)
+void OnReceivedFromClient(CLIENTID pClientId, char *pData, int pDataLength)
 {
-	LOG("OnClientDataReceived()");
+	LOG("OnReceivedFromClient()");
 	std::string text(pData, pDataLength);
 	echo(pClientId, ": \"", text.c_str(), "\"");
 }
+
 
 int main(int argc, char *argv[])
 {
@@ -33,7 +34,7 @@ int main(int argc, char *argv[])
 	LOG("main()");
 	NetErrCode err;
 
-	Server server(OnClientAccepted, OnClientDisconnected, OnClientDataReceived);
+	Server server(OnClientAccepted, OnClientDisconnected, OnReceivedFromClient);
 	err = server.Start(32167);
 	if (err != neterr_noErr)
 	{
@@ -43,6 +44,7 @@ int main(int argc, char *argv[])
 	}
 	echo("Server started OK.");
 
+	echo("Enter text to send to the last connected client. Enter 'q' to quit.");
 	while (true)
 	{
 		std::string line;
