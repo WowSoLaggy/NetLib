@@ -53,10 +53,8 @@ namespace NetLib
 			ClientAcceptCallback pOnClientAccepted,
 			ClientDisconnectCallback pOnClientDisconnected,
 			ReceiveFromClientCallback pOnReceiveFromClient)
+			: m_onClientAccepted(pOnClientAccepted), m_onClientDisconnected(pOnClientDisconnected), m_onReceiveFromClient(pOnReceiveFromClient)
 		{
-			m_onClientAccepted = pOnClientAccepted;
-			m_onClientDisconnected = pOnClientDisconnected;
-			m_onReceiveFromClient = pOnReceiveFromClient;
 		}
 
 		
@@ -77,7 +75,7 @@ namespace NetLib
 		// [in] CLIENTID pClient	- Id of the client to check existance for
 		bool CheckClientExists(CLIENTID pClientId)
 		{
-			std::unique_lock<std::mutex> lock(m_clientsLock);
+			std::unique_lock<std::recursive_mutex> lock(m_clientsLock);
 
 			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
 			if (it == m_clients.end())
@@ -191,7 +189,7 @@ namespace NetLib
 			err = Net::Send(pClientId, pData, pDataLength);
 			if (err != neterr_noErr)
 			{
-				echo("ERROR: Can't send data to client: ", pClientId);
+				echo("ERROR: Can't send data to client: ", pClientId, ".");
 				return err;
 			}
 
@@ -207,12 +205,12 @@ namespace NetLib
 			LOG("Server::DisconnectClient()");
 			NetErrCode err;
 
-			std::unique_lock<std::mutex> lock(m_clientsLock);
+			std::unique_lock<std::recursive_mutex> lock(m_clientsLock);
 
 			auto it = std::find_if(m_clients.begin(), m_clients.end(), [&pClientId](const auto &client) { return client.Id == pClientId; });
 			if (it == m_clients.end())
 			{
-				echo("ERROR: Can't find client to disconnect: ", pClientId);
+				echo("ERROR: Can't find client to disconnect: ", pClientId, ".");
 				return neterr_noSuchClient;
 			}
 
@@ -220,7 +218,7 @@ namespace NetLib
 			err = DisconnectClient_Internal(pClientId);
 			if (err != neterr_noErr)
 			{
-				echo("ERROR: Can't disconnect client: ", pClientId);
+				echo("ERROR: Can't disconnect client: ", pClientId, ".");
 				return neterr_errorDisconnecting;
 			}
 
@@ -238,7 +236,7 @@ namespace NetLib
 		ClientDisconnectCallback m_onClientDisconnected;	// Callback that is called when the client is disconnected
 		ReceiveFromClientCallback m_onReceiveFromClient;	// Callback taht is called when the new data is received from the client
 
-		std::mutex m_clientsLock;							// Mutex to lock access to the m_clients vector
+		std::recursive_mutex m_clientsLock;					// Mutex to lock access to the m_clients vector
 		std::vector<ClientData> m_clients;					// Vector of connected clients
 		std::vector<char> m_receiveBuffer;					// Buffer to receive data to
 
@@ -292,7 +290,7 @@ namespace NetLib
 				TryAccept();
 				TryReceive();
 
-				Sleep(1);
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			}
 
 			err = Net::CloseSocket(m_sockListen);	// Stop listen
@@ -320,17 +318,17 @@ namespace NetLib
 				clientData = ClientData(sockClient, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 				{
-					std::unique_lock<std::mutex> lock(m_clientsLock);
+					std::unique_lock<std::recursive_mutex> lock(m_clientsLock);
 
 					// Add to m_clients only if it is not there already
 					auto it = std::find_if(m_clients.begin(), m_clients.end(), [&sockClient](const auto &client) { return client.Id == sockClient; });
 					if (it == m_clients.end())
 						m_clients.push_back(clientData);
-				}
 
-				// Accepted someone
-				if (m_onClientAccepted != nullptr)
-					m_onClientAccepted(clientData.Id, clientData.Address, clientData.Port);
+					// Accepted someone
+					if (m_onClientAccepted != nullptr)
+						m_onClientAccepted(clientData.Id, clientData.Address, clientData.Port);
+				}
 			}
 		}
 
@@ -342,7 +340,7 @@ namespace NetLib
 			int res;
 			NetErrCode err;
 
-			std::unique_lock<std::mutex> lock(m_clientsLock);
+			std::unique_lock<std::recursive_mutex> lock(m_clientsLock);
 
 			if (m_clients.size() == 0)
 			{
@@ -399,12 +397,12 @@ namespace NetLib
 
 				if (bytesReceived == SOCKET_ERROR)
 				{
-					// Connection error or forced hard-close
+					// Connection error or forced hard-close. Disconnect
 					echo("ERROR: Error receiving data. Force disconnect (client id: ", it->Id, ").");
 				}
 				else if (bytesReceived == 0)
 				{
-					// Connection has been gracefully closed. Not an error
+					// Connection has been gracefully closed. Not an error, just disconnect
 				}
 
 				err = DisconnectClient_Internal(it->Id);
@@ -424,7 +422,7 @@ namespace NetLib
 			NetErrCode err;
 
 			{
-				std::unique_lock<std::mutex> lock(m_clientsLock);
+				std::unique_lock<std::recursive_mutex> lock(m_clientsLock);
 
 				for (auto &client : m_clients)
 				{
