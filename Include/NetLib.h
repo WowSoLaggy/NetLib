@@ -17,6 +17,8 @@
 #include "NetLib/ClientData.h"
 #include "NetLib/Client.h"
 #include "NetLib/Net.h"
+#include "NetLib/HttpServer.h"
+#include "NetLib/HttpClient.h"
 
 
 #endif // NETLIB_H
