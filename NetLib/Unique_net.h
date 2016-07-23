@@ -8,8 +8,8 @@
 
 #pragma once
 
-#ifndef NETLIB_NETINIT_H
-#define NETLIB_NETINIT_H
+#ifndef NETLIB_UNIQUE_NET_H
+#define NETLIB_UNIQUE_NET_H
 
 
 #include "Net.h"
@@ -44,4 +44,4 @@ namespace NetLib
 } // ns NetLib
 
 
-#endif // NETLIB_NETINIT_H
+#endif // NETLIB_UNIQUE_NET_H

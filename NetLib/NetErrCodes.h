@@ -33,7 +33,7 @@ namespace NetLib
 		};
 
 	} // ns NetErrCode_Wrapper
-} // NetLib
+} // ns NetLib
 
 
 #endif // NETLIB_NETERRCODES_H

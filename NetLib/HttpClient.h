@@ -4,15 +4,14 @@
 #define NETLIB_HTTPCLIENT_H
 
 
-class HttpClient
+namespace NetLib
 {
-public:
 
-	HttpClient()
+	class HttpClient
 	{
-		throw "Not implemented yet";
-	}
-};
+	};
+
+} // ns NetLib
 
 
 #endif // NETLIB_HTTPCLIENT_H

@@ -4,6 +4,7 @@
 #define STDAFX_H
 
 
+#include "Log.h"
 #include "NetLib.h"
 
 

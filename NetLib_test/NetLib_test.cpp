@@ -3,6 +3,7 @@
 
 
 #include "NetLib.h"
+using namespace NetLib;
 using namespace NetLib::NetErrCodes;
 
 

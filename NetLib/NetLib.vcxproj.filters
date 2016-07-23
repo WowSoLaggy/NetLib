@@ -4,5 +4,78 @@
     <Filter Include="src">
       <UniqueIdentifier>{c088a712-458c-4341-9f77-650213e855ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Server">
+      <UniqueIdentifier>{f8243d37-f181-44c3-b1b3-851ebca06795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Client">
+      <UniqueIdentifier>{6d58b633-9967-4cd5-a7b3-1d54466f2e29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\HttpServer">
+      <UniqueIdentifier>{75f11cb0-d568-4790-b94c-0b061232ecb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\HttpClient">
+      <UniqueIdentifier>{b253e10b-e9e0-43cf-92be-6402c5c85b4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Common">
+      <UniqueIdentifier>{d1afa34f-f991-4bfe-9926-fde1e18c7198}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Uri">
+      <UniqueIdentifier>{415612b9-a44b-48af-a789-cd7342038e46}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>src\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>src\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpClient.h">
+      <Filter>src\HttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpServer.h">
+      <Filter>src\HttpServer</Filter>
+    </ClInclude>
+    <ClInclude Include="Net.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientData.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="NetErrCodes.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Unique_net.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="NetLib.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="Uri.h">
+      <Filter>src\Uri</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocols.h">
+      <Filter>src\Uri</Filter>
+    </ClInclude>
+    <ClInclude Include="Credentials.h">
+      <Filter>src\Uri</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Net.cpp">
+      <Filter>src\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Uri.cpp">
+      <Filter>src\Uri</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>src\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>src\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpServer.cpp">
+      <Filter>src\HttpServer</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

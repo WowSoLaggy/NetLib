@@ -11,15 +11,15 @@
 #define NETLIB_H
 
 
-#include "NetLib/NetInit.h"
-#include "NetLib/NetErrCodes.h"
-#include "NetLib/Server.h"
-#include "NetLib/ClientData.h"
-#include "NetLib/Client.h"
-#include "NetLib/Net.h"
-#include "NetLib/HttpServer.h"
-#include "NetLib/HttpClient.h"
-#include "NetLib/Uri.h"
+#include "Unique_net.h"
+#include "NetErrCodes.h"
+#include "Server.h"
+#include "ClientData.h"
+#include "Client.h"
+#include "Net.h"
+#include "HttpServer.h"
+#include "HttpClient.h"
+#include "Uri.h"
 
 
 #endif // NETLIB_H

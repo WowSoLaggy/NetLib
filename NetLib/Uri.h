@@ -7,39 +7,12 @@
 #include <string>
 
 #include "NetErrCodes.h"
+#include "Protocols.h"
+#include "Credentials.h"
 
 
 namespace NetLib
 {
-
-	enum Protocol : int
-	{
-		prot_unknown = 0,
-
-		prot_http,
-		prot_ftp,
-		prot_rtsp,
-
-		prot_end
-	};
-
-	
-	struct Credentials
-	{
-		Credentials()
-			: UserName(""), Password("")
-		{
-		}
-
-		Credentials(const std::string &pUserName, const std::string &pPassword)
-			: UserName(pUserName), Password(pPassword)
-		{
-		}
-
-		std::string UserName;
-		std::string Password;
-	};
-
 
 	class Uri
 	{
@@ -104,13 +77,12 @@ namespace NetLib
 
 		void ParseFromString(const std::string &pUriString)
 		{
-			neterr_noErr;
 		}
 
 
 		void CopyProtocolToStr()
 		{
-			m_protocolStr = c_ProtocolStrings[m_protocol];
+			m_protocolStr = g_ProtocolStrings[m_protocol];
 		}
 
 		void CopyProtocolFromStr()
@@ -119,7 +91,7 @@ namespace NetLib
 
 			for (int i = 1; i < prot_end; ++i)
 			{
-				if (m_protocolStr.compare(c_ProtocolStrings[i]) == 0)
+				if (m_protocolStr.compare(g_ProtocolStrings[i]) == 0)
 				{
 					m_protocol = (Protocol)i;
 					return;
@@ -131,19 +103,6 @@ namespace NetLib
 		{
 			m_credentialsStr = m_credentials.UserName + ":" + m_credentials.Password;
 		}
-
-	private:
-
-		// Global const data
-
-		const std::vector<std::string> c_ProtocolStrings = {
-			"",
-			"http",
-			"ftp",
-			"rtsp",
-
-			""
-		};
 
 	};
 
