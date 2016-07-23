@@ -65,7 +65,7 @@ namespace NetLib
 
 
 		// Returns whether the server is listening for the incoming connections
-		bool IsListening()
+		bool IsListening() const
 		{
 			return IsListening(m_sockListen);
 		}
@@ -74,7 +74,7 @@ namespace NetLib
 		// Checks whether the client with the given Id exists
 		// Params:
 		// [in] CLIENTID pClient	- Id of the client to check existance for
-		bool CheckClientExists(CLIENTID pClientId)
+		bool CheckClientExists(CLIENTID pClientId) const
 		{
 			std::unique_lock<std::recursive_mutex> lock(m_clientsLock);
 
@@ -216,7 +216,7 @@ namespace NetLib
 			}
 
 			m_clients.erase(it);
-			err = DisconnectClient_Internal(pClientId);
+			err = DisconnectClient_internal(pClientId);
 			if (err != neterr_noErr)
 			{
 				echo("ERROR: Can't disconnect client: ", pClientId, ".");
@@ -238,13 +238,13 @@ namespace NetLib
 		ServerCb_ClientDiconnected m_onClientDisconnected;	// Callback that is called when the client is disconnected
 		ServerCb_ReceivedFromClient m_onReceivedFromClient;	// Callback that is called when the new data is received from the client
 
-		std::recursive_mutex m_clientsLock;					// Mutex to lock access to the m_clients vector
+		mutable std::recursive_mutex m_clientsLock;			// Mutex to lock access to the m_clients vector
 		std::vector<ClientData> m_clients;					// Vector of connected clients
 		std::vector<char> m_receiveBuffer;					// Buffer to receive data to
 
 
 		// Returns whether the given socket is listening for the incoming connections
-		bool IsListening(SOCKET pSocket)
+		bool IsListening(SOCKET pSocket) const
 		{
 			int res;
 
@@ -258,9 +258,9 @@ namespace NetLib
 		// Disconnects the client with the given Id (no mutex lock)
 		// Params:
 		// [in] CLIENTID pClientId	- Id of the client to be disconnected
-		NetErrCode DisconnectClient_Internal(CLIENTID pClientId)
+		NetErrCode DisconnectClient_internal(CLIENTID pClientId)
 		{
-			LOG("Server::DisconnectClient_Internal()");
+			LOG("Server::DisconnectClient_internal()");
 			NetErrCode err;
 
 			err = Net::CloseSocket(pClientId);
@@ -406,7 +406,7 @@ namespace NetLib
 					// Connection has been gracefully closed. Not an error, just disconnect
 				}
 
-				err = DisconnectClient_Internal(it->Id);
+				err = DisconnectClient_internal(it->Id);
 				if (err != neterr_noErr)
 					echo("ERROR: Can't disconnect client: ", it->Id, ".");
 

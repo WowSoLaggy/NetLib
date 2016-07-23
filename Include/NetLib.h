@@ -19,6 +19,7 @@
 #include "NetLib/Net.h"
 #include "NetLib/HttpServer.h"
 #include "NetLib/HttpClient.h"
+#include "NetLib/Uri.h"
 
 
 #endif // NETLIB_H
