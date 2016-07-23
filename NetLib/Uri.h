@@ -18,27 +18,16 @@ namespace NetLib
 	{
 	public:
 
-		Uri()
-			: Uri("", "", "", "", "", "")
-		{
-		}
+		Uri();
 
 		Uri(const std::string &pProtocol, const std::string &pCredentials,
 			const std::string &pHost, const std::string &pPath,
-			const std::string &pParameters, const std::string &pFragment)
-			: m_protocolStr(pProtocol), m_credentialsStr(pCredentials), m_host(pHost), m_path(pPath), m_parameters(pParameters), m_fragment(pFragment)
-		{
-		}
+			const std::string &pParameters, const std::string &pFragment);
 
-		Uri(const std::string &pUriString)
-		{
-			ParseFromString(pUriString);
-		}
-		
+		Uri(const std::string &pUriString);
 
-		virtual ~Uri()
-		{
-		}
+
+		virtual ~Uri();
 
 
 
@@ -54,11 +43,7 @@ namespace NetLib
 		const std::string & GetFragmentStr()	const { return m_fragment; }
 
 
-
-		void Parse(const std::string &pUriString)
-		{
-			ParseFromString(pUriString);
-		}
+		void Parse(const std::string &pUriString);
 
 
 	private:
@@ -75,34 +60,13 @@ namespace NetLib
 		std::string m_fragment;
 
 
-		void ParseFromString(const std::string &pUriString)
-		{
-		}
+		void ParseFromString(const std::string &pUriString);
 
 
-		void CopyProtocolToStr()
-		{
-			m_protocolStr = g_ProtocolStrings[m_protocol];
-		}
-
-		void CopyProtocolFromStr()
-		{
-			m_protocol = (Protocol)0;
-
-			for (int i = 1; i < prot_end; ++i)
-			{
-				if (m_protocolStr.compare(g_ProtocolStrings[i]) == 0)
-				{
-					m_protocol = (Protocol)i;
-					return;
-				}
-			}
-		}
-
-		void CopyCredentialsToStr()
-		{
-			m_credentialsStr = m_credentials.UserName + ":" + m_credentials.Password;
-		}
+		void CopyProtocolToStr();
+		void CopyProtocolFromStr();
+		void CopyCredentialsToStr();
+		void CopyCredentialsFromStr();
 
 	};
 

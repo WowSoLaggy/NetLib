@@ -60,6 +60,9 @@
     <ClInclude Include="Credentials.h">
       <Filter>src\Uri</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Net.cpp">
