@@ -4,6 +4,8 @@
 #define STDAFX_H
 
 
+#include <iostream>
+
 #include "NetLib.h"
 
 

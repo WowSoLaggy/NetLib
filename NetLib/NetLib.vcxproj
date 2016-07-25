@@ -39,6 +39,7 @@
     <ClCompile Include="Net.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Uri.cpp" />
+    <ClCompile Include="Uri_parser.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A0876616-007C-4AAA-9F9E-AA585287CE68}</ProjectGuid>

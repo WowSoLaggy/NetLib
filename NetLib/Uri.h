@@ -21,7 +21,7 @@ namespace NetLib
 		Uri();
 
 		Uri(const std::string &pProtocol, const std::string &pCredentials,
-			const std::string &pHost, const std::string &pPath,
+			const std::string &pHost, const std::string &pPort, const std::string &pPath,
 			const std::string &pParameters, const std::string &pFragment);
 
 		Uri(const std::string &pUriString);
@@ -38,10 +38,17 @@ namespace NetLib
 		const std::string & GetCredentialsStr()	const { return m_credentialsStr; }
 
 		const std::string & GetHostStr()		const { return m_host; }
+
+		int GetPort()							const { return m_port; }
+		const std::string & GetPortStr()		const { return m_portStr; }
+
 		const std::string & GetPathStr()		const { return m_path; }
 		const std::string & GetParametersStr()	const { return m_parameters; }
 		const std::string & GetFragmentStr()	const { return m_fragment; }
 
+
+		std::string ToString() const;
+		std::string ToStringWithCredentials() const;
 
 		void Parse(const std::string &pUriString);
 
@@ -55,6 +62,10 @@ namespace NetLib
 		std::string m_credentialsStr;
 
 		std::string m_host;
+
+		int m_port;
+		std::string m_portStr;
+
 		std::string m_path;
 		std::string m_parameters;
 		std::string m_fragment;
@@ -67,6 +78,8 @@ namespace NetLib
 		void CopyProtocolFromStr();
 		void CopyCredentialsToStr();
 		void CopyCredentialsFromStr();
+		void CopyPortToStr();
+		void CopyPortFromStr();
 
 	};
 

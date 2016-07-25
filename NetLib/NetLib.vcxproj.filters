@@ -80,5 +80,8 @@
     <ClCompile Include="HttpServer.cpp">
       <Filter>src\HttpServer</Filter>
     </ClCompile>
+    <ClCompile Include="Uri_parser.cpp">
+      <Filter>src\Uri</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
