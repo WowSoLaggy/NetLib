@@ -55,7 +55,8 @@ namespace NetLib
 	std::string Uri::ToStringWithCredentials() const
 	{
 		std::string str = "";
-		str.append(m_protocolStr).append("://");
+		if (!m_protocolStr.empty())
+			str.append(m_protocolStr).append("://");
 		if (!m_credentialsStr.empty())
 			str.append(m_credentialsStr).append("@");
 		str.append(m_host);
@@ -79,18 +80,18 @@ namespace NetLib
 
 	void Uri::CopyProtocolToStr()
 	{
-		m_protocolStr = g_ProtocolStrings[m_protocol];
+		m_protocolStr = g_protocolMap[m_protocol];
 	}
 
 	void Uri::CopyProtocolFromStr()
 	{
 		m_protocol = (Protocol)0;
 
-		for (int i = 1; i < prot_end; ++i)
+		for (auto & prot : g_protocolMap)
 		{
-			if (m_protocolStr.compare(g_ProtocolStrings[i]) == 0)
+			if (m_protocolStr.compare(prot.second) == 0)
 			{
-				m_protocol = (Protocol)i;
+				m_protocol = prot.first;
 				return;
 			}
 		}

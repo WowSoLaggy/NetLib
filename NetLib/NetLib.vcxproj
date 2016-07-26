@@ -20,13 +20,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
-    <ClInclude Include="ClientData.h" />
+    <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Credentials.h" />
     <ClInclude Include="HttpClient.h" />
+    <ClInclude Include="HttpRequest.h" />
+    <ClInclude Include="HttpResponse.h" />
     <ClInclude Include="HttpServer.h" />
+    <ClInclude Include="HttpVersions.h" />
     <ClInclude Include="Net.h" />
     <ClInclude Include="NetErrCodes.h" />
     <ClInclude Include="Protocols.h" />
+    <ClInclude Include="RequestMethods.h" />
+    <ClInclude Include="ResponseStatusCodes.h" />
     <ClInclude Include="Unique_net.h" />
     <ClInclude Include="NetLib.h" />
     <ClInclude Include="Server.h" />
@@ -35,8 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="HttpRequest.cpp" />
+    <ClCompile Include="HttpResponse.cpp" />
     <ClCompile Include="HttpServer.cpp" />
     <ClCompile Include="Net.cpp" />
+    <ClCompile Include="PredefinedHttpResponses.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="Uri.cpp" />
     <ClCompile Include="Uri_parser.cpp" />

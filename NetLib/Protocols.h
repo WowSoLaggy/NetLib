@@ -4,6 +4,10 @@
 #define NETLIB_PROTOCOLS_H
 
 
+#include <string>
+#include <map>
+
+
 namespace NetLib
 {
 
@@ -18,13 +22,14 @@ namespace NetLib
 		prot_end
 	};
 
-	static const std::string g_ProtocolStrings[] = {
-		"",
-		"http",
-		"ftp",
-		"rtsp",
+	static std::map<Protocol, std::string> g_protocolMap = {
+		{ prot_unknown, "" },
 
-		""
+		{ prot_http, "http" },
+		{ prot_ftp, "ftp" },
+		{ prot_rtsp, "rtsp" },
+
+		{ prot_end, "" }
 	};
 
 } // ns NetLib

@@ -65,11 +65,12 @@ namespace NetLib
 		}
 		CopyCredentialsFromStr();
 
-		// Port
+		// Port & host
 
 		tokens = SplitString(str, ':');
-		m_host = tokens[0];
-		if (tokens.size() == 2)
+		if (tokens.size() > 0)
+			m_host = tokens[0];
+		if (tokens.size() > 1)
 			m_portStr = tokens[1];
 		CopyPortFromStr();
 

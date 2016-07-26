@@ -7,27 +7,35 @@
 
 
 #include "Server.h"
+#include "HttpRequest.h"
 
 
 namespace NetLib
 {
 
-	typedef std::function<void()> HttpServer_ClientAccepted;
+	// Typedef for the request received callback
+	typedef std::function<void(const ClientInfo &pClientInfo, const HttpRequest &pRequest)> HttpServerCb_RequestFromClient;
 
 
-	class HttpServer : public Server
+	class HttpServer : protected Server
 	{
 	public:
 
-		HttpServer();
-
+		HttpServer(HttpServerCb_RequestFromClient pOnRequestFromClient);
 		virtual ~HttpServer();
+
+		NetErrCode Start(int pPort = 80);
+		NetErrCode Stop();
 
 	private:
 
-		void OnClientAccepted(CLIENTID pClientId, const std::string &pClientAddress, int pClientPort);
-		void OnClientDisconnected(CLIENTID pClientId);
-		void OnReceivedFromClient(CLIENTID pClientId, char *pData, int pDataLength);
+		std::string m_receiveBuffer;
+
+		HttpServerCb_RequestFromClient m_onRequestFromClient;
+
+		void OnClientAccepted(const ClientInfo &pClientInfo);
+		void OnClientDisconnected(const ClientInfo &pClientInfo);
+		void OnReceivedFromClient(const ClientInfo &pClientInfo, char *pData, int pDataLength);
 
 	};
 

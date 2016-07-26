@@ -151,8 +151,9 @@ namespace NetLib
 			return neterr_noSuchClient;
 		}
 
+		ClientInfo clientInfo = *it;
 		m_clients.erase(it);
-		err = DisconnectClient_internal(pClientId);
+		err = DisconnectClient_internal(clientInfo);
 		if (err != neterr_noErr)
 		{
 			echo("ERROR: Can't disconnect client: ", pClientId, ".");
@@ -174,12 +175,12 @@ namespace NetLib
 	}
 
 
-	NetErrCode Server::DisconnectClient_internal(CLIENTID pClientId)
+	NetErrCode Server::DisconnectClient_internal(const ClientInfo &pClientInfo)
 	{
 		LOG("Server::DisconnectClient_internal()");
 		NetErrCode err;
 
-		err = Net::CloseSocket(pClientId);
+		err = Net::CloseSocket(pClientInfo.Id);
 		if (err != neterr_noErr)
 		{
 			echo("ERROR: Can't close socket.");
@@ -187,7 +188,7 @@ namespace NetLib
 		}
 
 		if (m_onClientDisconnected != nullptr)
-			m_onClientDisconnected(pClientId);
+			m_onClientDisconnected(pClientInfo);
 
 		return neterr_noErr;
 	}
@@ -223,12 +224,12 @@ namespace NetLib
 		sockaddr_in clientAddr;
 		int clientAddrLength = sizeof(sockaddr_in);
 		SOCKET sockClient;
-		ClientData clientData;
+		ClientInfo clientInfo;
 
 		sockClient = accept(m_sockListen, (sockaddr *)&clientAddr, &clientAddrLength);
 		if (sockClient != INVALID_SOCKET)
 		{
-			clientData = ClientData(sockClient, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+			clientInfo = ClientInfo(sockClient, inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 			{
 				std::unique_lock<std::recursive_mutex> lock(m_clientsLock);
@@ -236,11 +237,11 @@ namespace NetLib
 				// Add to m_clients only if it is not there already
 				auto it = std::find_if(m_clients.begin(), m_clients.end(), [&sockClient](const auto &client) { return client.Id == sockClient; });
 				if (it == m_clients.end())
-					m_clients.push_back(clientData);
+					m_clients.push_back(clientInfo);
 
 				// Accepted someone
 				if (m_onClientAccepted != nullptr)
-					m_onClientAccepted(clientData.Id, clientData.Address, clientData.Port);
+					m_onClientAccepted({ clientInfo.Id, clientInfo.Address, clientInfo.Port });
 			}
 		}
 	}
@@ -299,7 +300,7 @@ namespace NetLib
 			if (bytesReceived > 0)
 			{
 				if (m_onReceivedFromClient != nullptr)
-					m_onReceivedFromClient(it->Id, m_receiveBuffer.data(), bytesReceived);
+					m_onReceivedFromClient(*it, m_receiveBuffer.data(), bytesReceived);
 
 				++it;
 				continue;
@@ -315,7 +316,7 @@ namespace NetLib
 				// Connection has been gracefully closed. Not an error, just disconnect
 			}
 
-			err = DisconnectClient_internal(it->Id);
+			err = DisconnectClient_internal(*it);
 			if (err != neterr_noErr)
 				echo("ERROR: Can't disconnect client: ", it->Id, ".");
 
@@ -342,7 +343,7 @@ namespace NetLib
 				}
 			}
 
-			std::vector<ClientData>().swap(m_clients);
+			std::vector<ClientInfo>().swap(m_clients);
 		}
 
 		std::vector<char>().swap(m_receiveBuffer);

@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef NETLIB_CLIENTDATA_H
-#define NETLIB_CLIENTDATA_H
+#ifndef NETLIB_CLIENTINFO_H
+#define NETLIB_CLIENTINFO_H
 
 
 #include <Windows.h>
@@ -15,20 +15,16 @@ namespace NetLib
 
 
 	// Struct that represents client. It contains it's unique Id, address and port
-	struct ClientData
+	struct ClientInfo
 	{
-		ClientData()
+		ClientInfo()
+			: Id(0), Address(""), Port(0)
 		{
-			Id = 0;
-			Address = "";
-			Port = 0;
 		}
 
-		ClientData(CLIENTID pId, const std::string &pAddress, int pPort)
+		ClientInfo(CLIENTID pId, const std::string &pAddress, int pPort)
+			: Id(pId), Address(pAddress), Port(pPort)
 		{
-			Id = pId;
-			Address = pAddress;
-			Port = pPort;
 		}
 
 		CLIENTID Id;			// Client's Id
@@ -40,4 +36,4 @@ namespace NetLib
 } // ns Netlib
 
 
-#endif // NETLIB_CLIENTDATA_H
+#endif // NETLIB_CLIENTINFO_H

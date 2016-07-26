@@ -10,17 +10,26 @@
     <Filter Include="src\Client">
       <UniqueIdentifier>{6d58b633-9967-4cd5-a7b3-1d54466f2e29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\HttpServer">
-      <UniqueIdentifier>{75f11cb0-d568-4790-b94c-0b061232ecb1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\HttpClient">
-      <UniqueIdentifier>{b253e10b-e9e0-43cf-92be-6402c5c85b4e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Common">
       <UniqueIdentifier>{d1afa34f-f991-4bfe-9926-fde1e18c7198}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Uri">
       <UniqueIdentifier>{415612b9-a44b-48af-a789-cd7342038e46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Http">
+      <UniqueIdentifier>{f03db708-5492-4bf9-bc32-2509d12b4508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Http\HttpServer">
+      <UniqueIdentifier>{75f11cb0-d568-4790-b94c-0b061232ecb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Http\HttpClient">
+      <UniqueIdentifier>{b253e10b-e9e0-43cf-92be-6402c5c85b4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Http\HttpRequest">
+      <UniqueIdentifier>{2070edd4-0c3d-46a9-96ea-386aea93892d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Http\HttpResponse">
+      <UniqueIdentifier>{d0fd9c04-9a51-4b31-bd53-19e295e5a503}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,15 +40,12 @@
       <Filter>src\Server</Filter>
     </ClInclude>
     <ClInclude Include="HttpClient.h">
-      <Filter>src\HttpClient</Filter>
+      <Filter>src\Http\HttpClient</Filter>
     </ClInclude>
     <ClInclude Include="HttpServer.h">
-      <Filter>src\HttpServer</Filter>
+      <Filter>src\Http\HttpServer</Filter>
     </ClInclude>
     <ClInclude Include="Net.h">
-      <Filter>src\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientData.h">
       <Filter>src\Common</Filter>
     </ClInclude>
     <ClInclude Include="NetErrCodes.h">
@@ -54,13 +60,31 @@
     <ClInclude Include="Uri.h">
       <Filter>src\Uri</Filter>
     </ClInclude>
-    <ClInclude Include="Protocols.h">
-      <Filter>src\Uri</Filter>
-    </ClInclude>
     <ClInclude Include="Credentials.h">
       <Filter>src\Uri</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientInfo.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocols.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpRequest.h">
+      <Filter>src\Http\HttpRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestMethods.h">
+      <Filter>src\Http\HttpRequest</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpResponse.h">
+      <Filter>src\Http\HttpResponse</Filter>
+    </ClInclude>
+    <ClInclude Include="ResponseStatusCodes.h">
+      <Filter>src\Http\HttpResponse</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpVersions.h">
       <Filter>src\Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -78,10 +102,19 @@
       <Filter>src\Client</Filter>
     </ClCompile>
     <ClCompile Include="HttpServer.cpp">
-      <Filter>src\HttpServer</Filter>
+      <Filter>src\Http\HttpServer</Filter>
     </ClCompile>
     <ClCompile Include="Uri_parser.cpp">
       <Filter>src\Uri</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpRequest.cpp">
+      <Filter>src\Http\HttpRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpResponse.cpp">
+      <Filter>src\Http\HttpResponse</Filter>
+    </ClCompile>
+    <ClCompile Include="PredefinedHttpResponses.cpp">
+      <Filter>src\Http\HttpResponse</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

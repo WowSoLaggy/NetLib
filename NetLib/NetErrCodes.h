@@ -29,6 +29,9 @@ namespace NetLib
 			neterr_cantSelect,
 			neterr_cantReceive,
 
+			neterr_parse_cantParse,
+			neterr_parse_requestLineTooLong,
+
 			neterr_end
 		};
 

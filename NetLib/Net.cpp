@@ -90,7 +90,7 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
-	NetErrCode Net::CloseSocket(SOCKET &pSocket)
+	NetErrCode Net::CloseSocket(SOCKET pSocket)
 	{
 		shutdown(pSocket, SD_BOTH);
 		closesocket(pSocket);

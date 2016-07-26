@@ -63,8 +63,8 @@ namespace NetLib
 
 		// Closes the given socket
 		// Params:
-		// [in] SOCKET & pSocket	- reference to the socket to close
-		static NetErrCode CloseSocket(SOCKET &pSocket);
+		// [in] SOCKET pSocket	- reference to the socket to close
+		static NetErrCode CloseSocket(SOCKET pSocket);
 
 		// Sends the given data to the given socket
 		// Params:

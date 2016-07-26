@@ -14,15 +14,15 @@ namespace NetLib_test
 {
 	volatile bool receivedSomething;
 	std::string receivedText;
-	void OnReceivedDataFromClient(CLIENTID pClientId, char *pData, int pDataLength)
+	void OnReceivedDataFromClient(const ClientInfo &pClientId, char *pData, int pDataLength)
 	{
 		receivedSomething = true;
 		receivedText = std::string(pData, pDataLength);
 	}
 	volatile CLIENTID clientId;
-	void OnClientAccepted(CLIENTID pClientId, std::string pClientAddress, int pClientPort)
+	void OnClientAccepted(const ClientInfo &pClientInfo)
 	{
-		clientId = pClientId;
+		clientId = pClientInfo.Id;
 	}
 	void OnReceivedDataFromServer(char *pData, int pDataLength)
 	{
@@ -379,6 +379,9 @@ namespace NetLib_test
 			Uri uri;
 
 
+			Logger::WriteMessage("Checking URI parsing.");
+
+
 			str = "www.example.com";
 			uri.Parse(str);
 			res = uri.ToString();
@@ -488,6 +491,29 @@ namespace NetLib_test
 			uri.Parse(str);
 			res = uri.ToStringWithCredentials();
 			Assert::IsTrue(res.compare(str) == 0, L"URI parse error 21.");
+
+			str = "/my_super/path";
+			uri.Parse(str);
+			res = uri.ToStringWithCredentials();
+			Assert::IsTrue(res.compare(str) == 0, L"URI parse error 22.");
+
+			str = "/my_super/path/";
+			uri.Parse(str);
+			res = uri.ToStringWithCredentials();
+			Assert::IsTrue(res.compare(str) == 0, L"URI parse error 23.");
+
+			str = "/my_super/path/#my_anchor?par1=val1&par2=val2";
+			uri.Parse(str);
+			res = uri.ToStringWithCredentials();
+			Assert::IsTrue(res.compare(str) == 0, L"URI parse error 24.");
+
+			str = "/";
+			uri.Parse(str);
+			res = uri.ToStringWithCredentials();
+			Assert::IsTrue(res.compare(str) == 0, L"URI parse error 25.");
+
+
+			Logger::WriteMessage("URI parsing OK.");
 
 
 			Logger::WriteMessage("--- FINISH ---");

@@ -6,22 +6,22 @@ using namespace NetLib;
 CLIENTID lastClient = 0;
 
 
-void OnClientAccepted(CLIENTID pClientId, std::string pClientAddress, int pClientPort)
+void OnClientAccepted(const ClientInfo &pClientInfo)
 {
 	LOG("OnClientAccepted()");
-	lastClient = pClientId;
-	echo("Accepted id: ", pClientId, " from ", pClientAddress, ":", pClientPort);
+	lastClient = pClientInfo.Id;
+	echo("Accepted id: ", pClientInfo.Id, " from ", pClientInfo.Address, ":", pClientInfo.Port);
 }
-void OnClientDisconnected(CLIENTID pClientId)
+void OnClientDisconnected(const ClientInfo &pClientInfo)
 {
 	LOG("OnClientDisconnected()");
-	echo("Disconnected id: ", pClientId);
+	echo("Disconnected id: ", pClientInfo.Id);
 }
-void OnReceivedFromClient(CLIENTID pClientId, char *pData, int pDataLength)
+void OnReceivedFromClient(const ClientInfo &pClientInfo, char *pData, int pDataLength)
 {
 	LOG("OnReceivedFromClient()");
 	std::string text(pData, pDataLength);
-	echo(pClientId, ": \"", text.c_str(), "\"");
+	echo(pClientInfo.Id, ": \"", text.c_str(), "\"");
 }
 
 

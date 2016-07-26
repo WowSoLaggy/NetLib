@@ -21,7 +21,7 @@
 #include <vector>
 
 #include "NetErrCodes.h"
-#include "ClientData.h"
+#include "ClientInfo.h"
 
 
 namespace NetLib
@@ -30,13 +30,13 @@ namespace NetLib
 
 
 	// Typedef for the client accepted callback
-	typedef std::function<void(CLIENTID pClientId, const std::string &pClientAddress, int pClientPort)> ServerCb_ClientAccepted;
+	typedef std::function<void(const ClientInfo &pClientInfo)> ServerCb_ClientAccepted;
 
 	// Typedef for the client disconnected callback
-	typedef std::function<void(CLIENTID pClientId)> ServerCb_ClientDiconnected;
+	typedef std::function<void(const ClientInfo &pClientInfo)> ServerCb_ClientDiconnected;
 
 	// Typedef for the data received callback
-	typedef std::function<void(CLIENTID pClientId, char *pData, int pDataLength)> ServerCb_ReceivedFromClient;
+	typedef std::function<void(const ClientInfo &pClientInfo, char *pData, int pDataLength)> ServerCb_ReceivedFromClient;
 
 
 	// Class that starts server on the given port,
@@ -103,7 +103,7 @@ namespace NetLib
 		ServerCb_ReceivedFromClient m_onReceivedFromClient;	// Callback that is called when the new data is received from the client
 
 		mutable std::recursive_mutex m_clientsLock;			// Mutex to lock access to the m_clients vector
-		std::vector<ClientData> m_clients;					// Vector of connected clients
+		std::vector<ClientInfo> m_clients;					// Vector of connected clients' info
 		std::vector<char> m_receiveBuffer;					// Buffer to receive data to
 
 
@@ -113,8 +113,8 @@ namespace NetLib
 
 		// Disconnects the client with the given Id (no mutex lock)
 		// Params:
-		// [in] CLIENTID pClientId	- Id of the client to be disconnected
-		NetErrCode DisconnectClient_internal(CLIENTID pClientId);
+		// [in] const ClientInfo & pClientId	- description of the client to be disconnected
+		NetErrCode DisconnectClient_internal(const ClientInfo &pClientInfo);
 
 
 		// Main loop that repeats until the server is stopped

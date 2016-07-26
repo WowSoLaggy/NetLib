@@ -14,7 +14,7 @@
 #include "Unique_net.h"
 #include "NetErrCodes.h"
 #include "Server.h"
-#include "ClientData.h"
+#include "ClientInfo.h"
 #include "Client.h"
 #include "Net.h"
 #include "HttpServer.h"

@@ -4,9 +4,9 @@
 #define STDAFX_H
 
 
-#include <iostream>
-
+#include "Log.h"
 #include "NetLib.h"
+using namespace NetLib::NetErrCodes;
 
 
 #endif // STDAFX_H
