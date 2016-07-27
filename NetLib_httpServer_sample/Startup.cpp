@@ -53,8 +53,5 @@ int main(int argc, char *argv[])
 	else
 		echo("Server stopped.");
 
-	echo("Press enter to exit.");
-	std::getchar();
-
 	return 0;
 }

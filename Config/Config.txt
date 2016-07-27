@@ -7,20 +7,51 @@
 ;
 ; Define true as "true" or "1"
 ; Define false as "false" or "0"
+; Strings should be written "as as" (without quotes, spaces are OK), e.g.:
+; StringPar = my string value
 ;
+
+
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+; CONNECTION
+; -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
 ; Port to start server on
 ServerPort = 80
 
 
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+; FILE SYSTEM
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+
+
 ; Server root folder
-RootFolder = ./www
+RootFolder = ../www
+
+
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+; REQUESTS
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+; Allowed request methods (other request methods will generate MethodNotAllowed response)
+AllowedRequestMethods = GET, HEAD, POST
+
+; Request URI max length
+RequestUriMaxLength = 512
+
+
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+; RESPONSES
+; -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
 ; Append DateTime stamp to all outgoing responses
 AppendDateTime = 1
 
-
 ; Append server version to all outgoing responses
-AppendServerVersion = 1
+AppendServerName = 1
+
+; Server name to append to all outgoing responses. Not used if 'AppendServerName = 0'
+ServerName = NetLibSampleServer/0.1

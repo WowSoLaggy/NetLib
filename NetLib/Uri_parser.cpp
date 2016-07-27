@@ -6,20 +6,6 @@
 namespace NetLib
 {
 
-	enum UriParseStage
-	{
-		parse_start,
-		parse_prot,
-		parse_credentials,
-		parse_host,
-		parse_port,
-		parse_path,
-		parse_parameters,
-		parse_fragment,		// not used
-
-		parse_end
-	};
-
 	void Uri::ParseFromString(const std::string &pUriString)
 	{
 		m_protocolStr = "";

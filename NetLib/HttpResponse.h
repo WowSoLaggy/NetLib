@@ -21,6 +21,7 @@ namespace NetLib
 		// Static predefined responses
 
 		static HttpResponse BadRequest();
+		static HttpResponse MethodNotAllowed();
 		static HttpResponse MethodNotImplemented();
 		static HttpResponse RequestUrlTooLong();
 
@@ -31,6 +32,8 @@ namespace NetLib
 		virtual ~HttpResponse();
 
 		std::string ToString() const;
+
+		void AddHeader(const std::string &pHeaderName, const std::string &pHeaderValue);
 
 	private:
 

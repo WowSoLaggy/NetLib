@@ -29,7 +29,7 @@ namespace NetLib
 		NetErrCode Start();
 		NetErrCode Stop();
 
-		NetErrCode SendToClient(CLIENTID pClientId, const HttpResponse & pHttpResponse);
+		NetErrCode SendToClient(CLIENTID pClientId, HttpResponse & pHttpResponse);
 
 	private:
 

@@ -1,5 +1,7 @@
 #include "HttpServer.h"
 
+#include "Utils.h"
+
 
 namespace NetLib
 {
@@ -30,8 +32,14 @@ namespace NetLib
 	}
 
 
-	NetErrCode HttpServer::SendToClient(CLIENTID pClientId, const HttpResponse & pHttpResponse)
+	NetErrCode HttpServer::SendToClient(CLIENTID pClientId, HttpResponse &pHttpResponse)
 	{
+		if (Config::GetAppendDateTimeStamp())
+			pHttpResponse.AddHeader("Date", GetHttpDate());
+		if (Config::GetAppendServerName())
+			pHttpResponse.AddHeader("Server", Config::GetServerName());
+		
+
 		std::string responseString = pHttpResponse.ToString();
 		return Server::SendToClient(pClientId, responseString.data(), responseString.size());
 	}
@@ -63,6 +71,8 @@ namespace NetLib
 		{
 			if (err == neterr_parse_requestLineTooLong)
 				SendToClient(pClientInfo.Id, HttpResponse::RequestUrlTooLong());
+			else if (err == neterr_parse_methodNotAllowed)
+				SendToClient(pClientInfo.Id, HttpResponse::MethodNotAllowed());
 			else
 				SendToClient(pClientInfo.Id, HttpResponse::BadRequest());
 

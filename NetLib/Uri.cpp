@@ -44,10 +44,10 @@ namespace NetLib
 		if (!m_portStr.empty())
 			str.append(":").append(m_portStr);
 		str.append(m_path);
-		if (!m_parameters.empty())
-			str.append("?").append(m_parameters);
 		if (!m_fragment.empty())
 			str.append("#").append(m_fragment);
+		if (!m_parameters.empty())
+			str.append("?").append(m_parameters);
 
 		return str;
 	}

@@ -10,9 +10,15 @@ namespace NetLib
 {
 
 	int Config::m_serverPort;
+
 	std::string Config::m_rootFolder;
+
+	std::vector<std::string> Config::m_allowedRequestMethods;
+	int Config::m_requestUriMaxLength;
+
 	bool Config::m_appendDateTimeStamp;
-	bool Config::m_appendServerVersion;
+	bool Config::m_appendServerName;
+	std::string Config::m_serverName;
 
 
 	NetErrCode Config::ReadFromFile(const std::string &pFileName)
@@ -45,8 +51,18 @@ namespace NetLib
 				m_rootFolder = value;
 			else if (header.compare("AppendDateTime") == 0)
 				m_appendDateTimeStamp = StringToBool(value);
-			else if (header.compare("AppendServerVersion") == 0)
-				m_appendServerVersion = StringToBool(value);
+			else if (header.compare("AppendServerName") == 0)
+				m_appendServerName = StringToBool(value);
+			else if (header.compare("ServerName") == 0)
+				m_serverName = value;
+			else if (header.compare("AllowedRequestMethods") == 0)
+			{
+				tokens = SplitString(value, ',');
+				for (auto & name : tokens)
+					m_allowedRequestMethods.push_back(TrimString(name));
+			}
+			else if (header.compare("RequestUriMaxLength") == 0)
+				m_requestUriMaxLength = std::stoi(value);
 			else
 			{
 				// Log unrecognized token

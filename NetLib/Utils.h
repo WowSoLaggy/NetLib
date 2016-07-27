@@ -119,6 +119,17 @@ namespace NetLib
 		return std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
 	}
 
+
+	static std::string GetHttpDate()
+	{
+		std::vector<char> str(100, ' ');
+		time_t now = time(0);
+		struct tm tm;
+		gmtime_s(&tm, &now);
+		strftime(str.data(), str.size(), "%a, %d %b %Y %H:%M:%S %Z", &tm);
+		return std::string(str.begin(), str.begin() + 29);
+	}
+
 }; // ns NetLib
 
 

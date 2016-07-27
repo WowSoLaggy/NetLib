@@ -1,5 +1,7 @@
 #include "HttpResponse.h"
 
+#include "Config.h"
+
 
 namespace NetLib
 {
@@ -23,17 +25,22 @@ namespace NetLib
 			append(std::to_string(std::get<0>(g_responseStatusMap[m_statusCode]))).
 			append(" ").
 			append(std::get<1>(g_responseStatusMap[m_statusCode])).
-			append("\r\n");	// TODO: take these symbols from somewhere (config or what?)
+			append(Config::GetHttpNewLine());
 
 		// Headers
 		for (auto & header : m_headers)
-			res.append(header.first).append(": ").append(header.second).append("\r\n");
-		res.append("\r\n");
+			res.append(header.first).append(": ").append(header.second).append(Config::GetHttpNewLine());
+		res.append(Config::GetHttpNewLine());
 
 		if (!m_body.empty())
-			res.append(m_body).append("\r\n\r\n");
+			res.append(m_body).append(Config::GetHttpNewLine()).append(Config::GetHttpNewLine());
 
 		return res;
+	}
+
+	void HttpResponse::AddHeader(const std::string &pHeaderName, const std::string &pHeaderValue)
+	{
+		m_headers.insert({ pHeaderName, pHeaderValue });
 	}
 
 } // ns NetLib

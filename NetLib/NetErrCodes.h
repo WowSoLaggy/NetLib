@@ -31,6 +31,7 @@ namespace NetLib
 
 			neterr_parse_cantParse,
 			neterr_parse_requestLineTooLong,
+			neterr_parse_methodNotAllowed,
 
 			neterr_end
 		};

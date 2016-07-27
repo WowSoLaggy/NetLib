@@ -4,6 +4,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Config.h"
+
 
 namespace NetLib
 {
@@ -30,7 +32,7 @@ namespace NetLib
 		// Get request line
 		if (!std::getline(lines, line))
 			return neterr_parse_cantParse;
-		if (line.size() > 255) // TODO: move 255 to config
+		if ((int)line.size() > Config::GetRequestUriMaxLength() + 17) // +17 due to nethod name and http version in this line
 			return neterr_parse_requestLineTooLong;
 
 		// Parse request line
@@ -43,9 +45,18 @@ namespace NetLib
 
 		for (auto & method : g_requestMethodsMap)
 		{
+			if (method.first == req_unknown)
+				continue;
+
 			if (tokens[0].compare(method.second) == 0)
 			{
 				m_method = method.first;
+
+				// Check whether the request method is allowed
+				auto allowedMethods = Config::GetAllowedRequestMethods();
+				if (std::find(allowedMethods.begin(), allowedMethods.end(), method.second) == allowedMethods.end())
+					return neterr_parse_methodNotAllowed;
+
 				break;
 			}
 			if (method.first == req_end)
@@ -55,6 +66,8 @@ namespace NetLib
 		// Request Uri
 
 		m_uri = Uri(tokens[1]);
+		if ((int)m_uri.ToString().size() > Config::GetRequestUriMaxLength())
+			return neterr_parse_requestLineTooLong;
 
 		// Request Http version
 
@@ -63,13 +76,17 @@ namespace NetLib
 			if (tokens[2].compare(version.second) == 0)
 			{
 				m_httpVersion = version.first;
+
+				// Check whether the http version of the request is supported
+				auto supportedHttpVersions = Config::GetSupportedHttpVersions();
+				if (std::find(supportedHttpVersions.begin(), supportedHttpVersions.end(), m_httpVersion) == supportedHttpVersions.end())
+					return neterr_parse_cantParse;
+
 				break;
 			}
 			if (version.first == httpver_end)
 				return neterr_parse_cantParse;
 		}
-		if ((m_httpVersion != httpver_1_0) && (m_httpVersion != httpver_1_1)) // TODO: move supported http version to config
-			return neterr_parse_cantParse;
 
 		// Request headers
 
