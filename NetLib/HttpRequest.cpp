@@ -19,7 +19,9 @@ namespace NetLib
 		// Remove all \r from request string
 
 		std::string requestString = pRequestString;
-		requestString.erase(std::remove(requestString.begin(), requestString.end(), '\r'), requestString.end());
+		auto it = std::remove(requestString.begin(), requestString.end(), '\r');
+		int removedChars = std::distance(it, requestString.end());
+		requestString.erase(it, requestString.end());
 
 
 		std::istringstream lines(requestString);
@@ -89,18 +91,29 @@ namespace NetLib
 			m_headers.insert({ headerName, line });
 		}
 
-		// Request body
+		// Check whether there should be a content
 
-		m_body = "";
-		while (std::getline(lines, line))
+		std::string contentLengthString = m_headers["Content-length"];
+		if (!contentLengthString.empty())
 		{
-			if (line.empty())
-				break;
-			
-			m_body.append(line).append("\n");
+			int contentLength = std::stoi(contentLengthString);
+
+			// Request body
+
+			m_body = "";
+			while (std::getline(lines, line))
+			{
+				if (line.empty())
+					break;
+
+				m_body.append(line).append("\n");
+			}
+
+			if (m_body.size() != contentLength)
+				return neterr_parse_cantParse;
 		}
 
-		pOffset = (int)lines.tellg();
+		pOffset = (int)lines.tellg() + removedChars;
 
 		return neterr_noErr;
 	}
