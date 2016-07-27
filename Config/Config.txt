@@ -26,8 +26,28 @@ ServerPort = 80
 ; -=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-; Server root folder
+; Allow requests to the file system
+; If 0 then requests such as GET, PUT, etc will be passed as a callback
+; to the control application
+AllowFileHandle = 1
+
+; Server root folder. If 'AllowFileHandle = 0' used only to get default pages (DefaultPage404, etc...)
 RootFolder = ../www
+
+; Default 400 (Bad Request) page
+DefaultPage400 = DefaultPages/400.html
+
+; Default 404 (Not Found) page
+DefaultPage404 = DefaultPages/404.html
+
+; Default 405 (Method Not Allowed) page
+DefaultPage405 = DefaultPages/405.html
+
+; Default 414 (Uri Too Large) page
+DefaultPage414 = DefaultPages/414.html
+
+; Default 501 (Method Not Implemented) page
+DefaultPage501 = DefaultPages/501.html
 
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-
@@ -53,5 +73,5 @@ AppendDateTime = 1
 ; Append server version to all outgoing responses
 AppendServerName = 1
 
-; Server name to append to all outgoing responses. Not used if 'AppendServerName = 0'
+; Server name to append to all outgoing responses. Ignored if 'AppendServerName = 0'
 ServerName = NetLibSampleServer/0.1

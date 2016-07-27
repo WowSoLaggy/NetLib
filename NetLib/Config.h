@@ -35,7 +35,13 @@ namespace NetLib
 
 		static int GetServerPort() { return m_serverPort; }
 
+		static bool GetAllowFileHandle() { return m_allowFileHandle; }
 		static const std::string & GetRootFolder() { return m_rootFolder; }
+		static const std::string & GetDefaultPage400() { return m_defaultPage400; }
+		static const std::string & GetDefaultPage404() { return m_defaultPage404; }
+		static const std::string & GetDefaultPage405() { return m_defaultPage405; }
+		static const std::string & GetDefaultPage414() { return m_defaultPage414; }
+		static const std::string & GetDefaultPage501() { return m_defaultPage501; }
 
 		static const std::vector<std::string> & GetAllowedRequestMethods() { return m_allowedRequestMethods; }
 		static int GetRequestUriMaxLength() { return m_requestUriMaxLength; }
@@ -48,7 +54,13 @@ namespace NetLib
 
 		static int m_serverPort;
 
+		static bool m_allowFileHandle;
 		static std::string m_rootFolder;
+		static std::string m_defaultPage400;
+		static std::string m_defaultPage404;
+		static std::string m_defaultPage405;
+		static std::string m_defaultPage414;
+		static std::string m_defaultPage501;
 
 		static std::vector<std::string> m_allowedRequestMethods;
 		static int m_requestUriMaxLength;

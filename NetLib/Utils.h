@@ -120,6 +120,7 @@ namespace NetLib
 	}
 
 
+	// Returns current date in the Http format
 	static std::string GetHttpDate()
 	{
 		std::vector<char> str(100, ' ');
@@ -128,6 +129,16 @@ namespace NetLib
 		gmtime_s(&tm, &now);
 		strftime(str.data(), str.size(), "%a, %d %b %Y %H:%M:%S %Z", &tm);
 		return std::string(str.begin(), str.begin() + 29);
+	}
+
+
+	// Checks whether the file with the given name exists
+	// Params:
+	// [in] const std::string & pFileName	- name of the file to check for existance
+	static bool CheckFileExists(const std::string &pFileName)
+	{
+		struct stat buffer;
+		return (stat(pFileName.c_str(), &buffer) == 0);
 	}
 
 }; // ns NetLib

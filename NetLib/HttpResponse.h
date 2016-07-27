@@ -24,6 +24,7 @@ namespace NetLib
 		static HttpResponse MethodNotAllowed();
 		static HttpResponse MethodNotImplemented();
 		static HttpResponse RequestUrlTooLong();
+		static HttpResponse FileNotFound();
 
 
 	public:
