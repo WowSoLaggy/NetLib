@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientInfo.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Credentials.h" />
     <ClInclude Include="HttpClient.h" />
     <ClInclude Include="HttpRequest.h" />
@@ -40,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="HttpRequest.cpp" />
     <ClCompile Include="HttpResponse.cpp" />
     <ClCompile Include="HttpServer.cpp" />

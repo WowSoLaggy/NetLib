@@ -18,9 +18,10 @@ namespace NetLib
 	}
 
 
-	NetErrCode HttpServer::Start(int pPort)
+	NetErrCode HttpServer::Start()
 	{
-		return Server::Start(pPort);
+		NetErrCode err = Config::ReadFromFile(Config::GetConfigFileName());
+		return Server::Start(Config::GetServerPort());
 	}
 
 	NetErrCode HttpServer::Stop()
@@ -61,9 +62,9 @@ namespace NetLib
 		if (err != neterr_noErr)
 		{
 			if (err == neterr_parse_requestLineTooLong)
-				SendToClient(pClientInfo.Id, HttpResponse::RequestUrlTooLong(true));
+				SendToClient(pClientInfo.Id, HttpResponse::RequestUrlTooLong());
 			else
-				SendToClient(pClientInfo.Id, HttpResponse::BadRequest(true));
+				SendToClient(pClientInfo.Id, HttpResponse::BadRequest());
 
 			return;
 		}

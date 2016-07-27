@@ -11,6 +11,7 @@
 #include <functional>
 #include <cctype>
 #include <locale>
+#include <fstream>
 
 
 namespace NetLib
@@ -99,6 +100,23 @@ namespace NetLib
 	{
 		TrimStringRef(pString);
 		return pString;
+	}
+
+
+	static bool StringToBool(std::string pString)
+	{
+		std::transform(pString.begin(), pString.end(), pString.begin(), ::tolower);
+		return (pString.compare("true") == 0) || (pString.compare("1") == 0);
+	}
+
+
+	// Reads whole given file to a string
+	// Params:
+	// [in] const std::string & pFileName	- name of the file to read from
+	static std::string ReadFileToString(const std::string &pFileName)
+	{
+		std::ifstream fileStream(pFileName);
+		return std::string(std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>());
 	}
 
 }; // ns NetLib

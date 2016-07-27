@@ -6,6 +6,7 @@
 #define NETLIB_HTTPSERVER_H
 
 
+#include "Config.h"
 #include "Server.h"
 #include "HttpRequest.h"
 #include "HttpResponse.h"
@@ -25,7 +26,7 @@ namespace NetLib
 		HttpServer(HttpServerCb_RequestFromClient pOnRequestFromClient);
 		virtual ~HttpServer();
 
-		NetErrCode Start(int pPort = 80);
+		NetErrCode Start();
 		NetErrCode Stop();
 
 		NetErrCode SendToClient(CLIENTID pClientId, const HttpResponse & pHttpResponse);
@@ -36,6 +37,7 @@ namespace NetLib
 
 		HttpServerCb_RequestFromClient m_onRequestFromClient;
 
+		
 		void OnClientAccepted(const ClientInfo &pClientInfo);
 		void OnClientDisconnected(const ClientInfo &pClientInfo);
 		void OnReceivedFromClient(const ClientInfo &pClientInfo, char *pData, int pDataLength);

@@ -1,0 +1,26 @@
+; Config file for NetLib HttpServer
+; Lines starting with ';' are comments and are ignored
+;
+; Parameters have the next format:
+; ParName = Value
+; Leading and trailing spaces are trimmed
+;
+; Define true as "true" or "1"
+; Define false as "false" or "0"
+;
+
+
+; Port to start server on
+ServerPort = 80
+
+
+; Server root folder
+RootFolder = ./www
+
+
+; Append DateTime stamp to all outgoing responses
+AppendDateTime = 1
+
+
+; Append server version to all outgoing responses
+AppendServerVersion = 1

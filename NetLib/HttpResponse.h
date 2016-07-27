@@ -20,9 +20,9 @@ namespace NetLib
 
 		// Static predefined responses
 
-		static HttpResponse BadRequest(bool pBody);
-		static HttpResponse MethodNotImplemented(bool pBody);
-		static HttpResponse RequestUrlTooLong(bool pBody);
+		static HttpResponse BadRequest();
+		static HttpResponse MethodNotImplemented();
+		static HttpResponse RequestUrlTooLong();
 
 
 	public:

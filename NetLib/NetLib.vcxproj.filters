@@ -31,6 +31,9 @@
     <Filter Include="src\Http\HttpResponse">
       <UniqueIdentifier>{d0fd9c04-9a51-4b31-bd53-19e295e5a503}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Http\Config">
+      <UniqueIdentifier>{5206b6af-60a8-45a7-a7d7-f35f226372cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -87,6 +90,9 @@
     <ClInclude Include="HttpVersions.h">
       <Filter>src\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>src\Http\Config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Net.cpp">
@@ -115,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="PredefinedHttpResponses.cpp">
       <Filter>src\Http\HttpResponse</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>src\Http\Config</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

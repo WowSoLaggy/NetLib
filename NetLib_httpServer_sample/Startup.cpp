@@ -12,13 +12,13 @@ void OnRequestFromClient(const ClientInfo &pClientInfo, const HttpRequest &pRequ
 	switch (pRequest.GetMethod())
 	{
 	case req_get:
-		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented(true));
+		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
 		break;
 	case req_head:
-		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented(true));
+		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
 		break;
 	default:
-		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented(true));
+		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
 		break;
 	}
 }
@@ -27,7 +27,7 @@ void OnRequestFromClient(const ClientInfo &pClientInfo, const HttpRequest &pRequ
 int main(int argc, char *argv[])
 {
 	CreateDirectory("Logs", nullptr);
-	LOGINIT("Logs\\Server.log", "NetLib Server", "NetLib_server_sample.exe");
+	LOGINIT("Logs\\HttpServer.log", "NetLib Sample HttpServer", "NetLib_httpServer_sample.exe");
 	NETINIT;
 
 	LOG("main()");
