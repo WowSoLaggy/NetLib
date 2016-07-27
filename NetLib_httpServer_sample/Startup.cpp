@@ -4,8 +4,23 @@
 using namespace NetLib;
 
 
+NetLib::HttpServer *g_server;
+
+
 void OnRequestFromClient(const ClientInfo &pClientInfo, const HttpRequest &pRequest)
 {
+	switch (pRequest.GetMethod())
+	{
+	case req_get:
+		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented(true));
+		break;
+	case req_head:
+		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented(true));
+		break;
+	default:
+		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented(true));
+		break;
+	}
 }
 
 
@@ -19,6 +34,7 @@ int main(int argc, char *argv[])
 	NetErrCode err;
 
 	NetLib::HttpServer serv(OnRequestFromClient);
+	g_server = &serv;
 	err = serv.Start();
 	if (err != neterr_noErr)
 	{

@@ -8,6 +8,7 @@
 
 #include "Server.h"
 #include "HttpRequest.h"
+#include "HttpResponse.h"
 
 
 namespace NetLib
@@ -26,6 +27,8 @@ namespace NetLib
 
 		NetErrCode Start(int pPort = 80);
 		NetErrCode Stop();
+
+		NetErrCode SendToClient(CLIENTID pClientId, const HttpResponse & pHttpResponse);
 
 	private:
 

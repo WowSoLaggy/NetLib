@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 #include "Utils.h"
 #include "RequestMethods.h"
@@ -24,6 +25,9 @@ namespace NetLib
 		const Uri & GetUri() const { return m_uri; }
 		const HttpVersion & GetHttpVersion() const { return m_httpVersion; }
 
+		const std::map<std::string, std::string> & GetHeaders() const { return m_headers; }
+		const std::string & GetBody() const { return m_body; }
+
 
 		NetErrCodes::NetErrCode Parse(const std::string &pRequestString, int &pOffset);
 
@@ -33,6 +37,10 @@ namespace NetLib
 		RequestMethod m_method;
 		Uri m_uri;
 		HttpVersion m_httpVersion;
+
+		std::map<std::string, std::string> m_headers;
+		std::string m_body;
+
 	};
 
 } // ns NetLib

@@ -29,6 +29,13 @@ namespace NetLib
 	}
 
 
+	NetErrCode HttpServer::SendToClient(CLIENTID pClientId, const HttpResponse & pHttpResponse)
+	{
+		std::string responseString = pHttpResponse.ToString();
+		return Server::SendToClient(pClientId, responseString.data(), responseString.size());
+	}
+
+
 	void HttpServer::OnClientAccepted(const ClientInfo &pClientInfo)
 	{
 	}
@@ -45,9 +52,19 @@ namespace NetLib
 		int processedChars = 0;
 		HttpRequest request;
 		err = request.Parse(m_receiveBuffer, processedChars);
+
+		if (processedChars <= 0)
+			m_receiveBuffer.clear();
+		else if (processedChars > 0)
+			m_receiveBuffer.erase(0, processedChars);
+
 		if (err != neterr_noErr)
 		{
-			// TODO: handle err, disconnect
+			if (err == neterr_parse_requestLineTooLong)
+				SendToClient(pClientInfo.Id, HttpResponse::RequestUrlTooLong(true));
+			else
+				SendToClient(pClientInfo.Id, HttpResponse::BadRequest(true));
+
 			return;
 		}
 
