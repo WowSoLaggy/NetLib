@@ -20,6 +20,18 @@
 ; Port to start server on
 ServerPort = 80
 
+; Keep-Alive support (HTTP/1.1 should support Keep-Alive by default)
+KeepAlive = 1
+
+; Keep-Alive timeout in seconds
+KeepAliveTimeout = 10
+
+; Keep-Alive max requests count
+KeepAliveMaxRequests = 100
+
+; Max number of connections (connected clients)
+MaxConnections = 100
+
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-
 ; FILE SYSTEM

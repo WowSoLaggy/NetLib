@@ -34,6 +34,9 @@
     <Filter Include="src\Http\Config">
       <UniqueIdentifier>{5206b6af-60a8-45a7-a7d7-f35f226372cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Http\Common">
+      <UniqueIdentifier>{c98e9233-913c-42e8-81d5-9f6eeebe61c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -92,6 +95,12 @@
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>src\Http\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionTypes.h">
+      <Filter>src\Http\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpConnectionInfo.h">
+      <Filter>src\Http\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

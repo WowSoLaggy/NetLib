@@ -6,10 +6,13 @@
 #define NETLIB_HTTPSERVER_H
 
 
+#include <mutex>
+
 #include "Config.h"
 #include "Server.h"
 #include "HttpRequest.h"
 #include "HttpResponse.h"
+#include "HttpConnectionInfo.h"
 
 
 namespace NetLib
@@ -34,6 +37,9 @@ namespace NetLib
 	private:
 
 		std::string m_receiveBuffer;
+
+		std::mutex m_lockConnections;
+		std::map<CLIENTID, HttpConnectionInfo> m_connections;
 
 		HttpServerCb_RequestFromClient m_onRequestFromClient;
 

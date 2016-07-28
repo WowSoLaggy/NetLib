@@ -25,7 +25,7 @@ namespace NetLib
 		const Uri & GetUri() const { return m_uri; }
 		const HttpVersion & GetHttpVersion() const { return m_httpVersion; }
 
-		const std::map<std::string, std::string> & GetHeaders() const { return m_headers; }
+		std::map<std::string, std::string> & GetHeaders() { return m_headers; }
 		const std::string & GetBody() const { return m_body; }
 
 

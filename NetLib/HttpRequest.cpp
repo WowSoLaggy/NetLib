@@ -104,7 +104,7 @@ namespace NetLib
 
 			std::string headerName = tokens[0];
 			line.erase(0, tokens[0].size() + 1); // +1 to delete ':'
-			TrimString(line);
+			line = TrimString(line);
 			m_headers.insert({ headerName, line });
 		}
 

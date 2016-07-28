@@ -34,6 +34,10 @@ namespace NetLib
 
 
 		static int GetServerPort() { return m_serverPort; }
+		static bool GetKeepAliveSupport() { return m_keepAliveSupport; }
+		static int GetKeepAliveTimeout() { return m_keepAliveTimeout; }
+		static int GetKeepAliveMaxRequests() { return m_keepAliveMaxRequests; }
+		static int GetMaxConnections() { return m_maxConnections; }
 
 		static bool GetAllowFileHandle() { return m_allowFileHandle; }
 		static const std::string & GetRootFolder() { return m_rootFolder; }
@@ -53,6 +57,10 @@ namespace NetLib
 	private:
 
 		static int m_serverPort;
+		static bool m_keepAliveSupport;
+		static int m_keepAliveTimeout;
+		static int m_keepAliveMaxRequests;
+		static int m_maxConnections;
 
 		static bool m_allowFileHandle;
 		static std::string m_rootFolder;

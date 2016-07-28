@@ -10,6 +10,10 @@ namespace NetLib
 {
 
 	int Config::m_serverPort = 0;
+	bool Config::m_keepAliveSupport;
+	int Config::m_keepAliveTimeout;
+	int Config::m_keepAliveMaxRequests;
+	int Config::m_maxConnections;
 
 	bool Config::m_allowFileHandle = false;
 	std::string Config::m_rootFolder = "./";
@@ -38,7 +42,7 @@ namespace NetLib
 
 		while (std::getline(f, line))
 		{
-			TrimString(line);
+			line = TrimString(line);
 			if (line.empty())
 				continue;
 			if (line[0] == ';')
@@ -53,6 +57,14 @@ namespace NetLib
 
 			if (header.compare("ServerPort") == 0)
 				m_serverPort = std::stoi(value);
+			else if (header.compare("KeepAlive") == 0)
+				m_keepAliveSupport = StringToBool(value);
+			else if (header.compare("KeepAliveTimeout") == 0)
+				m_keepAliveTimeout = std::stoi(value);
+			else if (header.compare("KeepAliveMaxRequests") == 0)
+				m_keepAliveMaxRequests = std::stoi(value);
+			else if (header.compare("MaxConnections") == 0)
+				m_maxConnections = std::stoi(value);
 			else if (header.compare("AllowFileHandle") == 0)
 				m_allowFileHandle = StringToBool(value);
 			else if (header.compare("RootFolder") == 0)
