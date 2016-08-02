@@ -39,6 +39,8 @@ namespace NetLib
 		static int GetKeepAliveMaxRequests() { return m_keepAliveMaxRequests; }
 		static int GetMaxConnections() { return m_maxConnections; }
 
+		static bool GetLogOnAccept() { return m_logOnAccept; }
+
 		static bool GetAllowFileHandle() { return m_allowFileHandle; }
 		static const std::string & GetRootFolder() { return m_rootFolder; }
 		static const std::string & GetDefaultPage400() { return m_defaultPage400; }
@@ -61,6 +63,8 @@ namespace NetLib
 		static int m_keepAliveTimeout;
 		static int m_keepAliveMaxRequests;
 		static int m_maxConnections;
+
+		static bool m_logOnAccept;
 
 		static bool m_allowFileHandle;
 		static std::string m_rootFolder;

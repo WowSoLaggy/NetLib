@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Log.h"
 #include "Config.h"
 
 
@@ -14,6 +15,8 @@ namespace NetLib
 
 	NetErrCode HttpRequest::Parse(const std::string &pRequestString, int &pOffset)
 	{
+		LOG("HttpRequest::Parse()");
+
 		std::string str;
 		std::vector<std::string> tokens;
 		pOffset = 0;
@@ -29,24 +32,53 @@ namespace NetLib
 		std::istringstream lines(requestString);
 		std::string line;
 		
-		// Get request line
+		// Get Request Line
 		if (!std::getline(lines, line))
+		{
+			// Can't get even the first line, lol
+			echo("ERROR: Can't get the Request Line.");
 			return neterr_parse_cantParse;
-		if ((int)line.size() > Config::GetRequestUriMaxLength() + 17) // +17 due to nethod name and http version in this line
+		}
+		if ((int)line.size() > Config::GetRequestUriMaxLength() + 17) // +17 due to method name and http version in this line
+		{
+			// The Request Line is too long (URI or whatever, it should not be SO long)
+			// We can log it if it is twice as long as possible. If it is more, then no log
+
+			if ((int)line.size() < Config::GetRequestUriMaxLength() * 2 + 17)
+				echo("ERROR: The Request Line is too long: \"", line, "\".");
+			else
+				echo("ERROR: The Request Line is too long.");
+
 			return neterr_parse_requestLineTooLong;
+		}
 
 		// Parse request line
 
 		tokens = SplitString(line, ' ');
 		if (tokens.size() != 3)
+		{
+			// Strange Request Line format, it should be:
+			// METHOD URI HTTPVER
+			echo("ERROR: Request Line invalid format: \"", line, "\".");
 			return neterr_parse_cantParse;
+		}
 
 		// Request method
 
 		for (auto & method : g_requestMethodsMap)
 		{
 			if (method.first == req_unknown)
+			{
+				// Skip the first element of the enumeration
 				continue;
+			}
+			if (method.first == req_end)
+			{
+				// It is already the last element of the enumeration and
+				// we still don't have any match
+				echo("ERROR: Can't recognize the Request Method: \"", tokens[0], "\".");
+				return neterr_parse_cantParse;
+			}
 
 			if (tokens[0].compare(method.second) == 0)
 			{
@@ -55,24 +87,48 @@ namespace NetLib
 				// Check whether the request method is allowed
 				auto allowedMethods = Config::GetAllowedRequestMethods();
 				if (std::find(allowedMethods.begin(), allowedMethods.end(), method.second) == allowedMethods.end())
+				{
+					// Nope. Not this time.
+					// No need to log, because it's not an error
 					return neterr_parse_methodNotAllowed;
+				}
 
 				break;
 			}
-			if (method.first == req_end)
-				return neterr_parse_cantParse;
 		}
 
 		// Request Uri
 
 		m_uri = Uri(tokens[1]);
 		if ((int)m_uri.ToString().size() > Config::GetRequestUriMaxLength())
+		{
+			// URI is too long. We can log it if it is twice as long as possible. If it is more, then no log
+
+			if ((int)m_uri.ToString().size() < Config::GetRequestUriMaxLength() * 2)
+				echo("ERROR: The Request URI is too long: \"", m_uri.ToString(), "\".");
+			else
+				echo("ERROR: The Request URI is too long.");
+
 			return neterr_parse_requestLineTooLong;
+		}
 
 		// Request Http version
 
 		for (auto & version : g_httpVersionsMap)
 		{
+			if (version.first == httpver_unknown)
+			{
+				// Skip the first element of the enumeration
+				continue;
+			}
+			if (version.first == httpver_end)
+			{
+				// It is already the last element of the enumeration and
+				// we still don't have any match
+				echo("ERROR: Can't recognize the HTTP version: \"", tokens[2], "\".");
+				return neterr_parse_cantParse;
+			}
+
 			if (tokens[2].compare(version.second) == 0)
 			{
 				m_httpVersion = version.first;
@@ -80,12 +136,14 @@ namespace NetLib
 				// Check whether the http version of the request is supported
 				auto supportedHttpVersions = Config::GetSupportedHttpVersions();
 				if (std::find(supportedHttpVersions.begin(), supportedHttpVersions.end(), m_httpVersion) == supportedHttpVersions.end())
+				{
+					// HTTP version is not supported.
+					// No need to log because it's not an error
 					return neterr_parse_cantParse;
+				}
 
 				break;
 			}
-			if (version.first == httpver_end)
-				return neterr_parse_cantParse;
 		}
 
 		// Request headers
@@ -93,12 +151,16 @@ namespace NetLib
 		while (std::getline(lines, line))
 		{
 			if (line.empty())
+			{
+				// End of headers
 				break;
+			}
 
 			tokens = SplitString(line, ':');
 			if (tokens.size() < 2)
 			{
-				// Error header parsing
+				// Invalid header syntax, can't find the ':' symbol
+				echo("ERROR: Invalid header syntax for the line: \"", line, "\".");
 				return neterr_parse_cantParse;
 			}
 
@@ -121,13 +183,21 @@ namespace NetLib
 			while (std::getline(lines, line))
 			{
 				if (line.empty())
+				{
+					// This should be the end of the body
 					break;
+				}
 
+				// Just append, no need to parse
 				m_body.append(line).append("\n");
 			}
 
 			if (m_body.size() != contentLength)
+			{
+				// Actual body length does not match the declared
+				echo("ERROR: Actual body length (", m_body.size(), ") does not match the declared (", contentLength, ").");
 				return neterr_parse_cantParse;
+			}
 		}
 
 		pOffset = (int)lines.tellg() + removedChars;

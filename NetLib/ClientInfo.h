@@ -27,6 +27,11 @@ namespace NetLib
 		{
 		}
 
+		std::string ToString() const
+		{
+			return "Id: " + std::to_string(Id) + ", address: " + Address + ":" + std::to_string(Port);
+		}
+
 		CLIENTID Id;			// Client's Id
 		std::string Address;	// Client's address
 		int Port;				// Client's port

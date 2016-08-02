@@ -7,7 +7,7 @@
 ;
 ; Define true as "true" or "1"
 ; Define false as "false" or "0"
-; Strings should be written "as as" (without quotes, spaces are OK), e.g.:
+; Strings should be written "as is" (without quotes, spaces are OK), e.g.:
 ; StringPar = my string value
 ;
 
@@ -31,6 +31,15 @@ KeepAliveMaxRequests = 100
 
 ; Max number of connections (connected clients)
 MaxConnections = 100
+
+
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+; LOGGING
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+; Log accepted connections (can spam the log file)
+LogOnAccept = 1
 
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-

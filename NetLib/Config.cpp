@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "Log.h"
 #include "Utils.h"
 
 
@@ -10,10 +11,12 @@ namespace NetLib
 {
 
 	int Config::m_serverPort = 0;
-	bool Config::m_keepAliveSupport;
-	int Config::m_keepAliveTimeout;
-	int Config::m_keepAliveMaxRequests;
-	int Config::m_maxConnections;
+	bool Config::m_keepAliveSupport = false;
+	int Config::m_keepAliveTimeout = 10;
+	int Config::m_keepAliveMaxRequests = 100;
+	int Config::m_maxConnections = 10;
+
+	bool Config::m_logOnAccept = false;
 
 	bool Config::m_allowFileHandle = false;
 	std::string Config::m_rootFolder = "./";
@@ -33,6 +36,8 @@ namespace NetLib
 
 	NetErrCode Config::ReadFromFile(const std::string &pFileName)
 	{
+		LOG("Config::ReadFromFile()");
+
 		std::fstream f(pFileName, std::ios::in);
 		std::string line;
 		std::vector<std::string> tokens;
@@ -40,17 +45,23 @@ namespace NetLib
 		std::string header;
 		std::string value;
 
+		int curLine = 0;
 		while (std::getline(f, line))
 		{
+			++curLine;
+
 			line = TrimString(line);
-			if (line.empty())
+			if (line.empty())	// empty line
 				continue;
-			if (line[0] == ';')
+			if (line[0] == ';')	// comment
 				continue;
 
 			int pos = line.find_first_of('=', 0);
 			if ((pos == std::string::npos) || (pos == 0))
+			{
+				echo("ERROR: Unrecognized syntax: Can't find '=' symbol. Line", curLine, ".");
 				continue;
+			}
 
 			header = TrimString(line.substr(0, pos));
 			value = TrimString(line.substr(pos + 1));
@@ -65,6 +76,8 @@ namespace NetLib
 				m_keepAliveMaxRequests = std::stoi(value);
 			else if (header.compare("MaxConnections") == 0)
 				m_maxConnections = std::stoi(value);
+			else if (header.compare("LogOnAccept") == 0)
+				m_logOnAccept = StringToBool(value);
 			else if (header.compare("AllowFileHandle") == 0)
 				m_allowFileHandle = StringToBool(value);
 			else if (header.compare("RootFolder") == 0)
@@ -95,7 +108,8 @@ namespace NetLib
 				m_requestUriMaxLength = std::stoi(value);
 			else
 			{
-				// Log unrecognized token
+				// Unrecognized token
+				echo("ERROR: Unrecognized token: \"", header, "\". Line: ", curLine, ".");
 			}
 		}
 

@@ -32,6 +32,7 @@ namespace NetLib
 			res.append(header.first).append(": ").append(header.second).append(Config::GetHttpNewLine());
 		res.append(Config::GetHttpNewLine());
 
+		// Body if any
 		if (!m_body.empty())
 			res.append(m_body).append(Config::GetHttpNewLine()).append(Config::GetHttpNewLine());
 

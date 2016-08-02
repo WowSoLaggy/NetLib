@@ -1,5 +1,6 @@
 #include "HttpServer.h"
 
+#include "Log.h"
 #include "Utils.h"
 #include "Net.h"
 
@@ -23,42 +24,106 @@ namespace NetLib
 
 	NetErrCode HttpServer::Start()
 	{
-		NetErrCode err = Config::ReadFromFile(Config::GetConfigFileName());
-		return Server::Start(Config::GetServerPort());
+		LOG("HttpServer::Start()");
+		NetErrCode err;
+
+		err = Config::ReadFromFile(Config::GetConfigFileName());
+		if (err != neterr_noErr)
+		{
+			echo("ERROR: Error occured while parsing the config file.");
+			return err;
+		}
+
+		err = Server::Start(Config::GetServerPort());
+		if (err != neterr_noErr)
+		{
+			echo("ERROR: Error occured while starting the web server.");
+			return err;
+		}
+
+		return neterr_noErr;
 	}
 
 	NetErrCode HttpServer::Stop()
 	{
+		LOG("HttpServer::Stop()");
+		NetErrCode err;
+
+		// Clear info about all connected client's
 		m_connections.clear();
-		return Server::Stop();
+
+		err = Server::Stop();
+		if (err != neterr_noErr)
+		{
+			echo("ERROR: Error occured while stopping the web server.");
+			return err;
+		}
+
+		return neterr_noErr;
 	}
 
 
 	NetErrCode HttpServer::SendToClient(CLIENTID pClientId, HttpResponse &pHttpResponse)
 	{
+		LOG("HttpServer::SendToClient()");
+		NetErrCode err;
+
+		// Append DateTime and Version if needed
+
 		if (Config::GetAppendDateTimeStamp())
 			pHttpResponse.AddHeader("Date", GetHttpDate());
 		if (Config::GetAppendServerName())
 			pHttpResponse.AddHeader("Server", Config::GetServerName());
-		
+
+		// Send this response to the client as a string
 
 		std::string responseString = pHttpResponse.ToString();
-		return Server::SendToClient(pClientId, responseString.data(), responseString.size());
+		err = Server::SendToClient(pClientId, responseString.data(), responseString.size());
+		if (err != neterr_noErr)
+		{
+			echo("ERROR: Can't send the response to the client (id: ", pClientId, ").");
+			return err;
+		}
+
+		return neterr_noErr;
 	}
 
 
 	void HttpServer::OnClientAccepted(const ClientInfo &pClientInfo)
 	{
+		LOG("HttpServer::OnClientAccepted()");
+		NetErrCode err;
+
 		{
 			std::unique_lock<std::mutex> lock(m_lockConnections);
+
+			// Check number of current connections
+
 			if ((int)m_connections.size() < Config::GetMaxConnections())
+			{
+				// We can connect the client
+
 				m_connections.insert({ pClientInfo.Id, HttpConnectionInfo() });
-			return;
+
+				if (Config::GetLogOnAccept())
+					echo("Accepted client: ", pClientInfo.ToString(), ".");
+
+				return;
+			}
 		}
 
-		// We don't need lock to disconnect client
+		// TOO MUCH CLIENTS! Kick him.
+		// No need to lock to disconnect client
 
-		DisconnectClient(pClientInfo.Id);
+		if (Config::GetLogOnAccept())
+			echo("Can't accept client: ", pClientInfo.ToString(), ". Too many connections.");
+
+		err = DisconnectClient(pClientInfo.Id);
+		if (err != neterr_noErr)
+		{
+			echo("ERROR: Can't disconnect the client (id: ", pClientInfo.Id, ").");
+			return;
+		}
 	}
 
 	void HttpServer::OnClientDisconnected(const ClientInfo &pClientInfo)
@@ -69,10 +134,11 @@ namespace NetLib
 
 	void HttpServer::OnReceivedFromClient(const ClientInfo &pClientInfo, char *pData, int pDataLength)
 	{
+		LOG("HttpServer::OnReceivedFromClient()");
 		NetErrCode err;
 		NetErrCode err2;
 
-		// Get info about the client
+		// Find info about the client
 
 		HttpConnectionInfo httpConnectionInfo;
 		{
@@ -80,7 +146,8 @@ namespace NetLib
 			auto it = m_connections.find(pClientInfo.Id);
 			if (it == m_connections.end())
 			{
-				// Client disconnected, ignore
+				// Client disconnected, drop the request
+				echo("ERROR: Can't find info about the request's client (id: ", pClientInfo.Id, "). Ignore.");
 				return;
 			}
 			httpConnectionInfo = it->second;
@@ -114,9 +181,7 @@ namespace NetLib
 				err2 = SendToClient(pClientInfo.Id, HttpResponse::BadRequest());
 
 			if (err2 != neterr_noErr)
-			{
-				// TODO: Log error
-			}
+				echo("ERROR: Can't send the response to the client (id: ", pClientInfo.Id, ").");
 		}
 		else
 		{
@@ -128,10 +193,11 @@ namespace NetLib
 
 		std::string str = request.GetHeaders()["Connection"];
 		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-		bool forceDisconnect = (!Config::GetKeepAliveSupport()) || (str.compare("keep-alive") != 0);
-		forceDisconnect = ((forceDisconnect) ||
-			(httpConnectionInfo.ConnectTimer.Check() >= Config::GetKeepAliveTimeout()) ||
-			(httpConnectionInfo.RequestsCount >= Config::GetKeepAliveMaxRequests()));
+		bool forceDisconnect = (
+			(!Config::GetKeepAliveSupport()) ||												// we do not support keep-alive
+			(str.compare("keep-alive") != 0) ||												// client forces not "keep-alive"
+			(httpConnectionInfo.ConnectTimer.Check() >= Config::GetKeepAliveTimeout()) ||	// client's timeout elapsed
+			(httpConnectionInfo.RequestsCount >= Config::GetKeepAliveMaxRequests()));		// client's number of requests exceeded
 		if (forceDisconnect)
 		{
 			// TODO:
