@@ -50,9 +50,9 @@ namespace NetLib
 		// [in] ServerCb_ClientDiconnected pOnClientDisconnected	- callback that is called when the client is disconnected
 		// [in] ServerCb_ReceivedFromClient pOnReceivedFromClient	- callback that is called when the new data is received from the client
 		Server(
-			ServerCb_ClientAccepted pOnClientAccepted,
-			ServerCb_ClientDiconnected pOnClientDisconnected,
-			ServerCb_ReceivedFromClient pOnReceivedFromClient);
+			ServerCb_ClientAccepted pOnClientAccepted = nullptr,
+			ServerCb_ClientDiconnected pOnClientDisconnected = nullptr,
+			ServerCb_ReceivedFromClient pOnReceivedFromClient = nullptr);
 		
 		//
 		virtual ~Server();

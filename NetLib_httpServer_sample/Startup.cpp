@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
 	NetLib::HttpServer serv(OnRequestFromClient);
 	g_server = &serv;
-	err = serv.Start();
+	err = serv.Start("../Config/Config.txt");
 	if (err != neterr_noErr)
 	{
 		echo("Can't start server: ", err, ".");

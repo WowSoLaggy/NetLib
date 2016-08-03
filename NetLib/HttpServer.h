@@ -39,7 +39,9 @@ namespace NetLib
 
 		
 		// Starts the Http Server
-		NetErrCode Start();
+		// Params:
+		// [in] const std::string & pConfigFilePath	- path to the config file
+		NetErrCode Start(const std::string &pConfigFilePath);
 
 		// Stops the Http Server
 		NetErrCode Stop();

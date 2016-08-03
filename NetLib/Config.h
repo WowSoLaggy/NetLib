@@ -26,9 +26,6 @@ namespace NetLib
 		// Global vars
 
 
-		// Path to the config file
-		static const std::string GetConfigFileName() { return "../Config/Config.txt"; }
-
 		// Returns the Http version that is supported by the HttpServer
 		static const HttpVersion GetServerHttpVersion() { return httpver_1_1; }
 

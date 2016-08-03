@@ -24,12 +24,12 @@ namespace NetLib
 	}
 
 
-	NetErrCode HttpServer::Start()
+	NetErrCode HttpServer::Start(const std::string &pConfigFilePath)
 	{
 		LOG("HttpServer::Start()");
 		NetErrCode err;
 
-		err = Config::ReadFromFile(Config::GetConfigFileName());
+		err = Config::ReadFromFile(pConfigFilePath);
 		if (err != neterr_noErr)
 		{
 			echo("ERROR: Error occured while parsing the config file.");
