@@ -18,10 +18,18 @@ namespace NetLib
 	struct HttpConnectionInfo
 	{
 		HttpConnectionInfo()
-			: ConnectType(con_unknown), RequestsCount(0)
+			: Id(0), ConnectType(con_unknown), RequestsCount(0)
 		{
 			ConnectTimer.Start();
 		}
+
+		HttpConnectionInfo(CLIENTID pId)
+			: Id(pId), ConnectType(con_unknown), RequestsCount(0)
+		{
+			ConnectTimer.Start();
+		}
+
+		CLIENTID Id;
 
 		ConnectionType ConnectType;
 		Timer ConnectTimer;

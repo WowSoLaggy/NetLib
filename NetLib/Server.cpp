@@ -199,11 +199,8 @@ namespace NetLib
 		LOG("Server::MainLoop()");
 		NetErrCode err;
 
-		while (true)
+		while (m_isRunning)
 		{
-			if (!m_isRunning)
-				break;
-
 			TryAccept();
 			TryReceive();
 

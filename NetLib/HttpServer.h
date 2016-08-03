@@ -7,6 +7,7 @@
 
 
 #include <mutex>
+#include <queue>
 
 #include "Config.h"
 #include "Server.h"
@@ -36,10 +37,14 @@ namespace NetLib
 
 	private:
 
+		std::atomic_bool m_isRunning;
 		std::string m_receiveBuffer;
 
+		std::mutex m_lockRequests;
+		std::queue<std::tuple<NetErrCode, ClientInfo, HttpConnectionInfo, HttpRequest>> m_requests;
+
 		std::mutex m_lockConnections;
-		std::map<CLIENTID, HttpConnectionInfo> m_connections;
+		std::vector<HttpConnectionInfo> m_connections;
 
 		HttpServerCb_RequestFromClient m_onRequestFromClient;
 
@@ -47,6 +52,9 @@ namespace NetLib
 		void OnClientAccepted(const ClientInfo &pClientInfo);
 		void OnClientDisconnected(const ClientInfo &pClientInfo);
 		void OnReceivedFromClient(const ClientInfo &pClientInfo, char *pData, int pDataLength);
+
+
+		void MainLoop();
 
 	};
 

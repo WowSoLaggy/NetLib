@@ -1,5 +1,7 @@
 #include "HttpServer.h"
 
+#include <algorithm>
+
 #include "Log.h"
 #include "Utils.h"
 #include "Net.h"
@@ -41,24 +43,18 @@ namespace NetLib
 			return err;
 		}
 
+		// Start the consumer thread. The Server's thread is a producer
+
+		m_isRunning = true;
+		std::thread consumerThread(&HttpServer::MainLoop, this);
+		consumerThread.detach();
+
 		return neterr_noErr;
 	}
 
 	NetErrCode HttpServer::Stop()
 	{
-		LOG("HttpServer::Stop()");
-		NetErrCode err;
-
-		// Clear info about all connected client's
-		m_connections.clear();
-
-		err = Server::Stop();
-		if (err != neterr_noErr)
-		{
-			echo("ERROR: Error occured while stopping the web server.");
-			return err;
-		}
-
+		m_isRunning = false;
 		return neterr_noErr;
 	}
 
@@ -103,7 +99,7 @@ namespace NetLib
 			{
 				// We can connect the client
 
-				m_connections.insert({ pClientInfo.Id, HttpConnectionInfo() });
+				m_connections.emplace_back(HttpConnectionInfo(pClientInfo.Id));
 
 				if (Config::GetLogOnAccept())
 					echo("Accepted client: ", pClientInfo.ToString(), ".");
@@ -128,29 +124,39 @@ namespace NetLib
 
 	void HttpServer::OnClientDisconnected(const ClientInfo &pClientInfo)
 	{
+		LOG("HttpServer::OnClientDisconnected()");
+
 		std::unique_lock<std::mutex> lock(m_lockConnections);
-		m_connections.erase(pClientInfo.Id);
+
+		auto it = std::find_if(m_connections.begin(), m_connections.end(), [&](auto &it) { return it.Id == pClientInfo.Id; });
+		if (it == m_connections.end())
+		{
+			// Client disconnected, drop the request
+			echo("ERROR: Can't find info about the request's client (id: ", pClientInfo.Id, "). Ignore.");
+			return;
+		}
+
+		m_connections.erase(it);
 	}
 
 	void HttpServer::OnReceivedFromClient(const ClientInfo &pClientInfo, char *pData, int pDataLength)
 	{
 		LOG("HttpServer::OnReceivedFromClient()");
 		NetErrCode err;
-		NetErrCode err2;
 
 		// Find info about the client
 
 		HttpConnectionInfo httpConnectionInfo;
 		{
 			std::unique_lock<std::mutex> lock(m_lockConnections);
-			auto it = m_connections.find(pClientInfo.Id);
+			auto it = std::find_if(m_connections.begin(), m_connections.end(), [&](auto &it) { return it.Id == pClientInfo.Id; });
 			if (it == m_connections.end())
 			{
 				// Client disconnected, drop the request
 				echo("ERROR: Can't find info about the request's client (id: ", pClientInfo.Id, "). Ignore.");
 				return;
 			}
-			httpConnectionInfo = it->second;
+			httpConnectionInfo = *it;
 		}
 		++httpConnectionInfo.RequestsCount;
 
@@ -169,43 +175,83 @@ namespace NetLib
 		else if (processedChars > 0)
 			m_receiveBuffer.erase(0, processedChars);
 
-		// Check whether we should auto generate the response or just pass the request to the control application
+		// Add the parse result and the request to the request queue
 
+		{
+			std::unique_lock<std::mutex> lock(m_lockRequests);
+			m_requests.push({ err, pClientInfo, httpConnectionInfo, request });
+		}
+	}
+
+
+	void HttpServer::MainLoop()
+	{
+		LOG("HttpServer::MainLoop()");
+		NetErrCode err;
+		NetErrCode err2;
+
+		ClientInfo clientInfo;
+		HttpConnectionInfo httpConnectionInfo;
+		HttpRequest request;
+		while (m_isRunning)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+			// Check the request queue
+			{
+				std::unique_lock<std::mutex> lock(m_lockRequests);
+				if (m_requests.size() == 0)
+					continue;
+
+				std::tie(err, clientInfo, httpConnectionInfo, request) = m_requests.front();
+				m_requests.pop();
+			}
+
+			// Check whether we should auto generate the response or just pass the request to the control application
+
+			if (err != neterr_noErr)
+			{
+				if (err == neterr_parse_requestLineTooLong)
+					err2 = SendToClient(httpConnectionInfo.Id, HttpResponse::RequestUrlTooLong());
+				else if (err == neterr_parse_methodNotAllowed)
+					err2 = SendToClient(httpConnectionInfo.Id, HttpResponse::MethodNotAllowed());
+				else
+					err2 = SendToClient(httpConnectionInfo.Id, HttpResponse::BadRequest());
+
+				if (err2 != neterr_noErr)
+					echo("ERROR: Can't send the response to the client (id: ", httpConnectionInfo.Id, ").");
+			}
+			else
+			{
+				if (m_onRequestFromClient != nullptr)
+					m_onRequestFromClient(clientInfo, request);
+			}
+
+			// Check whether we should disconnect the client
+
+			std::string str = request.GetHeaders()["Connection"];
+			std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+			bool forceDisconnect = (
+				(!Config::GetKeepAliveSupport()) ||												// we do not support keep-alive
+				(str.compare("keep-alive") != 0) ||												// client forces not "keep-alive"
+				(httpConnectionInfo.ConnectTimer.Check() >= Config::GetKeepAliveTimeout()) ||	// client's timeout elapsed
+				(httpConnectionInfo.RequestsCount >= Config::GetKeepAliveMaxRequests()));		// client's number of requests exceeded
+			if (forceDisconnect)
+			{
+				err = DisconnectClient(clientInfo.Id);
+				if (err != neterr_noErr)
+					echo("ERROR: Can't disconnect client (id: ", clientInfo.Id, ").");
+			}
+		}
+
+		// Clear info about all connected client's
+		m_connections.clear();
+
+		err = Server::Stop();
 		if (err != neterr_noErr)
 		{
-			if (err == neterr_parse_requestLineTooLong)
-				err2 = SendToClient(pClientInfo.Id, HttpResponse::RequestUrlTooLong());
-			else if (err == neterr_parse_methodNotAllowed)
-				err2 = SendToClient(pClientInfo.Id, HttpResponse::MethodNotAllowed());
-			else
-				err2 = SendToClient(pClientInfo.Id, HttpResponse::BadRequest());
-
-			if (err2 != neterr_noErr)
-				echo("ERROR: Can't send the response to the client (id: ", pClientInfo.Id, ").");
-		}
-		else
-		{
-			if (m_onRequestFromClient != nullptr)
-				m_onRequestFromClient(pClientInfo, request);
-		}
-
-		// Check whether we should disconnect the client
-
-		std::string str = request.GetHeaders()["Connection"];
-		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-		bool forceDisconnect = (
-			(!Config::GetKeepAliveSupport()) ||												// we do not support keep-alive
-			(str.compare("keep-alive") != 0) ||												// client forces not "keep-alive"
-			(httpConnectionInfo.ConnectTimer.Check() >= Config::GetKeepAliveTimeout()) ||	// client's timeout elapsed
-			(httpConnectionInfo.RequestsCount >= Config::GetKeepAliveMaxRequests()));		// client's number of requests exceeded
-		if (forceDisconnect)
-		{
-			// TODO:
-			// That's a big workaround shit, that should be removed as soon as possible.
-			// We just make the socket invalid, so that it will be disconnected on the next Server's select().
-			// If we will call DisconnectClient here it will corrupt Server's loop of recv
-			// Until it is fixed, the control application can't disconnect clients from this callback.
-			shutdown(pClientInfo.Id, SD_BOTH);
+			echo("ERROR: Can't stop the web server. Error code: ", err, ".");
+			return;
 		}
 	}
 
