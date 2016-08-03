@@ -10,6 +10,7 @@
 namespace NetLib
 {
 
+	// Struct that stores credentials
 	struct Credentials
 	{
 		Credentials()
@@ -22,8 +23,8 @@ namespace NetLib
 		{
 		}
 
-		std::string UserName;
-		std::string Password;
+		std::string UserName;	// User name
+		std::string Password;	// Password
 	};
 
 } // ns NetLib

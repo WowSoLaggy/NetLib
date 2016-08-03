@@ -1,11 +1,3 @@
-// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// Product:		NetLib
-// Module:		Net
-// Author:		Anton Egorov
-// Description:	Class that contains common network
-//				functions for client and server
-// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 #pragma once
 
 #ifndef NETLIB_UNIQUE_NET_H

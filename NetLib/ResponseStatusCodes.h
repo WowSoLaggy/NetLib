@@ -11,6 +11,7 @@
 namespace NetLib
 {
 
+	// Enumeration of known Response status codes
 	enum ResponseStatusCode : int
 	{
 		respcode_unknown = 0,
@@ -40,6 +41,7 @@ namespace NetLib
 		respcode_end
 	};
 
+	// Map that matches Response status code, it's integer code and it's short description
 	static std::map<ResponseStatusCode, std::tuple<int, std::string>> g_responseStatusMap = {
 		{ respcode_unknown, { 0, "" } },
 

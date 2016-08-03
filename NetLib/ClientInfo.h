@@ -11,6 +11,7 @@
 namespace NetLib
 {
 
+	// Typedef for the type-safety
 	typedef UINT_PTR CLIENTID;
 
 
@@ -27,10 +28,12 @@ namespace NetLib
 		{
 		}
 
+		// Returns a description string that contains Id, address and port
 		std::string ToString() const
 		{
 			return "Id: " + std::to_string(Id) + ", address: " + Address + ":" + std::to_string(Port);
 		}
+
 
 		CLIENTID Id;			// Client's Id
 		std::string Address;	// Client's address

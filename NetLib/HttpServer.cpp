@@ -234,7 +234,7 @@ namespace NetLib
 			bool forceDisconnect = (
 				(!Config::GetKeepAliveSupport()) ||												// we do not support keep-alive
 				(str.compare("keep-alive") != 0) ||												// client forces not "keep-alive"
-				(httpConnectionInfo.ConnectTimer.Check() >= Config::GetKeepAliveTimeout()) ||	// client's timeout elapsed
+				(httpConnectionInfo.GetConnectionTime() >= Config::GetKeepAliveTimeout()) ||	// client's timeout elapsed
 				(httpConnectionInfo.RequestsCount >= Config::GetKeepAliveMaxRequests()));		// client's number of requests exceeded
 			if (forceDisconnect)
 			{

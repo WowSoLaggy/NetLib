@@ -13,6 +13,7 @@
 namespace NetLib
 {
 
+	// Class that represents the Http response
 	class HttpResponse
 	{
 	public:
@@ -20,10 +21,20 @@ namespace NetLib
 
 		// Static predefined responses
 
+
+		// Returns the default Bad Request response
 		static HttpResponse BadRequest();
+
+		// Returns the default Method Not Allowed response
 		static HttpResponse MethodNotAllowed();
+
+		// Returns the default Method Not Implemented response
 		static HttpResponse MethodNotImplemented();
+
+		// Returns the default Request Url Too Long response
 		static HttpResponse RequestUrlTooLong();
+
+		// Returns the default File Not Found response
 		static HttpResponse FileNotFound();
 
 
@@ -32,17 +43,19 @@ namespace NetLib
 		HttpResponse();
 		virtual ~HttpResponse();
 
+		// Returns the response converted to the string
 		std::string ToString() const;
 
+		// Adds the given header to the response
 		void AddHeader(const std::string &pHeaderName, const std::string &pHeaderValue);
 
 	private:
 
-		HttpVersion m_httpVersion;
-		ResponseStatusCode m_statusCode;
+		HttpVersion m_httpVersion;						// Response Http version
+		ResponseStatusCode m_statusCode;				// Response status code
 
-		std::map<std::string, std::string> m_headers;
-		std::string m_body;
+		std::map<std::string, std::string> m_headers;	// Map of response headers
+		std::string m_body;								// Response body
 
 	};
 

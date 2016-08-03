@@ -39,9 +39,7 @@ namespace NetLib
 	typedef std::function<void(const ClientInfo &pClientInfo, char *pData, int pDataLength)> ServerCb_ReceivedFromClient;
 
 
-	// Class that starts server on the given port,
-	// accepts pending connections, sends and
-	// receives data, and controls connected clients
+	// Class that represents the Web Server
 	class Server
 	{
 	public:

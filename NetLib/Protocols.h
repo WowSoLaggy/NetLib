@@ -11,6 +11,7 @@
 namespace NetLib
 {
 
+	// Enumeration of known protocols
 	enum Protocol : int
 	{
 		prot_unknown = 0,
@@ -22,6 +23,7 @@ namespace NetLib
 		prot_end
 	};
 
+	// Map that matches Protocol and it's string declaration
 	static std::map<Protocol, std::string> g_protocolMap = {
 		{ prot_unknown, "" },
 

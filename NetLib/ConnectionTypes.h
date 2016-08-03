@@ -7,6 +7,7 @@
 namespace NetLib
 {
 
+	// Enumeration of connection types
 	enum ConnectionType
 	{
 		con_unknown = 0,

@@ -9,6 +9,7 @@ namespace NetLib
 	namespace NetErrCodes
 	{
 
+		// Enumeration that contains error codes
 		enum NetErrCode : int
 		{
 			neterr_noErr = 0,

@@ -11,6 +11,7 @@
 namespace NetLib
 {
 
+	// Enumeration of known Requests methods
 	enum RequestMethod : int
 	{
 		req_unknown = 0,
@@ -27,6 +28,7 @@ namespace NetLib
 		req_end
 	};
 
+	// Map that matches Request method and it's string declaration
 	static std::map<RequestMethod, std::string> g_requestMethodsMap = {
 		{ req_unknown, "" },
 

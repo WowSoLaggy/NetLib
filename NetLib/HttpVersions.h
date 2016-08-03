@@ -11,6 +11,7 @@
 namespace NetLib
 {
 
+	// Enumeration of known Http versions
 	enum HttpVersion : int
 	{
 		httpver_unknown = 0,
@@ -21,6 +22,7 @@ namespace NetLib
 		httpver_end
 	};
 
+	// Map that matches Http version and it's string declaration
 	static std::map<HttpVersion, std::string> g_httpVersionsMap = {
 		{ httpver_unknown, "" },
 

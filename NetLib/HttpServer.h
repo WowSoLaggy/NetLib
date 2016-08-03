@@ -23,6 +23,7 @@ namespace NetLib
 	typedef std::function<void(const ClientInfo &pClientInfo, const HttpRequest &pRequest)> HttpServerCb_RequestFromClient;
 
 
+	// Class that represents the HttpServer
 	class HttpServer : protected Server
 	{
 	public:
@@ -30,30 +31,45 @@ namespace NetLib
 		HttpServer(HttpServerCb_RequestFromClient pOnRequestFromClient);
 		virtual ~HttpServer();
 
+		
+		// Starts the Http Server
 		NetErrCode Start();
+
+		// Stops the Http Server
 		NetErrCode Stop();
 
+		
+		// Sends the given Http Response to the client with the given Id
+		// Params:
+		// [in] CLIENTID pClientId				- id of the client to send the response to
+		// [in] HttpResponse & pHttpResponse	- response to send to the client with the given id
 		NetErrCode SendToClient(CLIENTID pClientId, HttpResponse & pHttpResponse);
 
 	private:
 
-		std::atomic_bool m_isRunning;
-		std::string m_receiveBuffer;
+		std::atomic_bool m_isRunning;							// Flag that indicates whether the HttpServer is running
+		std::string m_receiveBuffer;							// Buffer to store received data
 
-		std::mutex m_lockRequests;
-		std::queue<std::tuple<NetErrCode, ClientInfo, HttpConnectionInfo, HttpRequest>> m_requests;
+		std::mutex m_lockRequests;								// Mutex to lock access to the queue of requests
+		std::queue<std::tuple<NetErrCode, ClientInfo, HttpConnectionInfo, HttpRequest>> m_requests;	// Queue of requests to process
 
-		std::mutex m_lockConnections;
-		std::vector<HttpConnectionInfo> m_connections;
+		std::mutex m_lockConnections;							// Mutex to lock the list of current connections
+		std::vector<HttpConnectionInfo> m_connections;			// List of current connections
 
-		HttpServerCb_RequestFromClient m_onRequestFromClient;
+		HttpServerCb_RequestFromClient m_onRequestFromClient;	// Callback that is called when a new request from the client should be processed by the control application
 
 		
+		// Callback to handle accepted clients
 		void OnClientAccepted(const ClientInfo &pClientInfo);
+
+		// Callback to handle client disconnect
 		void OnClientDisconnected(const ClientInfo &pClientInfo);
+
+		// Callback to handle received data from the client
 		void OnReceivedFromClient(const ClientInfo &pClientInfo, char *pData, int pDataLength);
 
 
+		// Consumer thread that generates callback to the control application
 		void MainLoop();
 
 	};

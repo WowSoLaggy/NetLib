@@ -103,10 +103,14 @@ namespace NetLib
 	}
 
 
-	static bool StringToBool(std::string pString)
+	// Converts the given string to the boolean value
+	// Params:
+	// [in] const std::string & pString	- string to convert
+	static bool StringToBool(const std::string &pString)
 	{
-		std::transform(pString.begin(), pString.end(), pString.begin(), ::tolower);
-		return (pString.compare("true") == 0) || (pString.compare("1") == 0);
+		std::string str = pString;
+		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+		return (str.compare("true") == 0) || (str.compare("1") == 0);
 	}
 
 
