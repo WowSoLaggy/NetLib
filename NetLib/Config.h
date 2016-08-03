@@ -67,9 +67,12 @@ namespace NetLib
 		// Allow requests to the file system.
 		// If false then requests such as GET, PUT, etc will be passed as a callback to the control application
 		static bool GetAllowFileHandle() { return m_allowFileHandle; }
-
+		
 		// Server root folder. If 'AllowFileHandle == false' used only to get default pages (DefaultPage404, etc...)
 		static const std::string & GetRootFolder() { return m_rootFolder; }
+
+		// Default file to get if the Uri points to the directory
+		static const std::string & GetDefaultIndex() { return m_defaultIndex; }
 
 		// Default 400 (Bad Request) page
 		static const std::string & GetDefaultPage400() { return m_defaultPage400; }
@@ -134,6 +137,9 @@ namespace NetLib
 
 		// Server root folder. If 'AllowFileHandle == false' used only to get default pages (DefaultPage404, etc...)
 		static std::string m_rootFolder;
+
+		// Default file to get if the Uri points to the directory
+		static std::string m_defaultIndex;
 
 		// Default 400 (Bad Request) page
 		static std::string m_defaultPage400;

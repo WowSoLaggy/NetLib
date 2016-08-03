@@ -137,5 +137,8 @@
     <ClCompile Include="HttpClient.cpp">
       <Filter>src\Http\HttpClient</Filter>
     </ClCompile>
+    <ClCompile Include="HttpFileHandler.cpp">
+      <Filter>src\Http\HttpServer</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

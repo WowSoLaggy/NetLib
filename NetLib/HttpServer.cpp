@@ -225,8 +225,23 @@ namespace NetLib
 			}
 			else
 			{
-				if (m_onRequestFromClient != nullptr)
-					m_onRequestFromClient(clientInfo, request);
+				// Should we handle requests to the file system or pass it to the control application?
+				if ((Config::GetAllowFileHandle()) && (
+					(request.GetMethod() == req_get) || 
+					(request.GetMethod() == req_head) ||
+					(request.GetMethod() == req_put) || 
+					(request.GetMethod() == req_delete)
+					))
+				{
+					err = FileHandler(clientInfo, request);
+					if (err != neterr_noErr)
+						echo("ERROR: Can't handle request to the file system.");
+				}
+				else
+				{
+					if (m_onRequestFromClient != nullptr)
+						m_onRequestFromClient(clientInfo, request);
+				}
 			}
 
 			// Check whether we should disconnect the client

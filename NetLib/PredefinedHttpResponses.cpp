@@ -7,6 +7,16 @@
 namespace NetLib
 {
 
+	HttpResponse HttpResponse::Ok()
+	{
+		HttpResponse response;
+
+		response.m_httpVersion = Config::GetServerHttpVersion();
+		response.m_statusCode = respcode_ok;
+
+		return response;
+	}
+
 	HttpResponse HttpResponse::BadRequest()
 	{
 		HttpResponse response;

@@ -44,4 +44,9 @@ namespace NetLib
 		m_headers.insert({ pHeaderName, pHeaderValue });
 	}
 
+	void HttpResponse::AddBody(const std::string &pBodyString)
+	{
+		m_body.append(pBodyString);
+	}
+
 } // ns NetLib

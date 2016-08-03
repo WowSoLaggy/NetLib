@@ -80,6 +80,9 @@ namespace NetLib
 		// Consumer thread that generates callback to the control application
 		void MainLoop();
 
+		// Handles requests to files (put, delete, get, ...)
+		NetErrCode FileHandler(const ClientInfo &pClientInfo, const HttpRequest &pHttpRequest);
+
 	};
 
 } // ns NetLib

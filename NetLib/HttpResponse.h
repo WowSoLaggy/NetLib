@@ -22,6 +22,9 @@ namespace NetLib
 		// Static predefined responses
 
 
+		// Returns the default OK response
+		static HttpResponse Ok();
+
 		// Returns the default Bad Request response
 		static HttpResponse BadRequest();
 
@@ -48,6 +51,12 @@ namespace NetLib
 
 		// Adds the given header to the response
 		void AddHeader(const std::string &pHeaderName, const std::string &pHeaderValue);
+
+		// Adds the given string to the body
+		void AddBody(const std::string &pBodyString);
+
+		// Returns the length of the body
+		int GetBodySize() { return m_body.size(); }
 
 	private:
 

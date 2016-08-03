@@ -55,6 +55,9 @@ AllowFileHandle = 1
 ; Server root folder. If 'AllowFileHandle = 0' used only to get default pages (DefaultPage404, etc...)
 RootFolder = ../www
 
+; Default file to get if the Uri points to the directory
+DefaultIndex = index.html
+
 ; Default 400 (Bad Request) page
 DefaultPage400 = DefaultPages/400.html
 

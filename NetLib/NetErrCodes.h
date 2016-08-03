@@ -35,6 +35,9 @@ namespace NetLib
 			neterr_parse_requestBodyTooLong,
 			neterr_parse_methodNotAllowed,
 
+			neterr_noRootDir,
+			neterr_fileHandlerMethodNotRecognized,
+
 			neterr_end
 		};
 

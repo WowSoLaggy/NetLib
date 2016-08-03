@@ -20,6 +20,7 @@ namespace NetLib
 
 	bool Config::m_allowFileHandle = false;
 	std::string Config::m_rootFolder = "./";
+	std::string Config::m_defaultIndex = "";
 	std::string Config::m_defaultPage400 = "";
 	std::string Config::m_defaultPage404 = "";
 	std::string Config::m_defaultPage405 = "";
@@ -83,6 +84,8 @@ namespace NetLib
 				m_allowFileHandle = StringToBool(value);
 			else if (header.compare("RootFolder") == 0)
 				m_rootFolder = value;
+			else if (header.compare("DefaultIndex") == 0)
+				m_defaultIndex = value;
 			else if (header.compare("DefaultPage400") == 0)
 				m_defaultPage400 = value;
 			else if (header.compare("DefaultPage404") == 0)
