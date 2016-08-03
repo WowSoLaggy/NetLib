@@ -2,16 +2,14 @@
 
 C++ framework to simplify the client-server routine via sockets.
 
-<br>
-
-Content:
+##Content
 
 1. Server     - async web server to handle incoming connections and receive/send data
 2. Client     - async web client to connect to the remote server and send/receive data
 3. HttpServer - async HTTP web server to handle HTTP requests
 4. HttpClient - not implemented yet
 
-<br>
+##Usage
 
 Usage is shown in the sample projects and is simple as:
 
