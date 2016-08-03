@@ -92,9 +92,12 @@ namespace NetLib
 
 		// Allowed request methods (other request methods will generate MethodNotAllowed response)
 		static const std::vector<std::string> & GetAllowedRequestMethods() { return m_allowedRequestMethods; }
-
+		
 		// Request URI max length
 		static int GetRequestUriMaxLength() { return m_requestUriMaxLength; }
+
+		// Request body max length
+		static int GetRequestBodyMaxLength() { return m_requestBodyMaxLength; }
 
 
 		// Append DateTime stamp to all outgoing responses
@@ -156,6 +159,9 @@ namespace NetLib
 
 		// Request URI max length
 		static int m_requestUriMaxLength;
+
+		// Request body max length
+		static int m_requestBodyMaxLength;
 
 
 		// Append DateTime stamp to all outgoing responses

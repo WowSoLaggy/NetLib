@@ -28,6 +28,7 @@ namespace NetLib
 
 	std::vector<std::string> Config::m_allowedRequestMethods;
 	int Config::m_requestUriMaxLength = 0;
+	int Config::m_requestBodyMaxLength = 0;
 
 	bool Config::m_appendDateTimeStamp = false;
 	bool Config::m_appendServerName = false;
@@ -106,6 +107,8 @@ namespace NetLib
 			}
 			else if (header.compare("RequestUriMaxLength") == 0)
 				m_requestUriMaxLength = std::stoi(value);
+			else if (header.compare("RequestBodyMaxLength") == 0)
+				m_requestBodyMaxLength = std::stoi(value);
 			else
 			{
 				// Unrecognized token

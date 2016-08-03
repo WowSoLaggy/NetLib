@@ -176,6 +176,11 @@ namespace NetLib
 		if (!contentLengthString.empty())
 		{
 			int contentLength = std::stoi(contentLengthString);
+			if (contentLength > Config::GetRequestBodyMaxLength())
+			{
+				// No need to log because it's not an error
+				return neterr_parse_requestBodyTooLong;
+			}
 
 			// Request body
 
@@ -190,6 +195,12 @@ namespace NetLib
 
 				// Just append, no need to parse
 				m_body.append(line).append("\n");
+			}
+
+			if ((int)m_body.size() > Config::GetRequestBodyMaxLength())
+			{
+				// No need to log because it's not an error
+				return neterr_parse_requestBodyTooLong;
 			}
 
 			if (m_body.size() != contentLength)

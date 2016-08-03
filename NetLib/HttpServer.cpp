@@ -188,7 +188,6 @@ namespace NetLib
 	{
 		LOG("HttpServer::MainLoop()");
 		NetErrCode err;
-		NetErrCode err2;
 
 		ClientInfo clientInfo;
 		HttpConnectionInfo httpConnectionInfo;
@@ -211,14 +210,17 @@ namespace NetLib
 
 			if (err != neterr_noErr)
 			{
-				if (err == neterr_parse_requestLineTooLong)
-					err2 = SendToClient(httpConnectionInfo.Id, HttpResponse::RequestUrlTooLong());
-				else if (err == neterr_parse_methodNotAllowed)
-					err2 = SendToClient(httpConnectionInfo.Id, HttpResponse::MethodNotAllowed());
-				else
-					err2 = SendToClient(httpConnectionInfo.Id, HttpResponse::BadRequest());
+				HttpResponse httpResponse;
 
-				if (err2 != neterr_noErr)
+				if (err == neterr_parse_requestLineTooLong)
+					httpResponse = HttpResponse::RequestUrlTooLong();
+				else if (err == neterr_parse_methodNotAllowed)
+					httpResponse = HttpResponse::MethodNotAllowed();
+				else
+					httpResponse = HttpResponse::BadRequest();
+
+				err = SendToClient(httpConnectionInfo.Id, httpResponse);
+				if (err != neterr_noErr)
 					echo("ERROR: Can't send the response to the client (id: ", httpConnectionInfo.Id, ").");
 			}
 			else

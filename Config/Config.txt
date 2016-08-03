@@ -82,6 +82,9 @@ AllowedRequestMethods = GET, HEAD, POST
 ; Request URI max length
 RequestUriMaxLength = 512
 
+; Request body max length (MB)
+RequestBodyMaxLength = 200
+
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-
 ; RESPONSES
