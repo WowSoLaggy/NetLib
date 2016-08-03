@@ -13,7 +13,7 @@ C++ framework to simplify the client-server routine via sockets.
 
 Usage is shown in the sample projects and is simple as:
 
-Server server;
+Server server("Config.txt");
 
 server.start(1234);
 
