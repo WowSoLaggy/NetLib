@@ -1,4 +1,10 @@
-// TODO: description
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Product:		NetLib
+// Module:		HttpServer
+// Author:		Anton Egorov
+// Description:	Class that controlls the HTTP server. It's 
+//				configuration is taken from the config file
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 #pragma once
 

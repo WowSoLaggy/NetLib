@@ -134,5 +134,8 @@
     <ClCompile Include="Config.cpp">
       <Filter>src\Http\Config</Filter>
     </ClCompile>
+    <ClCompile Include="HttpClient.cpp">
+      <Filter>src\Http\HttpClient</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

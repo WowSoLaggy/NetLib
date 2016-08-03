@@ -1,3 +1,10 @@
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Product:		NetLib
+// Module:		HttpClient
+// Author:		Anton Egorov
+// Description:	Class that controlls the HTTP client
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 #pragma once
 
 #ifndef NETLIB_HTTPCLIENT_H

@@ -44,6 +44,7 @@
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="HttpClient.cpp" />
     <ClCompile Include="HttpRequest.cpp" />
     <ClCompile Include="HttpResponse.cpp" />
     <ClCompile Include="HttpServer.cpp" />
