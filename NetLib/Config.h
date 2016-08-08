@@ -77,6 +77,12 @@ namespace NetLib
 		// Default 400 (Bad Request) page
 		static const std::string & GetDefaultPage400() { return m_defaultPage400; }
 
+		// Default 401 (Auth Required) page
+		static const std::string & GetDefaultPage401() { return m_defaultPage401; }
+
+		// Default 403 (Forbidden) page
+		static const std::string & GetDefaultPage403() { return m_defaultPage403; }
+
 		// Default 404 (Not Found) page
 		static const std::string & GetDefaultPage404() { return m_defaultPage404; }
 
@@ -85,6 +91,9 @@ namespace NetLib
 
 		// Default 414 (Uri Too Large) page
 		static const std::string & GetDefaultPage414() { return m_defaultPage414; }
+
+		// Default 500 (Internal Server Error) page
+		static const std::string & GetDefaultPage500() { return m_defaultPage500; }
 
 		// Default 501 (Method Not Implemented) page
 		static const std::string & GetDefaultPage501() { return m_defaultPage501; }
@@ -144,6 +153,12 @@ namespace NetLib
 		// Default 400 (Bad Request) page
 		static std::string m_defaultPage400;
 
+		// Default 401 (Auth Required) page
+		static std::string m_defaultPage401;
+
+		// Default 403 (Forbidden) page
+		static std::string m_defaultPage403;
+
 		// Default 404 (Not Found) page
 		static std::string m_defaultPage404;
 
@@ -152,6 +167,9 @@ namespace NetLib
 
 		// Default 414 (Uri Too Large) page
 		static std::string m_defaultPage414;
+
+		// Default 500 (Internal Server Error) page
+		static std::string m_defaultPage500;
 
 		// Default 501 (Method Not Implemented) page
 		static std::string m_defaultPage501;

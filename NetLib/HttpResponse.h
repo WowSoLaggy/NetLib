@@ -40,6 +40,15 @@ namespace NetLib
 		// Returns the default File Not Found response
 		static HttpResponse FileNotFound();
 
+		// Returns the default AuthRequired response
+		static HttpResponse AuthRequired();
+
+		// Returns the default Forbidden response
+		static HttpResponse Forbidden();
+
+		// Returns the default Internal Server Error response
+		static HttpResponse InternalServerError();
+
 
 	public:
 

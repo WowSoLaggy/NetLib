@@ -22,16 +22,22 @@ namespace NetLib
 			return neterr_noRootDir;
 		}
 
+		// Answer to the client
+		HttpResponse response;
 
-		if ((pHttpRequest.GetMethod() == req_get) || (pHttpRequest.GetMethod() == req_head))
+		switch (pHttpRequest.GetMethod())
+		{
+		case req_get:
+		case req_head:
 		{
 			// GET or HEAD
 
 			p = p.append(pHttpRequest.GetUri().ToString());
 			if (is_directory(p))
+			{
+				// If points to a directory add something like "index.html" from the config
 				p = p.append(Config::GetDefaultIndex());
-
-			HttpResponse response;
+			}
 
 			if (is_regular_file(p))
 			{
@@ -48,112 +54,40 @@ namespace NetLib
 			else
 				response = HttpResponse::FileNotFound();
 
-			err = SendToClient(pClientInfo.Id, response);
-			if (err != neterr_noErr)
-			{
-				echo("ERROR: Can't send response to the client (id: ", pClientInfo.Id, ").");
-				return err;
-			}
+			break;
 		}
-		else if (pHttpRequest.GetMethod() == req_put)
+		case req_put:
 		{
 			// PUT
 
-			err = SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
-			if (err != neterr_noErr)
-			{
-				echo("ERROR: Can't send response to the client (id: ", pClientInfo.Id, ").");
-				return err;
-			}
+			response = NetLib::HttpResponse::MethodNotImplemented();
+			break;
 		}
-		else if (pHttpRequest.GetMethod() == req_delete)
+		case req_delete:
 		{
 			// DELETE
 
-			err = SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
-			if (err != neterr_noErr)
-			{
-				echo("ERROR: Can't send response to the client (id: ", pClientInfo.Id, ").");
-				return err;
-			}
+			response = NetLib::HttpResponse::MethodNotImplemented();
+			break;
 		}
-		else
+		default:
 		{
 			echo("ERROR: Can't recognize method: \"", pHttpRequest.GetMethod(), "\".");
 			return neterr_fileHandlerMethodNotRecognized;
 		}
+		}
+
+
+		// Send the response
+		err = SendToClient(pClientInfo.Id, response);
+		if (err != neterr_noErr)
+		{
+			echo("ERROR: Can't send response to the client (id: ", pClientInfo.Id, ").");
+			return err;
+		}
+
 
 		return neterr_noErr;
 	}
 
 } // ns NetLib
-
-
-//#include <string>
-//#include <iostream>
-//#include <iomanip>
-//#include <filesystem>
-//#include <chrono>
-//#include <time.h>
-//
-//using namespace std;
-//using namespace std::experimental::filesystem::v1;
-//
-//// Display the last write time for the file
-//wstring LastWriteTimeToLocalTime(const path& file_path)
-//{
-//	const auto last = chrono::system_clock::to_time_t(last_write_time(file_path));
-//	tm timeinfo; localtime_s(&timeinfo, &last);
-//	wchar_t buf[56]; _wasctime_s(buf, 56, &timeinfo); // appends '\n'
-//	return wstring{ buf };
-//}
-//
-//// List files and directories in the specified path
-//void DisplayFolderContents(const path& p)
-//{
-//	wcout << L"Begin iterating " << p.wstring() << endl;
-//	for (const auto& entry : directory_iterator{ p })
-//	{
-//		if (is_regular_file(entry.status()))
-//		{
-//			wcout << L" File: " << entry.path().filename() << " : " << LastWriteTimeToLocalTime(entry.path());
-//		}
-//		else if (is_directory(entry.status()))
-//		{
-//			wcout << L" Dir: " << entry.path().filename() << endl;
-//		}
-//	}
-//}
-//
-//void main()
-//{
-//	wstring dir{ LR"(C:\users\public\documents\)" };
-//	path p{ dir };
-//	if (!is_directory(p))
-//	{
-//		wcout << L"No such directory: " << dir << endl;
-//		return;
-//	}
-//	DisplayFolderContents(p);
-//	// IterateFolderRecursively(p);	// see example
-//	wcout << endl << L"Press Enter to exit" << endl;
-//	wstring input;
-//	getline(wcin, input);
-//}
-//
-//// List files and directories recursively in the path
-//void IterateFolderRecursively(const path& p)
-//{
-//	wcout << L"Begin iterating " << p.wstring() << " recursively" << endl;
-//	for (recursive_directory_iterator it{ p }, end; it != end; ++it)
-//	{
-//		if (is_regular_file(it->status()))
-//		{
-//			wcout << setw(it.depth()) << L" " << L"File: " << it->path().filename() << L" : " << LastWriteTimeToLocalTime(it->path());
-//		}
-//		else if (is_directory(it->status()))
-//		{
-//			wcout << setw(it.depth()) << L" " << L"Dir: " << it->path().filename() << endl;
-//		}
-//	}
-//}

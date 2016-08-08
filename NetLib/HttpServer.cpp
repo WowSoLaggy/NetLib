@@ -227,15 +227,21 @@ namespace NetLib
 			{
 				// Should we handle requests to the file system or pass it to the control application?
 				if ((Config::GetAllowFileHandle()) && (
-					(request.GetMethod() == req_get) || 
+					(request.GetMethod() == req_get) ||
 					(request.GetMethod() == req_head) ||
-					(request.GetMethod() == req_put) || 
+					(request.GetMethod() == req_put) ||
 					(request.GetMethod() == req_delete)
 					))
 				{
 					err = FileHandler(clientInfo, request);
 					if (err != neterr_noErr)
+					{
 						echo("ERROR: Can't handle request to the file system.");
+
+						err = SendToClient(httpConnectionInfo.Id, HttpResponse::InternalServerError());
+						if (err != neterr_noErr)
+							echo("ERROR: Can't send the response to the client (id: ", httpConnectionInfo.Id, ").");
+					}
 				}
 				else
 				{

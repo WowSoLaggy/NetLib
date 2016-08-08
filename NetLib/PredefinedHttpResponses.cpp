@@ -107,4 +107,58 @@ namespace NetLib
 		return response;
 	}
 
+	HttpResponse HttpResponse::AuthRequired()
+	{
+		HttpResponse response;
+
+		response.m_httpVersion = Config::GetServerHttpVersion();
+		response.m_statusCode = respcode_authrequired;
+
+		std::string filePath = Config::GetRootFolder() + "/" + Config::GetDefaultPage401();
+		if (!CheckFileExists(filePath))
+			response.m_body = "<html><head><title>401 Auth Required</title><meta charset = \"utf-8\"/></head><body><br><center><h1>401 Auth Required</h1></center></body></html>";
+		else
+			response.m_body = ReadFileToString(filePath);
+		response.m_headers.insert({ "Content-Length", std::to_string(response.m_body.size()) });
+		response.m_headers.insert({ "Content-Type", "text/html" });
+
+		return response;
+	}
+
+	HttpResponse HttpResponse::Forbidden()
+	{
+		HttpResponse response;
+
+		response.m_httpVersion = Config::GetServerHttpVersion();
+		response.m_statusCode = respcode_forbidden;
+
+		std::string filePath = Config::GetRootFolder() + "/" + Config::GetDefaultPage403();
+		if (!CheckFileExists(filePath))
+			response.m_body = "<html><head><title>403 Forbidden</title><meta charset = \"utf-8\"/></head><body><br><center><h1>403 Forbidden</h1></center></body></html>";
+		else
+			response.m_body = ReadFileToString(filePath);
+		response.m_headers.insert({ "Content-Length", std::to_string(response.m_body.size()) });
+		response.m_headers.insert({ "Content-Type", "text/html" });
+
+		return response;
+	}
+
+	HttpResponse HttpResponse::InternalServerError()
+	{
+		HttpResponse response;
+
+		response.m_httpVersion = Config::GetServerHttpVersion();
+		response.m_statusCode = respcode_internalerror;
+
+		std::string filePath = Config::GetRootFolder() + "/" + Config::GetDefaultPage500();
+		if (!CheckFileExists(filePath))
+			response.m_body = "<html><head><title>500 Internal Server Error</title><meta charset = \"utf-8\"/></head><body><br><center><h1>500 Internal Server Error</h1></center></body></html>";
+		else
+			response.m_body = ReadFileToString(filePath);
+		response.m_headers.insert({ "Content-Length", std::to_string(response.m_body.size()) });
+		response.m_headers.insert({ "Content-Type", "text/html" });
+
+		return response;
+	}
+
 } // ns NetLib

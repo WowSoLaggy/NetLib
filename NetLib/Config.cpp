@@ -22,9 +22,12 @@ namespace NetLib
 	std::string Config::m_rootFolder = "./";
 	std::string Config::m_defaultIndex = "";
 	std::string Config::m_defaultPage400 = "";
+	std::string Config::m_defaultPage401 = "";
+	std::string Config::m_defaultPage403 = "";
 	std::string Config::m_defaultPage404 = "";
 	std::string Config::m_defaultPage405 = "";
 	std::string Config::m_defaultPage414 = "";
+	std::string Config::m_defaultPage500 = "";
 	std::string Config::m_defaultPage501 = "";
 
 	std::vector<std::string> Config::m_allowedRequestMethods;
@@ -88,12 +91,18 @@ namespace NetLib
 				m_defaultIndex = value;
 			else if (header.compare("DefaultPage400") == 0)
 				m_defaultPage400 = value;
+			else if (header.compare("DefaultPage401") == 0)
+				m_defaultPage401 = value;
+			else if (header.compare("DefaultPage403") == 0)
+				m_defaultPage403 = value;
 			else if (header.compare("DefaultPage404") == 0)
 				m_defaultPage404 = value;
 			else if (header.compare("DefaultPage405") == 0)
 				m_defaultPage405 = value;
 			else if (header.compare("DefaultPage414") == 0)
 				m_defaultPage414 = value;
+			else if (header.compare("DefaultPage500") == 0)
+				m_defaultPage500 = value;
 			else if (header.compare("DefaultPage501") == 0)
 				m_defaultPage501 = value;
 			else if (header.compare("AppendDateTime") == 0)

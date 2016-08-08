@@ -61,6 +61,12 @@ DefaultIndex = index.html
 ; Default 400 (Bad Request) page
 DefaultPage400 = DefaultPages/400.html
 
+; Default 401 (Auth Required) page
+DefaultPage401 = DefaultPages/401.html
+
+; Default 403 (Forbidden) page
+DefaultPage403 = DefaultPages/403.html
+
 ; Default 404 (Not Found) page
 DefaultPage404 = DefaultPages/404.html
 
@@ -69,6 +75,9 @@ DefaultPage405 = DefaultPages/405.html
 
 ; Default 414 (Uri Too Large) page
 DefaultPage414 = DefaultPages/414.html
+
+; Default 500 (Internal Server Error) page
+DefaultPage500 = DefaultPages/500.html
 
 ; Default 501 (Method Not Implemented) page
 DefaultPage501 = DefaultPages/501.html
