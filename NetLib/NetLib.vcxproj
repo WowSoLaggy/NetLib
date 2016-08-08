@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Auth.h" />
+    <ClInclude Include="AuthTypes.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientInfo.h" />
     <ClInclude Include="Config.h" />
@@ -42,6 +44,7 @@
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Auth.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="HttpClient.cpp" />

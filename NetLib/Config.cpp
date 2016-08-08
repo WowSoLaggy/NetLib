@@ -16,6 +16,8 @@ namespace NetLib
 	int Config::m_keepAliveMaxRequests = 100;
 	int Config::m_maxConnections = 10;
 
+	std::string Config::m_authType = "";
+
 	bool Config::m_logOnAccept = false;
 
 	bool Config::m_allowFileHandle = false;
@@ -81,8 +83,13 @@ namespace NetLib
 				m_keepAliveMaxRequests = std::stoi(value);
 			else if (header.compare("MaxConnections") == 0)
 				m_maxConnections = std::stoi(value);
+
+			else if (header.compare("AuthType") == 0)
+				m_authType = value;
+
 			else if (header.compare("LogOnAccept") == 0)
 				m_logOnAccept = StringToBool(value);
+
 			else if (header.compare("AllowFileHandle") == 0)
 				m_allowFileHandle = StringToBool(value);
 			else if (header.compare("RootFolder") == 0)
@@ -105,12 +112,14 @@ namespace NetLib
 				m_defaultPage500 = value;
 			else if (header.compare("DefaultPage501") == 0)
 				m_defaultPage501 = value;
+
 			else if (header.compare("AppendDateTime") == 0)
 				m_appendDateTimeStamp = StringToBool(value);
 			else if (header.compare("AppendServerName") == 0)
 				m_appendServerName = StringToBool(value);
 			else if (header.compare("ServerName") == 0)
 				m_serverName = value;
+
 			else if (header.compare("AllowedRequestMethods") == 0)
 			{
 				tokens = SplitString(value, ',');

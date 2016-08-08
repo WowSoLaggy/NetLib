@@ -37,6 +37,9 @@
     <Filter Include="src\Http\Common">
       <UniqueIdentifier>{c98e9233-913c-42e8-81d5-9f6eeebe61c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Http\Auth">
+      <UniqueIdentifier>{dd18601e-5d8c-4a10-a687-6dd85fb6051b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -64,9 +67,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="Uri.h">
-      <Filter>src\Uri</Filter>
-    </ClInclude>
-    <ClInclude Include="Credentials.h">
       <Filter>src\Uri</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
@@ -101,6 +101,15 @@
     </ClInclude>
     <ClInclude Include="HttpConnectionInfo.h">
       <Filter>src\Http\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="AuthTypes.h">
+      <Filter>src\Http\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="Auth.h">
+      <Filter>src\Http\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="Credentials.h">
+      <Filter>src\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="HttpFileHandler.cpp">
       <Filter>src\Http\HttpServer</Filter>
+    </ClCompile>
+    <ClCompile Include="Auth.cpp">
+      <Filter>src\Http\Auth</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

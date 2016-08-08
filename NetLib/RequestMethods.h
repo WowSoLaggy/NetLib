@@ -28,7 +28,7 @@ namespace NetLib
 		req_end
 	};
 
-	// Map that matches Request method and it's string declaration
+	// Map that matches the Request method and it's string declaration
 	static std::map<RequestMethod, std::string> g_requestMethodsMap = {
 		{ req_unknown, "" },
 

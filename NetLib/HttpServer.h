@@ -20,6 +20,7 @@
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 #include "HttpConnectionInfo.h"
+#include "Auth.h"
 
 
 namespace NetLib
@@ -65,6 +66,8 @@ namespace NetLib
 		std::vector<HttpConnectionInfo> m_connections;			// List of current connections
 
 		HttpServerCb_RequestFromClient m_onRequestFromClient;	// Callback that is called when a new request from the client should be processed by the control application
+
+		Auth m_authorizer;										// Object used to authorize incoming requests
 
 		
 		// Callback to handle accepted clients

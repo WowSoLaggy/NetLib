@@ -52,7 +52,12 @@ namespace NetLib
 				response.AddHeader("Content-Type", "text/html");
 			}
 			else
+			{
 				response = HttpResponse::FileNotFound();
+				/*response = HttpResponse::AuthRequired();
+				if (m_authorizer.GetAuthType() == auth_basic)
+					response.AddHeader("WWW-Authenticate", "Basic realm=\"Private\"");*/
+			}
 
 			break;
 		}

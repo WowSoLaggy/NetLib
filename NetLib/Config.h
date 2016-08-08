@@ -60,6 +60,10 @@ namespace NetLib
 		static int GetMaxConnections() { return m_maxConnections; }
 
 
+		// Authorization type
+		static std::string GetAuthType() { return m_authType; }
+
+
 		// Log accepted connections (can spam the log file)
 		static bool GetLogOnAccept() { return m_logOnAccept; }
 
@@ -134,6 +138,10 @@ namespace NetLib
 
 		// Max number of connections(connected clients)
 		static int m_maxConnections;
+
+
+		// Authorization type
+		static std::string m_authType;
 
 
 		// Log accepted connections (can spam the log file)

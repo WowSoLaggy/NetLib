@@ -34,6 +34,15 @@ MaxConnections = 100
 
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-
+; AUTHORIZATION
+; -=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+; Authorization type (only 'none', 'basic' and 'digest' are supported so far)
+AuthType = none
+
+
+; -=-=-=-=-=-=-=-=-=-=-=-=-
 ; LOGGING
 ; -=-=-=-=-=-=-=-=-=-=-=-=-
 
