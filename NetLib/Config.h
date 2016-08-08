@@ -63,6 +63,9 @@ namespace NetLib
 		// Authorization type
 		static std::string GetAuthType() { return m_authType; }
 
+		// Path to Auth.conf file (file that contains authorization rules). Can be empty if no authorization is required
+		static std::string GetAuthPath() { return m_authPath; }
+
 
 		// Log accepted connections (can spam the log file)
 		static bool GetLogOnAccept() { return m_logOnAccept; }
@@ -151,6 +154,9 @@ namespace NetLib
 
 		// Authorization type
 		static std::string m_authType;
+
+		// Path to Auth.conf file (file that contains authorization rules). Can be empty if no authorization is required
+		static std::string m_authPath;
 
 
 		// Log accepted connections (can spam the log file)

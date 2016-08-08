@@ -17,6 +17,7 @@ namespace NetLib
 	int Config::m_maxConnections = 10;
 
 	std::string Config::m_authType = "";
+	std::string Config::m_authPath = "";
 
 	bool Config::m_logOnAccept = false;
 	bool Config::m_logRequests = false;
@@ -89,6 +90,8 @@ namespace NetLib
 
 			else if (header.compare("AuthType") == 0)
 				m_authType = value;
+			else if (header.compare("AuthPath") == 0)
+				m_authPath = value;
 
 			else if (header.compare("LogOnAccept") == 0)
 				m_logOnAccept = StringToBool(value);
