@@ -36,6 +36,8 @@ namespace NetLib
 		// [out] int & pOffset						- number of parsed chars in the given request string
 		NetErrCodes::NetErrCode Parse(const std::string &pRequestString, int &pOffset);
 
+		std::string ToString(bool pWithBody) const;
+
 
 	private:
 

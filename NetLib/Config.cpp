@@ -19,6 +19,9 @@ namespace NetLib
 	std::string Config::m_authType = "";
 
 	bool Config::m_logOnAccept = false;
+	bool Config::m_logRequests = false;
+	bool Config::m_logResponses = false;
+	bool Config::m_logBody = false;
 
 	bool Config::m_allowFileHandle = false;
 	std::string Config::m_rootFolder = "./";
@@ -89,6 +92,12 @@ namespace NetLib
 
 			else if (header.compare("LogOnAccept") == 0)
 				m_logOnAccept = StringToBool(value);
+			else if (header.compare("LogRequests") == 0)
+				m_logRequests = StringToBool(value);
+			else if (header.compare("LogResponses") == 0)
+				m_logResponses = StringToBool(value);
+			else if (header.compare("LogBody") == 0)
+				m_logBody = StringToBool(value);
 
 			else if (header.compare("AllowFileHandle") == 0)
 				m_allowFileHandle = StringToBool(value);

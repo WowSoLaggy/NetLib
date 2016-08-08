@@ -67,6 +67,15 @@ namespace NetLib
 		// Log accepted connections (can spam the log file)
 		static bool GetLogOnAccept() { return m_logOnAccept; }
 
+		// Log all incoming requests (can spam the log file)
+		static bool GetLogRequests() { return m_logRequests; }
+
+		// Log all sent responses (can spam the log file)
+		static bool GetLogResponses() { return m_logResponses; }
+
+		// Log the request and response body (how about logging 100MB file?)
+		static bool GetLogBody() { return m_logBody; }
+
 
 		// Allow requests to the file system.
 		// If false then requests such as GET, PUT, etc will be passed as a callback to the control application
@@ -146,6 +155,15 @@ namespace NetLib
 
 		// Log accepted connections (can spam the log file)
 		static bool m_logOnAccept;
+
+		// Log all incoming requests (can spam the log file)
+		static bool m_logRequests;
+
+		// Log all sent responses (can spam the log file)
+		static bool m_logResponses;
+
+		// Log the request and response body (how about logging 100MB file?)
+		static bool m_logBody;
 
 
 		// Allow requests to the file system.

@@ -56,7 +56,7 @@ namespace NetLib
 		virtual ~HttpResponse();
 
 		// Returns the response converted to the string
-		std::string ToString() const;
+		std::string ToString(bool pWithBody) const;
 
 		// Adds the given header to the response
 		void AddHeader(const std::string &pHeaderName, const std::string &pHeaderValue);

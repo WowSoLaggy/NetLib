@@ -22,7 +22,6 @@ namespace NetLib
 			return neterr_noRootDir;
 		}
 
-		// Answer to the client
 		HttpResponse response;
 
 		switch (pHttpRequest.GetMethod())
@@ -52,12 +51,7 @@ namespace NetLib
 				response.AddHeader("Content-Type", "text/html");
 			}
 			else
-			{
 				response = HttpResponse::FileNotFound();
-				/*response = HttpResponse::AuthRequired();
-				if (m_authorizer.GetAuthType() == auth_basic)
-					response.AddHeader("WWW-Authenticate", "Basic realm=\"Private\"");*/
-			}
 
 			break;
 		}

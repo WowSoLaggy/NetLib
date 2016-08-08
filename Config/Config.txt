@@ -39,7 +39,7 @@ MaxConnections = 100
 
 
 ; Authorization type (only 'none', 'basic' and 'digest' are supported so far)
-AuthType = none
+AuthType = basic
 
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-
@@ -49,6 +49,15 @@ AuthType = none
 
 ; Log accepted connections (can spam the log file)
 LogOnAccept = 1
+
+; Log all incoming requests (can spam the log file)
+LogRequests = 1
+
+; Log all sent responses (can spam the log file)
+LogResponses = 1
+
+; Log the request and response body (how about logging 100MB file?)
+LogBody = 0
 
 
 ; -=-=-=-=-=-=-=-=-=-=-=-=-

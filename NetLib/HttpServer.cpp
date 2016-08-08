@@ -36,6 +36,13 @@ namespace NetLib
 			return err;
 		}
 
+		err = m_authorizer.UpdatePrivileges();
+		if (err != neterr_noErr)
+		{
+			echo("ERROR: Error occured while updating authorization privileges.");
+			return err;
+		}
+
 		err = Server::Start(Config::GetServerPort());
 		if (err != neterr_noErr)
 		{
@@ -71,9 +78,18 @@ namespace NetLib
 		if (Config::GetAppendServerName())
 			pHttpResponse.AddHeader("Server", Config::GetServerName());
 
+		// Log if neccessary
+
+		if (Config::GetLogResponses())
+		{
+			echo("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+			echo("\n", pHttpResponse.ToString(Config::GetLogBody()));
+			echo("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		}
+
 		// Send this response to the client as a string
 
-		std::string responseString = pHttpResponse.ToString();
+		std::string responseString = pHttpResponse.ToString(true);
 		err = Server::SendToClient(pClientId, responseString.data(), responseString.size());
 		if (err != neterr_noErr)
 		{
@@ -204,6 +220,15 @@ namespace NetLib
 
 				std::tie(err, clientInfo, httpConnectionInfo, request) = m_requests.front();
 				m_requests.pop();
+			}
+
+			// Log if neccessary
+
+			if (Config::GetLogRequests())
+			{
+				echo("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+				echo("\n", request.ToString(Config::GetLogBody()));
+				echo("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 			}
 
 			// Check whether we should auto generate the response or just pass the request to the control application

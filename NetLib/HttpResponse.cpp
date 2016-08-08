@@ -15,7 +15,7 @@ namespace NetLib
 	}
 
 
-	std::string HttpResponse::ToString() const
+	std::string HttpResponse::ToString(bool pWithBody) const
 	{
 		std::string res = "";
 
@@ -33,7 +33,7 @@ namespace NetLib
 		res.append(Config::GetHttpNewLine());
 
 		// Body if any
-		if (!m_body.empty())
+		if ((!m_body.empty()) && (pWithBody))
 			res.append(m_body).append(Config::GetHttpNewLine()).append(Config::GetHttpNewLine());
 
 		return res;

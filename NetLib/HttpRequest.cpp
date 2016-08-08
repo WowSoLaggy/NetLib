@@ -216,4 +216,28 @@ namespace NetLib
 		return neterr_noErr;
 	}
 
+	std::string HttpRequest::ToString(bool pWithBody) const
+	{
+		std::string res = "";
+
+		// Response status line
+		res.append(g_requestMethodsMap[m_method]).
+			append(" ").
+			append(m_uri.ToString()).
+			append(" ").
+			append(g_httpVersionsMap[m_httpVersion]).
+			append(Config::GetHttpNewLine());
+
+		// Headers
+		for (auto & header : m_headers)
+			res.append(header.first).append(": ").append(header.second).append(Config::GetHttpNewLine());
+		res.append(Config::GetHttpNewLine());
+
+		// Body if any
+		if ((!m_body.empty()) && (pWithBody))
+			res.append(m_body).append(Config::GetHttpNewLine()).append(Config::GetHttpNewLine());
+
+		return res;
+	}
+
 } // ns NetLib
