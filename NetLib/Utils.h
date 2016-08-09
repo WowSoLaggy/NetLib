@@ -145,6 +145,19 @@ namespace NetLib
 		return (stat(pFileName.c_str(), &buffer) == 0);
 	}
 
+
+	// Check whether the input string is a number (can be parsed to)
+	// Params:
+	// [in] const std::string & pString - input string to be checked
+	static bool IsNumber(const std::string& pString)
+	{
+		return (
+			(!pString.empty()) &&
+			(std::find_if(pString.begin(), pString.end(),
+				[](char c) { return !std::isdigit(c); }) == pString.end())
+			);
+	}
+
 }; // ns NetLib
 
 
