@@ -17,7 +17,13 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="NetLib_test.cpp">
+    <ClCompile Include="Uri_tests.cpp">
+      <Filter>src\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="NetLib_Client_Server_tests.cpp">
+      <Filter>src\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils_tests.cpp">
       <Filter>src\Tests</Filter>
     </ClCompile>
   </ItemGroup>

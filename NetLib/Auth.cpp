@@ -26,7 +26,7 @@ namespace NetLib
 				// It is already the last element of the enumeration and
 				// we still don't have any match
 				echo("ERROR: Can't recognize the Authorization type: \"", authTypeString, "\".");
-				return neterr_parse_cantParse;
+				return neterr_cantParseAuth;
 			}
 
 			if (authType.second.compare(authTypeString) == 0)

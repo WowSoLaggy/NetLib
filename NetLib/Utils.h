@@ -4,6 +4,7 @@
 #define UTILS_H
 
 
+#include <Windows.h>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -12,10 +13,13 @@
 #include <cctype>
 #include <locale>
 #include <fstream>
+#include <filesystem>
 
 
 namespace NetLib
 {
+	using namespace std::tr2::sys;
+
 
 	// Splits the given string to tokens with a given delimiter
 	// Params:
@@ -149,13 +153,86 @@ namespace NetLib
 	// Check whether the input string is a number (can be parsed to)
 	// Params:
 	// [in] const std::string & pString - input string to be checked
-	static bool IsNumber(const std::string& pString)
+	static bool IsNumber(const std::string &pString)
 	{
 		return (
 			(!pString.empty()) &&
 			(std::find_if(pString.begin(), pString.end(),
 				[](char c) { return !std::isdigit(c); }) == pString.end())
 			);
+	}
+
+
+	// Checks whether the two given paths point to the same directory.
+	// Params:
+	// [in] std::string pDir1	- path to the directory that supposed to be the sub-directory
+	// [in] std::string pDir2	- path to the directory that supposed to be the parent directory
+	static bool IsSameDir(std::string pDir1, std::string pDir2)
+	{
+		// This implementation is not as good as it should be,
+		// but I don't want to do it anymore
+
+		if ((!is_directory(path(pDir1))) || (!is_directory(path(pDir2))))
+			return false;
+
+		std::transform(pDir1.begin(), pDir1.end(), pDir1.begin(), ::tolower);
+		std::transform(pDir2.begin(), pDir2.end(), pDir2.begin(), ::tolower);
+
+		char absolute[MAX_PATH];
+		_fullpath(absolute, pDir1.c_str(), MAX_PATH);
+		pDir1 = absolute;
+		_fullpath(absolute, pDir2.c_str(), MAX_PATH);
+		pDir2 = absolute;
+
+		while ((pDir1[pDir1.size() - 1] == '\\') || (pDir1[pDir1.size() - 1] == '/'))
+			pDir1.erase(pDir1.end() - 1);
+		while ((pDir2[pDir2.size() - 1] == '\\') || (pDir2[pDir2.size() - 1] == '/'))
+			pDir2.erase(pDir2.end() - 1);
+
+		return (pDir1.compare(pDir2) == 0);
+	}
+
+	
+	// Checks whether the given pSubDir is a sub-directory for a pParentDir
+	// Params:
+	// [in] std::string pSubDir		- path to the directory that supposed to be the sub-directory
+	// [in] std::string pParentDir	- path to the directory that supposed to be the parent directory
+	static bool IsSubDir(std::string pSubDir, std::string pParentDir)
+	{
+		// This implementation is not as good as it should be,
+		// but I don't want to do it anymore
+
+		pSubDir = pSubDir.append("/");
+		pParentDir = pParentDir.append("/");
+
+		std::transform(pSubDir.begin(), pSubDir.end(), pSubDir.begin(), ::tolower);
+		std::transform(pParentDir.begin(), pParentDir.end(), pParentDir.begin(), ::tolower);
+
+		char absolute[MAX_PATH];
+		_fullpath(absolute, pSubDir.c_str(), MAX_PATH);
+		pSubDir = absolute;
+		_fullpath(absolute, pParentDir.c_str(), MAX_PATH);
+		pParentDir = absolute;
+
+		while ((pParentDir[pParentDir.size() - 1] == '\\') || (pParentDir[pParentDir.size() - 1] == '/'))
+			pParentDir.erase(pParentDir.end() - 1);
+		while ((pSubDir[pSubDir.size() - 1] == '\\') || (pSubDir[pSubDir.size() - 1] == '/'))
+			pSubDir.erase(pSubDir.end() - 1);
+
+		path dirParent(pParentDir);
+		path dirSub(pSubDir);
+
+		if ((!is_directory(path(dirParent))) || (!is_directory(path(dirSub))))
+			return false;
+
+		while (dirSub.has_parent_path())
+		{
+			dirSub = dirSub.parent_path();
+			if (dirSub.compare(dirParent) == 0)
+				return true;
+		}
+
+		return false;
 	}
 
 }; // ns NetLib
