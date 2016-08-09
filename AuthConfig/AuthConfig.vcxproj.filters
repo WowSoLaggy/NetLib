@@ -7,6 +7,9 @@
     <Filter Include="src\AuthConfig">
       <UniqueIdentifier>{8b39c715-bb23-44b2-adae-a5d966a58fac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{c2d753cc-f566-483b-b1a7-651ddedb1a08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -17,6 +20,9 @@
     </ClInclude>
     <ClInclude Include="User.h">
       <Filter>src\AuthConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\Encodings\Md5.h">
+      <Filter>libs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

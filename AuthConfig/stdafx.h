@@ -12,5 +12,7 @@
 #include <regex>
 #include <iomanip>
 
+#include "Md5.h"
+
 
 #endif // AUTHCONFIG_STDAFX_H
