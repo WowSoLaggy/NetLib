@@ -27,7 +27,7 @@ namespace NetLib
 {
 
 	// Typedef for the request received callback
-	typedef std::function<void(const ClientInfo &pClientInfo, const HttpRequest &pRequest)> HttpServerCb_RequestFromClient;
+	typedef std::function<void(const HttpConnectionInfo &pHttpConnectionInfo, const HttpRequest &pRequest)> HttpServerCb_RequestFromClient;
 
 
 	// Class that represents the HttpServer
@@ -60,7 +60,7 @@ namespace NetLib
 		std::string m_receiveBuffer;							// Buffer to store received data
 
 		std::mutex m_lockRequests;								// Mutex to lock access to the queue of requests
-		std::queue<std::tuple<NetErrCode, ClientInfo, HttpConnectionInfo, HttpRequest>> m_requests;	// Queue of requests to process
+		std::queue<std::tuple<NetErrCode, HttpConnectionInfo, HttpRequest>> m_requests;	// Queue of requests to process
 
 		std::mutex m_lockConnections;							// Mutex to lock the list of current connections
 		std::vector<HttpConnectionInfo> m_connections;			// List of current connections
@@ -84,7 +84,7 @@ namespace NetLib
 		void MainLoop();
 
 		// Handles requests to files (put, delete, get, ...)
-		NetErrCode FileHandler(const ClientInfo &pClientInfo, const HttpRequest &pHttpRequest);
+		NetErrCode FileHandler(const HttpConnectionInfo &pHttpConnectionInfo, const HttpRequest &pHttpRequest);
 
 	};
 

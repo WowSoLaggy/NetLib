@@ -165,7 +165,6 @@ copy /Y "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)Config\"</Command>
     <ClInclude Include="..\libs\Encodings\Md5.h" />
     <ClInclude Include="AuthConfig.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="User.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AuthConfig.cpp" />

@@ -18,6 +18,7 @@ namespace NetLib
 
 	std::string Config::m_authType = "";
 	std::string Config::m_authPath = "";
+	std::string Config::m_defaultHtAccess = "";
 
 	bool Config::m_logOnAccept = false;
 	bool Config::m_logRequests = false;
@@ -35,6 +36,8 @@ namespace NetLib
 	std::string Config::m_defaultPage414 = "";
 	std::string Config::m_defaultPage500 = "";
 	std::string Config::m_defaultPage501 = "";
+	bool Config::m_forbidDot = true;
+	bool Config::m_forbidHtAccess = true;
 
 	std::vector<std::string> Config::m_allowedRequestMethods;
 	int Config::m_requestUriMaxLength = 0;
@@ -92,6 +95,8 @@ namespace NetLib
 				m_authType = value;
 			else if (header.compare("AuthPath") == 0)
 				m_authPath = value;
+			else if (header.compare("DefaultHtAccess") == 0)
+				m_defaultHtAccess = value;
 
 			else if (header.compare("LogOnAccept") == 0)
 				m_logOnAccept = StringToBool(value);
@@ -124,6 +129,10 @@ namespace NetLib
 				m_defaultPage500 = value;
 			else if (header.compare("DefaultPage501") == 0)
 				m_defaultPage501 = value;
+			else if (header.compare("ForbidDot") == 0)
+				m_forbidDot = StringToBool(value);
+			else if (header.compare("ForbidHtAccess") == 0)
+				m_forbidHtAccess = StringToBool(value);
 
 			else if (header.compare("AppendDateTime") == 0)
 				m_appendDateTimeStamp = StringToBool(value);

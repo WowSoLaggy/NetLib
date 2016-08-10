@@ -6,6 +6,7 @@
 
 int AuthConfig::Run()
 {
+	ReadFromFile();
 	ShowMainMenu();
 
 	while (true)
@@ -118,10 +119,14 @@ void AuthConfig::ReadFromFile()
 		else if (mode == 2)
 		{
 			tokens = NetLib::SplitString(line, ':');
-			if (tokens.size() != 3)
+			if (tokens.size() < 2)
 				continue;
 
-			m_users.push_back({ tokens[0], tokens[1], tokens[2] });
+			std::vector<std::string> realms;
+			if (tokens.size() > 2)
+				realms = std::vector<std::string>(tokens.begin() + 2, tokens.end());
+
+			m_users.push_back({ tokens[0], tokens[1], realms });
 			if ((int)tokens[0].size() > m_maxUserNameLength)
 				m_maxUserNameLength = (int)tokens[0].size();
 		}
@@ -151,7 +156,12 @@ void AuthConfig::WriteToFile()
 
 	f << c_usersOpenStr << std::endl;
 	for (auto & user : m_users)
-		f << "   " << user.Name << ":" << user.Realm << ":" << user.Password << std::endl;
+	{
+		f << "   " << user.Name << ":" << user.Password;
+		for (auto & realm : user.Realms)
+			f << ":" << realm;
+		f << std::endl;
+	}
 	f << c_usersCloseStr << std::endl;
 }
 
@@ -275,13 +285,7 @@ void AuthConfig::ListUsers()
 		return;
 	}
 
-	std::cout << std::endl << "Available users:" << std::endl << std::endl;
-	std::cout << std::setw(m_maxUserNameLength + 7) << "Name" << " | " << std::setw(m_maxRealmName) << "Realm" << " | Password secured" << std::endl;
-	std::cout << std::setfill('-') << std::setw(80) << " " << std::setfill(' ') << std::endl;
-	for (int i = 0; i < (int)m_users.size(); ++i)
-		std::cout << "   " << std::setw(2) << (i + 1) << ". " << std::setw(m_maxUserNameLength) << m_users[i].Name << " | " <<
-		std::setw(m_maxRealmName) << m_users[i].Realm << " | " <<
-		(m_users[i].Password.empty() ? "No" : "Yes") << std::endl;
+	PrintUsersList();
 
 	std::cout << std::endl << "Total " << m_users.size() << " users." << std::endl << std::endl;
 }
@@ -317,26 +321,33 @@ void AuthConfig::AddUser()
 
 	// Realm
 
+	std::vector<std::string> realms;
 	std::string realmName = "";
-
 	if (m_realms.size() != 0)
 	{
-		std::cout << "Enter the name of the existing realm to add this user to." << std::endl;
-		std::cout << "Leave blank to not to specify realm (can be changed later).";
-		std::cout << std::endl << "Available realms:" << std::endl;
-		for (int i = 0; i < (int)m_realms.size(); ++i)
-			std::cout << "   " << (i + 1) << ". " << m_realms[i] << std::endl;
-
-		std::cout << "Enter realm name:" << std::endl << "> ";
-		std::getline(std::cin, realmName);
-		if (realmName.size() > 0)
+		while (true)
 		{
-			auto it = std::find(m_realms.begin(), m_realms.end(), realmName);
-			if (it == m_realms.end())
+			std::cout << "Enter the name of the existing realm to add this user to." << std::endl;
+			std::cout << "Leave blank to finish or not to specify realm (can be changed later).";
+			std::cout << std::endl << "Available realms:" << std::endl;
+			for (int i = 0; i < (int)m_realms.size(); ++i)
+				std::cout << "   " << (i + 1) << ". " << m_realms[i] << std::endl;
+
+			std::cout << "Enter realm name:" << std::endl << "> ";
+			std::getline(std::cin, realmName);
+			if (realmName.size() > 0)
 			{
-				std::cout << "ERROR: Can't find the realm with the entered name." << std::endl << std::endl;
-				return;
+				auto it = std::find(m_realms.begin(), m_realms.end(), realmName);
+				if (it == m_realms.end())
+				{
+					std::cout << "ERROR: Can't find the realm with the entered name." << std::endl << std::endl;
+					return;
+				}
+
+				realms.push_back(realmName);
 			}
+			else
+				break;
 		}
 	}
 	else
@@ -373,7 +384,7 @@ void AuthConfig::AddUser()
 	// Finalize
 
 	password1 = Md5::Md5_Encode(std::vector<uint8_t>(password1.begin(), password1.end()));
-	m_users.push_back({ userName, realmName, password1 });
+	m_users.push_back({ userName, password1, realms });
 	WriteToFile();
 	std::cout << std::endl << "User \"" << userName << "\" successfully added." << std::endl << std::endl;
 }
@@ -388,9 +399,7 @@ void AuthConfig::RemoveUser()
 		return;
 	}
 
-	std::cout << std::endl << "Available users:" << std::endl;
-	for (int i = 0; i < (int)m_users.size(); ++i)
-		std::cout << "   " << (i + 1) << ". " << m_users[i].Name << std::endl;
+	PrintUsersList();
 
 	std::string userName;
 	std::cout << "Enter user name to delete:" << std::endl << "> ";
@@ -429,13 +438,7 @@ void AuthConfig::ChangeUserRealm()
 		return;
 	}
 
-	std::cout << std::endl << "Available users:" << std::endl << std::endl;
-	std::cout << std::setw(m_maxUserNameLength + 7) << "Name" << " | " << std::setw(m_maxRealmName) << "Realm" << " | Password secured" << std::endl;
-	std::cout << std::setfill('-') << std::setw(80) << " " << std::setfill(' ') << std::endl;
-	for (int i = 0; i < (int)m_users.size(); ++i)
-		std::cout << "   " << std::setw(2) << (i + 1) << ". " << std::setw(m_maxUserNameLength) << m_users[i].Name << " | " <<
-		std::setw(m_maxRealmName) << m_users[i].Realm << " | " <<
-		(m_users[i].Password.empty() ? "No" : "Yes") << std::endl;
+	PrintUsersList();
 
 	std::cout << "Enter the name of the existing user:" << std::endl << "> ";
 	std::getline(std::cin, userName);
@@ -448,36 +451,44 @@ void AuthConfig::ChangeUserRealm()
 
 	// User realm
 
-	std::string realmName = "";
 	if (m_realms.size() == 0)
 	{
 		std::cout << "No realms found to add user to." << std::endl << std::endl;
 		return;
 	}
 
-	std::cout << "Enter the name of the existing realm to add this user to." << std::endl;
-	std::cout << "Leave blank to not to specify realm (can be changed later).";
-	std::cout << std::endl << "Available realms:" << std::endl;
-	for (int i = 0; i < (int)m_realms.size(); ++i)
-		std::cout << "   " << (i + 1) << ". " << m_realms[i] << std::endl;
-
-	std::cout << "Enter realm name:" << std::endl << "> ";
-	std::getline(std::cin, realmName);
-	if (realmName.size() > 0)
+	std::string realmName = "";
+	std::vector<std::string> realms;
+	while (true)
 	{
-		auto it = std::find(m_realms.begin(), m_realms.end(), realmName);
-		if (it == m_realms.end())
+		std::cout << "Enter the name of the existing realm to add this user to." << std::endl;
+		std::cout << "Leave blank to finish or not to specify realm (can be changed later).";
+		std::cout << std::endl << "Available realms:" << std::endl;
+		for (int i = 0; i < (int)m_realms.size(); ++i)
+			std::cout << "   " << (i + 1) << ". " << m_realms[i] << std::endl;
+
+		std::cout << "Enter realm name:" << std::endl << "> ";
+		std::getline(std::cin, realmName);
+		if (realmName.size() > 0)
 		{
-			std::cout << "ERROR: Can't find the realm with the entered name." << std::endl << std::endl;
-			return;
+			auto it = std::find(m_realms.begin(), m_realms.end(), realmName);
+			if (it == m_realms.end())
+			{
+				std::cout << "ERROR: Can't find the realm with the entered name." << std::endl << std::endl;
+				return;
+			}
+
+			realms.push_back(realmName);
 		}
+		else
+			break;
 	}
 
 	// Finalize
 
-	it->Realm = realmName;
+	it->Realms = realms;
 	WriteToFile();
-	std::cout << "Realm was successfully changed." << std::endl << std::endl;
+	std::cout << "Realms were successfully changed." << std::endl << std::endl;
 }
 
 void AuthConfig::ChangeUserPassword()
@@ -493,13 +504,7 @@ void AuthConfig::ChangeUserPassword()
 		return;
 	}
 
-	std::cout << std::endl << "Available users:" << std::endl << std::endl;
-	std::cout << std::setw(m_maxUserNameLength + 7) << "Name" << " | " << std::setw(m_maxRealmName) << "Realm" << " | Password secured" << std::endl;
-	std::cout << std::setfill('-') << std::setw(80) << " " << std::setfill(' ') << std::endl;
-	for (int i = 0; i < (int)m_users.size(); ++i)
-		std::cout << "   " << std::setw(2) << (i + 1) << ". " << std::setw(m_maxUserNameLength) << m_users[i].Name << " | " <<
-		std::setw(m_maxRealmName) << m_users[i].Realm << " | " <<
-		(m_users[i].Password.empty() ? "No" : "Yes") << std::endl;
+	PrintUsersList();
 
 	std::cout << "Enter the name of the existing user:" << std::endl << "> ";
 	std::getline(std::cin, userName);
@@ -543,4 +548,27 @@ void AuthConfig::ChangeUserPassword()
 	it->Password = Md5::Md5_Encode(std::vector<uint8_t>(password1.begin(), password1.end()));
 	WriteToFile();
 	std::cout << "Password was successfully changed." << std::endl << std::endl;
+}
+
+
+void AuthConfig::PrintUsersList()
+{
+	std::cout << std::endl << "Available users:" << std::endl << std::endl;
+	std::cout << std::setw(m_maxUserNameLength + 7) << "Name" << " | " << std::setw(m_maxRealmName) << "Realm" << " | Password secured" << std::endl;
+	std::cout << std::setfill('-') << std::setw(80) << " " << std::setfill(' ') << std::endl;
+	for (int i = 0; i < (int)m_users.size(); ++i)
+	{
+		std::string firstRealm;
+
+		if (m_users[i].Realms.size() == 0)
+			firstRealm = "";
+		else firstRealm = m_users[i].Realms[0];
+
+		std::cout << "   " << std::setw(2) << (i + 1) << ". " << std::setw(m_maxUserNameLength) << m_users[i].Name << " | " <<
+			std::setw(m_maxRealmName) << firstRealm << " | " <<
+			(m_users[i].Password.empty() ? "No" : "Yes") << std::endl;
+
+		for (int j = 1; j < (int)m_users[i].Realms.size(); ++j)
+			std::cout << std::setw(10 + m_maxUserNameLength) << " | " << std::setw(m_maxRealmName) << m_users[i].Realms[j] << " | " << std::endl;
+	}
 }

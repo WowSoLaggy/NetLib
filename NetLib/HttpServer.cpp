@@ -115,7 +115,7 @@ namespace NetLib
 			{
 				// We can connect the client
 
-				m_connections.emplace_back(HttpConnectionInfo(pClientInfo.Id));
+				m_connections.emplace_back(HttpConnectionInfo(pClientInfo));
 
 				if (Config::GetLogOnAccept())
 					echo("Accepted client: ", pClientInfo.ToString(), ".");
@@ -195,7 +195,7 @@ namespace NetLib
 
 		{
 			std::unique_lock<std::mutex> lock(m_lockRequests);
-			m_requests.push({ err, pClientInfo, httpConnectionInfo, request });
+			m_requests.push({ err, httpConnectionInfo, request });
 		}
 	}
 
@@ -205,7 +205,6 @@ namespace NetLib
 		LOG("HttpServer::MainLoop()");
 		NetErrCode err;
 
-		ClientInfo clientInfo;
 		HttpConnectionInfo httpConnectionInfo;
 		HttpRequest request;
 		while (m_isRunning)
@@ -218,7 +217,7 @@ namespace NetLib
 				if (m_requests.size() == 0)
 					continue;
 
-				std::tie(err, clientInfo, httpConnectionInfo, request) = m_requests.front();
+				std::tie(err, httpConnectionInfo, request) = m_requests.front();
 				m_requests.pop();
 			}
 
@@ -250,6 +249,13 @@ namespace NetLib
 			}
 			else
 			{
+				// Fill authorization info if any
+				auto it = request.GetHeaders().find("Authorization");
+				if (it != request.GetHeaders().end())
+					httpConnectionInfo.AuthorizationString = it->second;
+				else
+					httpConnectionInfo.AuthorizationString = "";
+
 				// Should we handle requests to the file system or pass it to the control application?
 				if ((Config::GetAllowFileHandle()) && (
 					(request.GetMethod() == req_get) ||
@@ -258,7 +264,7 @@ namespace NetLib
 					(request.GetMethod() == req_delete)
 					))
 				{
-					err = FileHandler(clientInfo, request);
+					err = FileHandler(httpConnectionInfo, request);
 					if (err != neterr_noErr)
 					{
 						echo("ERROR: Can't handle request to the file system.");
@@ -271,7 +277,7 @@ namespace NetLib
 				else
 				{
 					if (m_onRequestFromClient != nullptr)
-						m_onRequestFromClient(clientInfo, request);
+						m_onRequestFromClient(httpConnectionInfo, request);
 				}
 			}
 
@@ -286,9 +292,9 @@ namespace NetLib
 				(httpConnectionInfo.RequestsCount >= Config::GetKeepAliveMaxRequests()));		// client's number of requests exceeded
 			if (forceDisconnect)
 			{
-				err = DisconnectClient(clientInfo.Id);
+				err = DisconnectClient(httpConnectionInfo.Id);
 				if (err != neterr_noErr)
-					echo("ERROR: Can't disconnect client (id: ", clientInfo.Id, ").");
+					echo("ERROR: Can't disconnect client (id: ", httpConnectionInfo.Id, ").");
 			}
 		}
 

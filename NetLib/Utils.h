@@ -18,38 +18,7 @@
 
 namespace NetLib
 {
-	using namespace std::tr2::sys;
-
-
-	// Splits the given string to tokens with a given delimiter
-	// Params:
-	// [in]  const std::string & pString		- string to split
-	// [in]  char pDelimiter					- delimiter used to split the given string
-	// [out] std::vector<std::string> & pTokens	- vector of splitted tokens
-	// Returns:
-	// std::vector<std::string>					- vector of splitted tokens (reference to pTokens)
-	static std::vector<std::string> & SplitString(const std::string &pString, char pDelimiter, std::vector<std::string> &pTokens)
-	{
-		std::stringstream ss(pString);
-		std::string item;
-		while (std::getline(ss, item, pDelimiter))
-			pTokens.push_back(item);
-
-		return pTokens;
-	}
-
-
-	// Splits the given string to tokens with a given delimiter
-	// Params:
-	// [in] const std::string & pString	- string to split
-	// [in] char pDelimiter				- delimiter used to split the given string
-	// Returns:
-	// std::vector<std::string>				- vector of splitted tokens
-	static std::vector<std::string> SplitString(const std::string &pString, char pDelimiter)
-	{
-		std::vector<std::string> tokens;
-		return SplitString(pString, pDelimiter, tokens);
-	}
+	using std::tr2::sys::path;
 
 
 	// Trims the given string from the start (removes all spaces)
@@ -104,6 +73,45 @@ namespace NetLib
 	{
 		TrimStringRef(pString);
 		return pString;
+	}
+
+
+	// Splits the given string to tokens with a given delimiter
+	// Params:
+	// [in]  const std::string & pString		- string to split
+	// [in]  char pDelimiter					- delimiter used to split the given string
+	// [out] std::vector<std::string> & pTokens	- vector of splitted tokens
+	// Returns:
+	// std::vector<std::string>					- vector of splitted tokens (reference to pTokens)
+	static std::vector<std::string> & SplitString(const std::string &pString, char pDelimiter, std::vector<std::string> &pTokens, bool pTrimTokens = false)
+	{
+		std::stringstream ss(pString);
+		std::string item;
+		if (pTrimTokens)
+		{
+			while (std::getline(ss, item, pDelimiter))
+				pTokens.push_back(TrimString(item));
+		}
+		else
+		{
+			while (std::getline(ss, item, pDelimiter))
+				pTokens.push_back(item);
+		}
+
+		return pTokens;
+	}
+
+
+	// Splits the given string to tokens with a given delimiter
+	// Params:
+	// [in] const std::string & pString	- string to split
+	// [in] char pDelimiter				- delimiter used to split the given string
+	// Returns:
+	// std::vector<std::string>				- vector of splitted tokens
+	static std::vector<std::string> SplitString(const std::string &pString, char pDelimiter, bool pTrimTokens = false)
+	{
+		std::vector<std::string> tokens;
+		return SplitString(pString, pDelimiter, tokens, pTrimTokens);
 	}
 
 
@@ -192,6 +200,16 @@ namespace NetLib
 		return (pDir1.compare(pDir2) == 0);
 	}
 
+
+	// Checks whether the two given paths point to the same directory.
+	// Params:
+	// [in] path pDir1	- path to the directory that supposed to be the sub-directory
+	// [in] path pDir2	- path to the directory that supposed to be the parent directory
+	static bool IsSameDir(path pDir1, path pDir2)
+	{
+		return IsSameDir(pDir1.string(), pDir2.string());
+	}
+
 	
 	// Checks whether the given pSubDir is a sub-directory for a pParentDir
 	// Params:
@@ -233,6 +251,16 @@ namespace NetLib
 		}
 
 		return false;
+	}
+
+
+	// Checks whether the given pSubDir is a sub-directory for a pParentDir
+	// Params:
+	// [in] path pSubDir		- path to the directory that supposed to be the sub-directory
+	// [in] path pParentDir	- path to the directory that supposed to be the parent directory
+	static bool IsSubDir(path pSubDir, path pParentDir)
+	{
+		return IsSubDir(pSubDir.string(), pParentDir.string());
 	}
 
 }; // ns NetLib

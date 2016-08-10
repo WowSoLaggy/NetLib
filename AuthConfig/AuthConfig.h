@@ -49,6 +49,8 @@ private:
 	void ChangeUserRealm();
 	void ChangeUserPassword();
 
+	void PrintUsersList();
+
 };
 
 

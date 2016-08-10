@@ -10,17 +10,24 @@ namespace NetLib
 {
 	using namespace std::experimental::filesystem::v1;
 
-	NetErrCode HttpServer::FileHandler(const ClientInfo &pClientInfo, const HttpRequest &pHttpRequest)
+
+	NetErrCode HttpServer::FileHandler(const HttpConnectionInfo &pHttpConnectionInfo, const HttpRequest &pHttpRequest)
 	{
 		LOG("HttpServer::FileHandler()");
 		NetErrCode err;
 
-		path p(Config::GetRootFolder());
-		if (!is_directory(p))
+		// Server root dir
+
+		path rootPath(Config::GetRootFolder());
+		if (!is_directory(rootPath))
 		{
 			echo("ERROR: Can't find the root directory.");
 			return neterr_noRootDir;
 		}
+
+		// Resource path
+
+		path resPath = rootPath.append(pHttpRequest.GetUri().ToString());
 
 		HttpResponse response;
 
@@ -31,17 +38,41 @@ namespace NetLib
 		{
 			// GET or HEAD
 
-			p = p.append(pHttpRequest.GetUri().ToString());
-			if (is_directory(p))
+			if (is_directory(resPath))
 			{
 				// If points to a directory add something like "index.html" from the config
-				p = p.append(Config::GetDefaultIndex());
+				resPath = resPath.append(Config::GetDefaultIndex());
 			}
 
-			if (is_regular_file(p))
+			std::string authHeader = "";
+			err = m_authorizer.CanAccess(pHttpConnectionInfo, resPath, access_read, authHeader);
+			if (err == neterr_notFound)
+			{
+				response = HttpResponse::FileNotFound();
+				break;
+			}
+			else if (err == neterr_authRequired)
+			{
+				response = HttpResponse::AuthRequired();
+				if (!authHeader.empty())
+					response.AddHeader("WWW-Authenticate", authHeader);
+				break;
+			}
+			else if (err == neterr_forbidden)
+			{
+				response = HttpResponse::Forbidden();
+				break;
+			}
+			else if (err != neterr_noErr)
+			{
+				echo("ERROR: Internal authorization error.");
+				return err;
+			}
+
+			if (is_regular_file(resPath))
 			{
 				response = HttpResponse::Ok();
-				std::string body = ReadFileToString(p.string());
+				std::string body = ReadFileToString(resPath.string());
 				if (pHttpRequest.GetMethod() == req_get)
 				{
 					// Add body only if GET, not HEAD
@@ -78,10 +109,10 @@ namespace NetLib
 
 
 		// Send the response
-		err = SendToClient(pClientInfo.Id, response);
+		err = SendToClient(pHttpConnectionInfo.Id, response);
 		if (err != neterr_noErr)
 		{
-			echo("ERROR: Can't send response to the client (id: ", pClientInfo.Id, ").");
+			echo("ERROR: Can't send response to the client (id: ", pHttpConnectionInfo.Id, ").");
 			return err;
 		}
 

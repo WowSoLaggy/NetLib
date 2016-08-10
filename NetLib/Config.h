@@ -61,10 +61,13 @@ namespace NetLib
 
 
 		// Authorization type
-		static std::string GetAuthType() { return m_authType; }
+		static const std::string & GetAuthType() { return m_authType; }
 
 		// Path to Auth.conf file (file that contains authorization rules). Can be empty if no authorization is required
-		static std::string GetAuthPath() { return m_authPath; }
+		static const std::string & GetAuthPath() { return m_authPath; }
+
+		// Path to the default .htaccess file, can be empty if 'AuthType = none' or if it is not required
+		static const std::string & GetDefaultHtAccess() { return m_defaultHtAccess; }
 
 
 		// Log accepted connections (can spam the log file)
@@ -114,6 +117,12 @@ namespace NetLib
 		// Default 501 (Method Not Implemented) page
 		static const std::string & GetDefaultPage501() { return m_defaultPage501; }
 
+		// Forbid any access to files starting with the '.' (dot) symbol
+		static bool GetForbidDot() { return m_forbidDot; }
+
+		// Forbid any access to the .htaccess files (vital for the server security, turn off on your own risk)
+		static bool GetForbidHtAccess() { return m_forbidHtAccess; }
+
 
 		// Allowed request methods (other request methods will generate MethodNotAllowed response)
 		static const std::vector<std::string> & GetAllowedRequestMethods() { return m_allowedRequestMethods; }
@@ -157,6 +166,9 @@ namespace NetLib
 
 		// Path to Auth.conf file (file that contains authorization rules). Can be empty if no authorization is required
 		static std::string m_authPath;
+
+		// Path to the default .htaccess file, can be empty if 'AuthType = none' or if it is not required
+		static std::string m_defaultHtAccess;
 
 
 		// Log accepted connections (can spam the log file)
@@ -205,6 +217,12 @@ namespace NetLib
 
 		// Default 501 (Method Not Implemented) page
 		static std::string m_defaultPage501;
+
+		// Forbid any access to files starting with the '.' (dot) symbol
+		static bool m_forbidDot;
+
+		// Forbid any access to the .htaccess files (vital for the server security, turn off on your own risk)
+		static bool m_forbidHtAccess;
 
 
 		// Allowed request methods (other request methods will generate MethodNotAllowed response)

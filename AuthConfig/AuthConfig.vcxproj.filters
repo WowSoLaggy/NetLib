@@ -18,9 +18,6 @@
     <ClInclude Include="AuthConfig.h">
       <Filter>src\AuthConfig</Filter>
     </ClInclude>
-    <ClInclude Include="User.h">
-      <Filter>src\AuthConfig</Filter>
-    </ClInclude>
     <ClInclude Include="..\libs\Encodings\Md5.h">
       <Filter>libs</Filter>
     </ClInclude>

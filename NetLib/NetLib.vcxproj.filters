@@ -111,6 +111,12 @@
     <ClInclude Include="Credentials.h">
       <Filter>src\Common</Filter>
     </ClInclude>
+    <ClInclude Include="AccessTypes.h">
+      <Filter>src\Http\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Net.cpp">

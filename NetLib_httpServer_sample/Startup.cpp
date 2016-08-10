@@ -7,18 +7,18 @@ using namespace NetLib;
 NetLib::HttpServer *g_server;
 
 
-void OnRequestFromClient(const ClientInfo &pClientInfo, const HttpRequest &pRequest)
+void OnRequestFromClient(const HttpConnectionInfo &pHttpConnectionInfo, const HttpRequest &pRequest)
 {
 	switch (pRequest.GetMethod())
 	{
 	case req_get:
-		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
+		g_server->SendToClient(pHttpConnectionInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
 		break;
 	case req_head:
-		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
+		g_server->SendToClient(pHttpConnectionInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
 		break;
 	default:
-		g_server->SendToClient(pClientInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
+		g_server->SendToClient(pHttpConnectionInfo.Id, NetLib::HttpResponse::MethodNotImplemented());
 		break;
 	}
 }

@@ -1,0 +1,26 @@
+; This is a file that contains access rules for the current directory
+; and it's files (resources). For the subdirectories this file can be
+; overriden by another .htaccess file in the corresponding subdirectory.
+; If neither directory nor its parents contain .htaccess file, then the default
+; .htaccess file is applied (if it is specified in the Config.conf file).
+; Otherwise no authorization rules are applied.
+;
+; Lines starting with ';' are comments and are ignored.
+;
+; File format is:
+;
+; access_type_1 = realm_name
+; access_type_2 = realm_name
+;
+; Access types are: read, write. Note that the 'delete' access equals to the 'write' access.
+; Realms should be listed in the Auth.conf file (generated via the AuthConfig tool).
+; Empty realm name means that there are no authorization limitations applied for this access type.
+;
+; Example:
+;
+; read = public
+; write = admin
+;
+
+read = admin
+write = admin

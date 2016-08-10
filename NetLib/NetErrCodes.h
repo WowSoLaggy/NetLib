@@ -38,7 +38,11 @@ namespace NetLib
 			neterr_noRootDir,
 			neterr_fileHandlerMethodNotRecognized,
 
+			neterr_authError,
 			neterr_cantParseAuth,
+			neterr_notFound,
+			neterr_authRequired,
+			neterr_forbidden,
 
 			neterr_end
 		};
