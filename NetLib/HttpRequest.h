@@ -16,6 +16,8 @@
 
 namespace NetLib
 {
+	using namespace NetErrCodes;
+
 
 	// Class that represents the Http Request
 	class HttpRequest
@@ -34,8 +36,11 @@ namespace NetLib
 		// Params:
 		// [in]  const std::string & pRequestString	- request string to parse
 		// [out] int & pOffset						- number of parsed chars in the given request string
-		NetErrCodes::NetErrCode Parse(const std::string &pRequestString, int &pOffset);
+		NetErrCode Parse(const std::string &pRequestString, int &pOffset);
 
+		// Converts request to string
+		// Param:
+		// [in] bool pWithBody	- add the request body to the string or not
 		std::string ToString(bool pWithBody) const;
 
 

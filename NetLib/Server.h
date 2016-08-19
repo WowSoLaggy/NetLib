@@ -13,6 +13,7 @@
 #define NETLIB_SERVER_H
 
 
+#define NOMINMAX
 #include <Windows.h>
 #include <mutex>
 #include <string>

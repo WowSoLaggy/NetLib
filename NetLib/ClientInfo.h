@@ -4,6 +4,7 @@
 #define NETLIB_CLIENTINFO_H
 
 
+#define NOMINMAX
 #include <Windows.h>
 #include <string>
 

@@ -143,6 +143,9 @@ namespace NetLib
 		// Server name to append to all outgoing responses. Ignored if 'AppendServerName = false'
 		static const std::string & GetServerName() { return m_serverName; }
 
+		// Response body max length
+		static int GetResponseBodyMaxLength() { return m_responseBodyMaxLength; }
+
 	private:
 
 		// Port to start the HttpServer on
@@ -243,6 +246,9 @@ namespace NetLib
 
 		// Server name to append to all outgoing responses. Ignored if 'AppendServerName = false'
 		static std::string m_serverName;
+
+		// Response body max length
+		static int m_responseBodyMaxLength;
 
 	};
 

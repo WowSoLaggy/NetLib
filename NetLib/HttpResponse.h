@@ -6,12 +6,15 @@
 
 #include <string>
 
+#include "NetErrCodes.h"
 #include "HttpVersions.h"
 #include "ResponseStatusCodes.h"
 
 
 namespace NetLib
 {
+	using namespace NetErrCodes;
+
 
 	// Class that represents the Http response
 	class HttpResponse
@@ -67,10 +70,17 @@ namespace NetLib
 		// Returns the length of the body
 		int GetBodySize() { return m_body.size(); }
 
+		// Parses the given response string
+		// Params:
+		// [in]  const std::string & pResponseString	- response string to parse
+		// [out] int & pOffset							- number of parsed chars in the given response string
+		NetErrCode Parse(const std::string &pResponseString, int &pOffset);
+
 	private:
 
 		HttpVersion m_httpVersion;						// Response Http version
 		ResponseStatusCode m_statusCode;				// Response status code
+		std::string m_reasonPhrase;						// Response reason phrase
 
 		std::map<std::string, std::string> m_headers;	// Map of response headers
 		std::string m_body;								// Response body

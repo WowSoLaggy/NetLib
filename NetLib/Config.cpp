@@ -46,6 +46,7 @@ namespace NetLib
 	bool Config::m_appendDateTimeStamp = false;
 	bool Config::m_appendServerName = false;
 	std::string Config::m_serverName = "";
+	int Config::m_responseBodyMaxLength = 0;
 
 
 	NetErrCode Config::ReadFromFile(const std::string &pFileName)
@@ -134,13 +135,6 @@ namespace NetLib
 			else if (header.compare("ForbidHtAccess") == 0)
 				m_forbidHtAccess = StringToBool(value);
 
-			else if (header.compare("AppendDateTime") == 0)
-				m_appendDateTimeStamp = StringToBool(value);
-			else if (header.compare("AppendServerName") == 0)
-				m_appendServerName = StringToBool(value);
-			else if (header.compare("ServerName") == 0)
-				m_serverName = value;
-
 			else if (header.compare("AllowedRequestMethods") == 0)
 			{
 				tokens = SplitString(value, ',');
@@ -151,6 +145,16 @@ namespace NetLib
 				m_requestUriMaxLength = std::stoi(value);
 			else if (header.compare("RequestBodyMaxLength") == 0)
 				m_requestBodyMaxLength = std::stoi(value);
+
+			else if (header.compare("AppendDateTime") == 0)
+				m_appendDateTimeStamp = StringToBool(value);
+			else if (header.compare("AppendServerName") == 0)
+				m_appendServerName = StringToBool(value);
+			else if (header.compare("ServerName") == 0)
+				m_serverName = value;
+			else if (header.compare("ResponseBodyMaxLength") == 0)
+				m_responseBodyMaxLength = std::stoi(value);
+
 			else
 			{
 				// Unrecognized token

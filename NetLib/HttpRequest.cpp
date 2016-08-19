@@ -21,7 +21,7 @@ namespace NetLib
 		std::vector<std::string> tokens;
 		pOffset = 0;
 
-		// Remove all \r from request string
+		// Remove all \r from the request string
 
 		std::string requestString = pRequestString;
 		auto it = std::remove(requestString.begin(), requestString.end(), '\r');
@@ -179,7 +179,7 @@ namespace NetLib
 			if (contentLength > Config::GetRequestBodyMaxLength())
 			{
 				// No need to log because it's not an error
-				return neterr_parse_requestBodyTooLong;
+				return neterr_parse_bodyTooLong;
 			}
 
 			// Request body
@@ -200,7 +200,7 @@ namespace NetLib
 			if ((int)m_body.size() > Config::GetRequestBodyMaxLength())
 			{
 				// No need to log because it's not an error
-				return neterr_parse_requestBodyTooLong;
+				return neterr_parse_bodyTooLong;
 			}
 
 			if (m_body.size() != contentLength)
@@ -220,7 +220,7 @@ namespace NetLib
 	{
 		std::string res = "";
 
-		// Response status line
+		// Request status line
 		res.append(g_requestMethodsMap[m_method]).
 			append(" ").
 			append(m_uri.ToString()).

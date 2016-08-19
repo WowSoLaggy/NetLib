@@ -226,7 +226,7 @@ namespace NetLib
 			if (Config::GetLogRequests())
 			{
 				echo("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-				echo("\n", request.ToString(Config::GetLogBody()));
+				echo(request.ToString(Config::GetLogBody()));
 				echo("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 			}
 

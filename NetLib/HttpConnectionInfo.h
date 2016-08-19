@@ -4,6 +4,7 @@
 #define NETLIB_HTTPCONNECTIONINFO_H
 
 
+#define NOMINMAX
 #include <Windows.h>
 #include <string>
 #include "Timer.h"

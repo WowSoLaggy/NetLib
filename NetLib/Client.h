@@ -12,6 +12,7 @@
 #define NETLIB_CLIENT_H
 
 
+#define NOMINMAX
 #include <Windows.h>
 #include <functional>
 #include <string>

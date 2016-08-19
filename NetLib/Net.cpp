@@ -1,5 +1,6 @@
 #include "Net.h"
 
+#include <algorithm>
 #include "Log.h"
 
 
@@ -113,7 +114,7 @@ namespace NetLib
 		int offset = 0;
 		while (true)
 		{
-			res = send(pSocket, &pData[offset], min(pSizeInBytes - offset, Net::GetBufferSize()), 0);
+			res = send(pSocket, &pData[offset], std::min(pSizeInBytes - offset, Net::GetBufferSize()), 0);
 			if (res == SOCKET_ERROR)
 			{
 				echo("ERROR: Can't send data.");

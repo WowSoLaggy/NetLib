@@ -32,7 +32,7 @@ namespace NetLib
 
 			neterr_parse_cantParse,
 			neterr_parse_requestLineTooLong,
-			neterr_parse_requestBodyTooLong,
+			neterr_parse_bodyTooLong,
 			neterr_parse_methodNotAllowed,
 
 			neterr_noRootDir,
@@ -43,6 +43,8 @@ namespace NetLib
 			neterr_notFound,
 			neterr_authRequired,
 			neterr_forbidden,
+
+			neterr_invalidAddress,
 
 			neterr_end
 		};
