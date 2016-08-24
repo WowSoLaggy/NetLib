@@ -18,6 +18,5 @@ Server server;
 server.start(1234);
 
 <br>
-
-Anton Egorov, 2016
+Anton Egorov, 2016<br>
 dohxehapo@gmail.com
